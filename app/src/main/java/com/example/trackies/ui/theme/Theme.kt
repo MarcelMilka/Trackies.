@@ -64,7 +64,7 @@ fun TrackiesTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
+        typography = MyFonts,
         content = content
     )
 }

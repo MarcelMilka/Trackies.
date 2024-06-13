@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace 'com.example.trackies'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.example.trackies"
@@ -63,4 +63,7 @@ dependencies {
     androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
     debugImplementation 'androidx.compose.ui:ui-tooling'
     debugImplementation 'androidx.compose.ui:ui-test-manifest'
+
+//  Extended library of google icons
+    implementation 'androidx.compose.material:material-icons-extended:1.6.7'
 }
