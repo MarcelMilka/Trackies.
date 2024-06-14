@@ -32,9 +32,15 @@ class MainActivity : ComponentActivity() {
 
                         composable( route = "Register" ) {
 
-                            Register { navigationController.navigate( it ) }
-                        } // -> SignedOut / Authenticate
-                        composable( route = "Authenticate" ) {  } // -> SignIn
+                            Register {
+
+                                navigationController.navigate( it ) { popUpTo("WelcomeScreen") { inclusive = false } }
+                            }
+                        }
+                        composable( route = "Authenticate" ) {
+
+                            Authenticate { navigationController.navigate("SignIn") { popUpTo("WelcomeScreen") { inclusive = false } } }
+                        }
                     }
 
 //                  Sign in
