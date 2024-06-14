@@ -19,13 +19,14 @@ import com.example.trackies.ui.theme.MyFonts
 }
 
 @Composable fun TextMedium( content: String ) {
+
     Text(
         text = content,
         style = MyFonts.titleMedium
     )
 }
 
-@Composable fun TextSmall( content: String ) {
+@Composable fun TextSmall( content: String) {
     Text(
         text = content,
         style = MyFonts.titleSmall
