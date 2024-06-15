@@ -46,7 +46,17 @@ class MainActivity : ComponentActivity() {
 //                  Sign in
                     navigation( route = "SignIn", startDestination = "Login" ) {
 
-                        composable( route = "Login" ) {  }
+                        composable( route = "Login" ) { LogIn { navigationController.navigate(it) } }
+                        composable( route = "RecoverThePassword" ) {
+                            RecoverThePassword {
+                                navigationController.navigate(it) { popUpTo("SignIn") { inclusive = false } }
+                            }
+                        }
+                        composable( route = "RecoverThePassword-Information" ) {
+                            RecoverThePasswordInformation {
+                                navigationController.navigate(it) { popUpTo("SignIn") { inclusive = false } }
+                            }
+                        }
                     }
                 }
             }

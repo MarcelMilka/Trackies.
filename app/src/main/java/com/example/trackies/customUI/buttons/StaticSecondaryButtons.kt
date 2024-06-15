@@ -44,7 +44,7 @@ fun SmallStaticSeondaryButton(textToDisplay: String, onClick: () -> Unit ) {
         onClick = { onClick() },
 
         modifier = Modifier
-            .width(120.dp)
+            .width(180.dp)
             .height(40.dp),
 
         shape = RoundedCornerShape(20.dp),
@@ -55,6 +55,6 @@ fun SmallStaticSeondaryButton(textToDisplay: String, onClick: () -> Unit ) {
         ),
 
         ) {
-        Text(text = textToDisplay, style = MyFonts.titleMedium)
+        Text(text = textToDisplay, style = MyFonts.titleSmall)
     }
 }
