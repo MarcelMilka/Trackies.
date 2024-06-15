@@ -1,4 +1,4 @@
-package com.example.trackies
+package com.example.trackies.authentication.ui.register
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.animateContentSize

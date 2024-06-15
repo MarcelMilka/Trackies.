@@ -7,6 +7,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import com.example.trackies.authentication.ui.login.LogIn
+import com.example.trackies.authentication.ui.login.RecoverThePassword
+import com.example.trackies.authentication.ui.login.RecoverThePasswordInformation
+import com.example.trackies.authentication.ui.register.Authenticate
+import com.example.trackies.authentication.ui.register.Register
+import com.example.trackies.authentication.ui.welcomeScreen.WelcomeScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

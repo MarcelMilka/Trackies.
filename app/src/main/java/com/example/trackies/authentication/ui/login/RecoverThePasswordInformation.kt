@@ -1,4 +1,4 @@
-package com.example.trackies
+package com.example.trackies.authentication.ui.login
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
