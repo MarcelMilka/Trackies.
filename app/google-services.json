@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "516829384287",
+    "project_id": "trackies-81e65",
+    "storage_bucket": "trackies-81e65.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:516829384287:android:04532b5e09d554375055ea",
+        "android_client_info": {
+          "package_name": "com.example.trackies"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC1od0k6gR1RX6MiIJwp0r5mxKwAMKYNE4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
