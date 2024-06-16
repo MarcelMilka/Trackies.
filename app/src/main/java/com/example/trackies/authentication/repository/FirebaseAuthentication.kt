@@ -113,4 +113,22 @@ class FirebaseAuthentication {
                 onFailure("$exception")
             }
     }
+
+    fun recoverThePassword(
+        email: String,
+        successfullySentEmail: () -> Unit,
+        failedToSendEmail: (String) -> Unit
+    ) {
+        authentication.sendPasswordResetEmail( email )
+            .addOnCompleteListener {process ->
+
+                if (process.isSuccessful) {
+                    successfullySentEmail()
+                }
+
+                else {
+                    failedToSendEmail("${process.exception}")
+                }
+            }
+    }
 }

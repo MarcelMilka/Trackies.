@@ -16,7 +16,7 @@ import com.example.trackies.customUI.texts.Header
 import com.example.trackies.ui.theme.BackgroundColor
 
 @Composable
-fun RecoverThePassword( navigate: (String) -> Unit ) {
+fun RecoverThePassword( onContinue: (String) -> Unit ) {
 
     //  registration credentials
     var email by remember { mutableStateOf("") }
@@ -77,7 +77,7 @@ fun RecoverThePassword( navigate: (String) -> Unit ) {
 
             Spacer25()
 
-            BigDynamicButton( textToDisplay = "Continue.", isEnabled = isEnabled ) { navigate( "RecoverThePassword-Information" ) }
+            BigDynamicButton( textToDisplay = "Continue.", isEnabled = isEnabled ) { onContinue(email) }
 
         }
     )

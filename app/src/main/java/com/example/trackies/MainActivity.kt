@@ -113,8 +113,17 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable( route = "RecoverThePassword" ) {
-                            RecoverThePassword {
-                                navigationController.navigate(it) { popUpTo("SignIn") { inclusive = false } }
+                            RecoverThePassword { email ->
+
+                                firebaseAuthenticator.recoverThePassword(
+                                    email = email,
+                                    successfullySentEmail = {
+                                        navigationController.navigate("RecoverThePassword-Information") { popUpTo("SignIn") { inclusive = false } }
+                                    },
+                                    failedToSendEmail = {
+                                        Log.d("customFailedToSendEmail", it)
+                                    }
+                                )
                             }
                         }
 
