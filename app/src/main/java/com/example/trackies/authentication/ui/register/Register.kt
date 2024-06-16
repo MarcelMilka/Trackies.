@@ -1,6 +1,7 @@
 package com.example.trackies.authentication.ui.register
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -11,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
+import com.example.trackies.authentication.emailPasswordCredentials.EmailPasswordCredentials
 import com.example.trackies.customUI.buttons.BigDynamicButton
 import com.example.trackies.customUI.spacers.Spacer120
 import com.example.trackies.customUI.spacers.Spacer25
@@ -25,7 +27,7 @@ import com.example.trackies.ui.theme.BackgroundColor
 @OptIn(ExperimentalLayoutApi::class)
 @SuppressLint("SuspiciousIndentation")
 @Composable
-fun Register( navigate: (String) -> Unit ) {
+fun Register( onContinue: ( EmailPasswordCredentials ) -> Unit ) {
 
 //  focus requesters responsible for switching between text fields
     var emailTextFieldIsActive by remember { mutableStateOf(false) }
@@ -155,7 +157,10 @@ fun Register( navigate: (String) -> Unit ) {
 
             Spacer25()
 
-            BigDynamicButton( textToDisplay = "Continue.", isEnabled = buttonContinueIsEnabled ) { navigate( "Authenticate" ) }
+            BigDynamicButton( textToDisplay = "Continue.", isEnabled = buttonContinueIsEnabled ) {
+                Log.d("bratan, register", "passed credentials")
+                onContinue( EmailPasswordCredentials(email, password) )
+            }
 
         }
     )

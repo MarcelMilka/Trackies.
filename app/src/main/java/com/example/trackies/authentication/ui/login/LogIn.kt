@@ -9,6 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.unit.dp
+import com.example.trackies.authentication.emailPasswordCredentials.EmailPasswordCredentials
 import com.example.trackies.customUI.buttons.BigStaticPrimaryButton
 import com.example.trackies.customUI.buttons.SmallStaticSeondaryButton
 import com.example.trackies.customUI.spacers.Spacer120
@@ -22,7 +23,7 @@ import com.example.trackies.ui.theme.BackgroundColor
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
-fun LogIn( navigate: (String) -> Unit ) {
+fun LogIn(onContinue: (EmailPasswordCredentials) -> Unit, recoverThePassword: () -> Unit ) {
 
 //  focus requesters responsible for switching between text fields
     var emailTextFieldIsActive by remember { mutableStateOf(false) }
@@ -87,7 +88,7 @@ fun LogIn( navigate: (String) -> Unit ) {
 
             Spacer25()
 
-            BigStaticPrimaryButton( textToDisplay = "Continue.") {  }
+            BigStaticPrimaryButton( textToDisplay = "Continue.") { onContinue( EmailPasswordCredentials( email = email, password = password ) ) }
 
             Spacer120()
 
@@ -95,7 +96,7 @@ fun LogIn( navigate: (String) -> Unit ) {
 
             Spacer5()
 
-            SmallStaticSeondaryButton( textToDisplay = "Recover the password" ) { navigate("RecoverThePassword") }
+            SmallStaticSeondaryButton( textToDisplay = "Recover the password" ) { recoverThePassword() }
 
         }
     )

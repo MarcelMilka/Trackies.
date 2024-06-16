@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
@@ -14,27 +13,29 @@ import com.example.trackies.authentication.ui.login.LogIn
 import com.example.trackies.authentication.ui.login.RecoverThePassword
 import com.example.trackies.authentication.ui.login.RecoverThePasswordInformation
 import com.example.trackies.authentication.ui.register.Authenticate
+import com.example.trackies.authentication.ui.register.CouldNotRegister
 import com.example.trackies.authentication.ui.register.Register
 import com.example.trackies.authentication.ui.welcomeScreen.WelcomeScreen
 import com.example.trackies.homeScreen.presentation.HomeScreen
 
 class MainActivity : ComponentActivity() {
 
-    private val firebaseAuthenticator by lazy {
-        FirebaseAuthentication()
-    }
+    private val firebaseAuthenticator by lazy { FirebaseAuthentication() }
+
+    private var uniqueIdentifier: String? = null
+    private var signUpError: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
 
 //          check if a user is already signed in
-            val usersID = firebaseAuthenticator.getSignedInUser()
+            uniqueIdentifier = firebaseAuthenticator.getSignedInUser()
 
-//          navigation
             val navigationController = rememberNavController()
 
-            NavHost( navController = navigationController, startDestination = when (usersID) { null -> {"SignedOut"} else -> {"SignedIn"} } ) {
+            NavHost( navController = navigationController, startDestination = when (uniqueIdentifier) { null -> {"SignedOut"} else -> {"SignedIn"} } ) {
 
 //              Welcome screen
                 navigation( route = "SignedOut", startDestination = "WelcomeScreen" ) {
@@ -49,26 +50,74 @@ class MainActivity : ComponentActivity() {
 
                         composable( route = "Register" ) {
 
-                            Register {
+                            Register { credentials ->
 
-                                navigationController.navigate( it ) { popUpTo("WelcomeScreen") { inclusive = false } }
+                                firebaseAuthenticator.signUpWithEmailAndPassword(
+                                    email = credentials.email,
+                                    password = credentials.password,
+                                    signUpError = {
+
+                                        signUpError = it
+                                        navigationController.navigate( "CouldNotRegister" ) { popUpTo("WelcomeScreen") { inclusive = false } }
+                                    },
+                                    authenticationResult = { waitingForAuthentication ->
+
+                                        if (waitingForAuthentication) {
+                                            firebaseAuthenticator.signOut()
+                                            navigationController.navigate( "Authenticate" ) { popUpTo("WelcomeScreen") { inclusive = false } }
+                                        }
+                                        else { navigationController.navigate( "CouldNotRegister" ) { popUpTo("WelcomeScreen") { inclusive = false } } }
+                                    }
+                                )
                             }
                         }
+
                         composable( route = "Authenticate" ) {
 
                             Authenticate { navigationController.navigate("SignIn") { popUpTo("WelcomeScreen") { inclusive = false } } }
+                        }
+
+                        composable( route = "CouldNotRegister" ) {
+
+                            CouldNotRegister (
+                                errorCause = signUpError!!,
+                                navigate = { navigationController.navigate("WelcomeScreen") { popUpTo("WelcomeScreen") { inclusive = false } } }
+                            )
                         }
                     }
 
 //                  Sign in
                     navigation( route = "SignIn", startDestination = "Login" ) {
 
-                        composable( route = "Login" ) { LogIn { navigationController.navigate(it) } }
+                        composable( route = "Login" ) {
+
+                            LogIn(
+                                onContinue = { credentials ->
+                                    firebaseAuthenticator.signInWithEmailAndPassword(
+
+                                        email = credentials.email,
+                                        password = credentials.password,
+                                        signInError = {},
+                                        authenticatedSuccessfully = { uid ->
+
+                                            uniqueIdentifier = uid
+                                            navigationController.navigate("SignedIn") {
+
+                                                popUpTo("SignedOut") { inclusive = true }
+                                            }
+                                        }
+                                    )
+                                },
+                                recoverThePassword = { navigationController.navigate("RecoverThePassword") }
+                            )
+                        }
+
                         composable( route = "RecoverThePassword" ) {
                             RecoverThePassword {
                                 navigationController.navigate(it) { popUpTo("SignIn") { inclusive = false } }
                             }
                         }
+
                         composable( route = "RecoverThePassword-Information" ) {
                             RecoverThePasswordInformation {
                                 navigationController.navigate(it) { popUpTo("SignIn") { inclusive = false } }
@@ -81,7 +130,37 @@ class MainActivity : ComponentActivity() {
                 navigation( route = "SignedIn", startDestination = "HomeScreen" ) {
 
                     composable( route = "HomeScreen" ) {
-                        HomeScreen()
+
+                        HomeScreen(
+
+                            uniqueIdentifier = uniqueIdentifier!!,
+                            onSignOut = {
+
+                                navigationController.navigate( route = "SignedOut" ) {
+
+                                    popUpTo( route = "SignedIn" ) { inclusive = true }
+                                }
+
+                                firebaseAuthenticator.signOut()
+                            },
+
+                            onDelete = {
+
+                                firebaseAuthenticator.deleteAccount(
+
+                                    onComplete = {
+
+                                        navigationController.navigate( route = "SignedOut" ) {
+
+                                            popUpTo( route = "SignedIn" ) { inclusive = true }
+                                        }
+                                    },
+                                    onFailure = {exception ->
+                                        Log.d("halla", exception)
+                                    }
+                                )
+                            }
+                        )
                     }
                 }
             }
