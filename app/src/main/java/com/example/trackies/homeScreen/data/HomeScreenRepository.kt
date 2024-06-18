@@ -2,7 +2,6 @@ package com.example.trackies.homeScreen.data
 
 import android.util.Log
 import com.example.trackies.homeScreen.viewState.License
-
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -15,10 +14,8 @@ class HomeScreenRepository( val uniqueIdentifier: String ): HomeScreenRepository
     private val user = users.document(uniqueIdentifier)
 
     private val usersInformation = user.collection("user's information").document("license")
-    private val usersTrackies = user.collection("user's data").document("trackies")
-    private val usersStatistics = user.collection("user's data").document("statistics")
-
-
+    private val usersTrackies = user.collection("user's trackies").document("trackies")
+    private val usersStatistics = user.collection("user's statistics").document("statistics")
     override fun isFirstTimeInApp() {
 
         users.document(uniqueIdentifier)
@@ -39,7 +36,7 @@ class HomeScreenRepository( val uniqueIdentifier: String ): HomeScreenRepository
 
     override fun addNewUser() {
 
-//      add the user
+//      add the user to the database (the document which contains user's data is named after the user's unique identifier)
         users.document(uniqueIdentifier).set({})
             .continueWith {
                 val update = hashMapOf<String, Any>(
@@ -48,26 +45,15 @@ class HomeScreenRepository( val uniqueIdentifier: String ): HomeScreenRepository
                 user.update(update)
             }
 
-//      add a collection which is going to represent user's information (whether the license is valid or no etc.)
+//      add a document which is responsible for "telling" whether the user has premium app
         usersInformation.set(License(isActive = false, isValidUntil = null))
 
-//      add a collection which is going to represent user's trackies
+//      add a document which is responsible for storing the user's trackies
         usersTrackies.set({})
-            .continueWith {
-                val update = hashMapOf<String, Any>(
-                    "arity" to FieldValue.delete()
-                )
-                usersTrackies.update(update)
-            }
+            .continueWith { usersTrackies.update(hashMapOf<String, Any>("arity" to FieldValue.delete())) }
 
-//      add a collection which is going to represent user's statistics
+//      add a document which is responsible for storing the user's statistics (weekly, in the future monthly and annual)
         usersStatistics.set({})
-            .continueWith {
-                val update = hashMapOf<String, Any>(
-                    "arity" to FieldValue.delete()
-                )
-                usersStatistics.update(update)
-            }
-
+            .continueWith { usersStatistics.update(hashMapOf<String, Any>("arity" to FieldValue.delete())) }
     }
 }
