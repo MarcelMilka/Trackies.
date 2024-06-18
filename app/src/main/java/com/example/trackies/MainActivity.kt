@@ -17,6 +17,7 @@ import com.example.trackies.authentication.ui.register.CouldNotRegister
 import com.example.trackies.authentication.ui.register.Register
 import com.example.trackies.authentication.ui.welcomeScreen.WelcomeScreen
 import com.example.trackies.homeScreen.presentation.HomeScreen
+import com.example.trackies.homeScreen.presentation.HomeScreenViewModel
 
 class MainActivity : ComponentActivity() {
 
@@ -140,6 +141,10 @@ class MainActivity : ComponentActivity() {
 
                     composable( route = "HomeScreen" ) {
 
+                        val viewModel = HomeScreenViewModel(uniqueIdentifier!!)
+
+//                        val state = viewModel.collectAsState
+
                         HomeScreen(
 
                             uniqueIdentifier = uniqueIdentifier!!,
@@ -152,7 +157,6 @@ class MainActivity : ComponentActivity() {
 
                                 firebaseAuthenticator.signOut()
                             },
-
                             onDelete = {
 
                                 firebaseAuthenticator.deleteAccount(
