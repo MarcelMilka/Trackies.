@@ -1,9 +1,12 @@
 package com.example.trackies.homeScreen.data
 
 import android.util.Log
-import com.example.trackies.homeScreen.viewState.License
+import com.example.trackies.homeScreen.buisness.LicenseViewState
+import com.example.trackies.homeScreen.buisness.TrackieViewState
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 
 class HomeScreenRepository( val uniqueIdentifier: String ): HomeScreenRepositoryInterface {
@@ -46,7 +49,7 @@ class HomeScreenRepository( val uniqueIdentifier: String ): HomeScreenRepository
             }
 
 //      add a document which is responsible for "telling" whether the user has premium app
-        usersInformation.set(License(isActive = false, isValidUntil = null))
+        usersInformation.set(LicenseViewState(active = false, validUntil = null))
 
 //      add a document which is responsible for storing the user's trackies
         usersTrackies.set({})
@@ -56,4 +59,25 @@ class HomeScreenRepository( val uniqueIdentifier: String ): HomeScreenRepository
         usersStatistics.set({})
             .continueWith { usersStatistics.update(hashMapOf<String, Any>("arity" to FieldValue.delete())) }
     }
+
+    override suspend fun fetchUsersInformation(): LicenseViewState? {
+
+        return suspendCoroutine {continuation ->
+
+            usersInformation
+                .get()
+                .addOnSuccessListener { document ->
+
+                    val active = document.getBoolean("active")
+                    val validUntil = document.getString("validUntil")
+
+                    if ( active != null ) { continuation.resume(LicenseViewState( active = active, validUntil = validUntil )) }
+                    else { return@addOnSuccessListener }
+                }
+                .addOnFailureListener { continuation.resume(null) }
+        }
+    }
+
+    override suspend fun fetchUsersTrackies(): List<TrackieViewState>? = suspendCoroutine { continuation -> continuation.resume(null) }
+    override suspend fun fetchUsersStatistics(): List<String>? = suspendCoroutine { continuation -> continuation.resume(null) }
 }

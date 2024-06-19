@@ -141,13 +141,10 @@ class MainActivity : ComponentActivity() {
 
                     composable( route = "HomeScreen" ) {
 
-                        val viewModel = HomeScreenViewModel(uniqueIdentifier!!)
-
-//                        val state = viewModel.collectAsState
-
                         HomeScreen(
 
                             uniqueIdentifier = uniqueIdentifier!!,
+                            viewModel = HomeScreenViewModel(uniqueIdentifier!!),
                             onSignOut = {
 
                                 navigationController.navigate( route = "SignedOut" ) {
