@@ -10,5 +10,5 @@ interface Reads {
 
     suspend fun fetchUsersLicenseInformation(): LicenseViewState?
 
-    suspend fun fetchTrackiesForToday(): List<TrackieViewState>
+    suspend fun fetchTrackiesForToday(): List<TrackieViewState>?
 }

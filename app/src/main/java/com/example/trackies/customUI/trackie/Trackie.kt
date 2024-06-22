@@ -19,9 +19,16 @@ import com.example.trackies.customUI.progressIndicators.ProgressBar
 import com.example.trackies.customUI.spacers.Spacer5
 import com.example.trackies.customUI.texts.TextMedium
 import com.example.trackies.customUI.texts.TextSmall
+import com.example.trackies.homeScreen.buisness.TrackieViewState
 import com.example.trackies.ui.theme.SecondaryColor
 
-@Composable fun Trackie() {
+@Composable fun Trackie(
+    name: String,
+    totalDose: Int,
+    measuringUnit: String,
+    repeatOn: List<String>,
+    ingestionTime: Map<String, Int>?
+) {
 
     Row(
 
@@ -50,7 +57,8 @@ import com.example.trackies.ui.theme.SecondaryColor
                 verticalArrangement = Arrangement.Top,
 
                 content = {
-                    TextMedium( "name of the trackie" )
+
+                    TextMedium( name )
 
                     Spacer5()
 
@@ -64,8 +72,8 @@ import com.example.trackies.ui.theme.SecondaryColor
 
                         content = {
 
-                            ProgressBar(1, 2)
-                            TextSmall( content = " 0/xxxml" )
+                            ProgressBar(currentValue = 0, goal = totalDose)
+                            TextSmall( content = " 0/$totalDose $measuringUnit" )
                         }
                     )
                 }
@@ -84,7 +92,11 @@ import com.example.trackies.ui.theme.SecondaryColor
                 }
             )
 
-            MagicButton {}
+            MagicButton(
+                ingestionTime = ingestionTime,
+                totalDose = totalDose,
+                measuringUnit = measuringUnit
+            ) {}
         }
     )
 }

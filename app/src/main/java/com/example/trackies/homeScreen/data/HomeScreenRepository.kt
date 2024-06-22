@@ -4,6 +4,8 @@ import android.util.Log
 import com.example.trackies.DateTimeClass
 import com.example.trackies.homeScreen.buisness.LicenseViewState
 import com.example.trackies.homeScreen.buisness.TrackieViewState
+import com.example.trackies.homeScreen.presentation.HomeScreenViewState
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlin.coroutines.resume
@@ -90,44 +92,60 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes {
         }
     }
 
-    override suspend fun fetchTrackiesForToday(): List<TrackieViewState> {
+    override suspend fun fetchTrackiesForToday(): List<TrackieViewState>? {
 
-        val namesOfTrackiesForToday: List<String> = fetchNamesOfTrackiesForToday()
-        var trackiesForToday: MutableList<TrackieViewState> = mutableListOf()
+        val namesOfTrackiesForToday: List<String>? = fetchNamesOfTrackiesForToday()
+        val trackiesForToday: MutableList<TrackieViewState> = mutableListOf()
 
         return suspendCoroutine { continuation ->
 
-            if (namesOfTrackiesForToday.isNotEmpty()) {
+            if (namesOfTrackiesForToday != null) {
 
-                namesOfTrackiesForToday.forEach { nameOfTheTrackie ->
+                if (namesOfTrackiesForToday.isNotEmpty()) {
 
-                    usersTrackies
-                        .get()
-                        .addOnSuccessListener {
+                    val tasks = namesOfTrackiesForToday.map { nameOfTheTrackie ->
 
-                            val trackie = it.get(nameOfTheTrackie) as? TrackieViewState
+                        usersTrackies.collection(nameOfTheTrackie).document(nameOfTheTrackie)
+                            .get()
+                            .addOnSuccessListener { document ->
 
-                            if (trackie != null) {
-                                trackiesForToday.add(trackie)
+                                val trackieAsNull = document.toObject(TrackieViewState::class.java)
+                                if (trackieAsNull != null) {
+                                    TrackieViewState(
+                                        name = trackieAsNull.name,
+                                        totalDose = trackieAsNull.totalDose,
+                                        measuringUnit = trackieAsNull.measuringUnit,
+                                        repeatOn = trackieAsNull.repeatOn,
+                                        ingestionTime = trackieAsNull.ingestionTime
+                                    ).let {
+                                        trackiesForToday.add(it)
+                                    }
+                                }
                             }
+                            .addOnFailureListener { exception ->
+                                Log.d("HomeScreenRepository", "fetchTrackiesForToday, an error occurred while fetching data, $exception")
+                            }
+                    }
 
-                            else { return@addOnSuccessListener }
-                        }
-                        .addOnFailureListener {
-                            Log.d("halla!", "an error occurred while fetching trackies for today, $it")
-                        }
+
+                    Tasks.whenAllComplete(tasks).addOnCompleteListener {
+                        continuation.resume(trackiesForToday)
+                    }
+
                 }
 
-                continuation.resume(trackiesForToday.toList())
+                else {
+                    continuation.resume(listOf<TrackieViewState>())
+                }
             }
 
             else {
-                Log.d("halla!", "trackiesForToday is null")
+                continuation.resume(null)
             }
         }
     }
 
-    private suspend fun fetchNamesOfTrackiesForToday(): List<String> {
+    private suspend fun fetchNamesOfTrackiesForToday(): List<String>? {
 
         val currentDayOfWeek = currentDateAndTime.getCurrentDayOfWeek()
 
@@ -135,23 +153,31 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes {
 
             namesOfTrackies
                 .get()
-                .addOnSuccessListener {
+                .addOnSuccessListener {document ->
 
-                    Log.d("halla!", "im in")
+                    if (document.exists()) {
 
-                    val listOfTrackiesForToday = it.get(currentDayOfWeek) as? List<String>
+                        val listOfTrackiesForToday = document.get(currentDayOfWeek) as? List<String>
 
-                    if (listOfTrackiesForToday != null) {
-                        continuation.resume(listOfTrackiesForToday)
-                        Log.d("halla!", "that's the list: $listOfTrackiesForToday")
+                        if (listOfTrackiesForToday != null) {
+
+                            continuation.resume(listOfTrackiesForToday)
+                            Log.d("HomeScreenRepository", "fetchNamesOfTrackiesForToday, that's the list of names of trackies for today: $listOfTrackiesForToday")
+                        }
+
+                        else {
+
+                            Log.d("HomeScreenRepository", "fetchNamesOfTrackiesForToday, listOfTrackiesForToday is equal to null")
+                            return@addOnSuccessListener
+                        }
                     }
 
                     else {
-                        Log.d("halla!", "null")
-                        return@addOnSuccessListener
+                        Log.d("HomeScreenRepository", "fetchNamesOfTrackiesForToday, the document does not exist")
                     }
                 }
-                .addOnFailureListener { Log.d("halla!", "$it") }
+
+                .addOnFailureListener { Log.d("HomeScreenRepository", "fetchNamesOfTrackiesForToday, $it") }
         }
     }
 

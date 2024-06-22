@@ -1,9 +1,12 @@
 package com.example.trackies.homeScreen.presentation
 
 import android.util.Log
+import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.trackies.homeScreen.buisness.TrackieViewState
 import com.example.trackies.homeScreen.data.HomeScreenRepository
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -19,11 +22,16 @@ class HomeScreenViewModel(private val uniqueIdentifier: String): ViewModel() {
 
         viewModelScope.launch {
 
+            _uiState.update { HomeScreenViewState.Loading }
+
+            delay(5000)
+
             val licenseInformation = repository.fetchUsersLicenseInformation()
             val trackiesForToday = repository.fetchTrackiesForToday()
 
-            if (licenseInformation != null && trackiesForToday != null) {
+            if (licenseInformation != null && trackiesForToday != null ) {
 
+                Log.d("ustaaa", "$trackiesForToday")
                 _uiState.update {
 
                     HomeScreenViewState.LoadedSuccessfully(
@@ -33,6 +41,8 @@ class HomeScreenViewModel(private val uniqueIdentifier: String): ViewModel() {
                     )
                 }
             }
+
+            else { _uiState.update { HomeScreenViewState.FailedToLoadData } }
         }
     }
 }

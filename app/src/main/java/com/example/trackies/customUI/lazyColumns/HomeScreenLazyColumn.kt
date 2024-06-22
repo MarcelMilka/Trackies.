@@ -1,5 +1,6 @@
 package com.example.trackies.customUI.lazyColumns
 
+import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -8,11 +9,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.trackies.customUI.buttons.ButtonAddAnotherTrackie
 import com.example.trackies.customUI.spacers.Spacer5
+import com.example.trackies.customUI.texts.MediumHeader
 import com.example.trackies.customUI.trackie.Trackie
 import com.example.trackies.homeScreen.presentation.HomeScreenViewState
 
@@ -31,12 +34,20 @@ import com.example.trackies.homeScreen.presentation.HomeScreenViewState
 
             when (uiState) {
 
-                HomeScreenViewState.Loading -> {}
+                HomeScreenViewState.Loading -> {
+                    this.item { MediumHeader("loading") }
+                }
 
                 is HomeScreenViewState.LoadedSuccessfully -> {
 
-                    items(listOf(1,2,3)) {
-                        Trackie()
+                    items( uiState.trackies!! ) {trackie ->
+                        Trackie(
+                            name = trackie.name!!,
+                            totalDose = trackie.totalDose!!,
+                            measuringUnit = trackie.measuringUnit!!,
+                            repeatOn = trackie.repeatOn!!,
+                            ingestionTime = trackie.ingestionTime
+                        )
                         Spacer5()
                     }
 
@@ -48,7 +59,9 @@ import com.example.trackies.homeScreen.presentation.HomeScreenViewState
                     }
                 }
 
-                HomeScreenViewState.FailedToLoadData -> {}
+                HomeScreenViewState.FailedToLoadData -> {
+                    this.item { MediumHeader("fialed to load data") }
+                }
             }
         }
     )

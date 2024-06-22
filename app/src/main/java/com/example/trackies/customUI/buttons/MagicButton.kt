@@ -23,7 +23,13 @@ import com.example.trackies.ui.theme.PrimaryColor
 import kotlinx.coroutines.delay
 
 @Composable
-fun MagicButton(onCheck: () -> Unit) {
+fun MagicButton(
+    ingestionTime: Map<String, Int>?,
+    totalDose: Int,
+    measuringUnit: String,
+
+    onCheck: () -> Unit
+) {
 
     var time: Map<String, Int>? = null
 
@@ -100,7 +106,7 @@ fun MagicButton(onCheck: () -> Unit) {
 
                 false -> {
 
-                    if (time != null) {}
+                    if (ingestionTime != null) {}
 
                     else {
 
@@ -116,8 +122,8 @@ fun MagicButton(onCheck: () -> Unit) {
 
                             content = {
 
-                                TextMedium( content = "+2000" )
-                                TextSmall( content = "ml" )
+                                TextMedium( content = "+$totalDose" )
+                                TextSmall( content = measuringUnit)
                             }
                         )
                     }
