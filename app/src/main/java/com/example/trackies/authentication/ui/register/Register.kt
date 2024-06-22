@@ -19,7 +19,7 @@ import com.example.trackies.customUI.spacers.Spacer25
 import com.example.trackies.customUI.spacers.Spacer5
 import com.example.trackies.customUI.textFields.EmailInputTextField
 import com.example.trackies.customUI.textFields.PasswordInputTextField
-import com.example.trackies.customUI.texts.Header
+import com.example.trackies.customUI.texts.BigHeader
 import com.example.trackies.customUI.texts.TextMedium
 import com.example.trackies.customUI.texts.TextSmall
 import com.example.trackies.ui.theme.BackgroundColor
@@ -95,7 +95,7 @@ fun Register( onContinue: ( EmailPasswordCredentials ) -> Unit ) {
                 .height(heightOfTheUpperSpacer.dp)
             )
 
-            Header( "Sign up" )
+            BigHeader( "Sign up" )
 
             Spacer120()
 

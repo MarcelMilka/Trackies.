@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Details
 import androidx.compose.material.icons.rounded.Person
+import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
@@ -39,16 +40,12 @@ fun IconButtonDetails ( onClick: () -> Unit ) {
 
     IconButton(
 
-        modifier = Modifier
-            .size( 50.dp ),
-
         onClick = { onClick() },
         content = {
             Icon(
-                imageVector = Icons.Rounded.Details,
+                imageVector = Icons.Rounded.Search,
                 contentDescription = null,
                 tint = White,
-                modifier = Modifier.size( 50.dp )
             )
         }
     )

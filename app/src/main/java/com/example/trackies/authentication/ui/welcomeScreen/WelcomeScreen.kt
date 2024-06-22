@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import com.example.trackies.customUI.buttons.BigStaticPrimaryButton
 import com.example.trackies.customUI.spacers.Spacer200
 import com.example.trackies.customUI.spacers.Spacer5
-import com.example.trackies.customUI.texts.Header
+import com.example.trackies.customUI.texts.BigHeader
 import com.example.trackies.ui.theme.BackgroundColor
 
 @Composable
@@ -30,7 +30,7 @@ fun WelcomeScreen( navigate: (String) -> Unit ) {
         content = {
 
             Spacer200()
-            Header( "Hey there!" )
+            BigHeader( "Hey there!" )
             Spacer200()
             BigStaticPrimaryButton( textToDisplay = "Create a new account." ) { navigate("SignUp") }
             Spacer5()

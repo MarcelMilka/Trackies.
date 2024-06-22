@@ -33,3 +33,25 @@ fun BigStaticPrimaryButton(textToDisplay: String, onClick: () -> Unit ) {
         Text(text = textToDisplay, style = MyFonts.titleMedium)
     }
 }
+
+@Composable fun ButtonAddAnotherTrackie( onClick: () -> Unit ) {
+
+    Button(
+
+        onClick = { onClick() },
+
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(30.dp),
+
+        shape = RoundedCornerShape(10.dp),
+
+        colors = ButtonDefaults.buttonColors(
+            containerColor = PrimaryColor,
+            contentColor = Color.White
+        ),
+
+        ) {
+        Text(text = "add new trackie", style = MyFonts.titleSmall, color = Color.White)
+    }
+}

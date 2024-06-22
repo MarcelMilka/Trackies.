@@ -12,7 +12,7 @@ import com.example.trackies.customUI.spacers.Spacer200
 import com.example.trackies.customUI.spacers.Spacer25
 import com.example.trackies.customUI.textFields.EmailInputTextField
 import com.example.trackies.customUI.texts.Detail
-import com.example.trackies.customUI.texts.Header
+import com.example.trackies.customUI.texts.BigHeader
 import com.example.trackies.ui.theme.BackgroundColor
 
 @Composable
@@ -48,7 +48,7 @@ fun RecoverThePassword( onContinue: (String) -> Unit ) {
 
             Spacer200()
 
-            Header( "Password recovery" )
+            BigHeader( "Password recovery" )
 
             Spacer25()
 

@@ -12,7 +12,7 @@ import com.example.trackies.customUI.buttons.BigStaticPrimaryButton
 import com.example.trackies.customUI.spacers.Spacer200
 import com.example.trackies.customUI.spacers.Spacer25
 import com.example.trackies.customUI.texts.Detail
-import com.example.trackies.customUI.texts.Header
+import com.example.trackies.customUI.texts.BigHeader
 import com.example.trackies.ui.theme.BackgroundColor
 
 @Composable
@@ -35,7 +35,7 @@ fun CouldNotRegister(
         content = {
 
             Spacer200()
-            Header(content = "An error occurred.")
+            BigHeader(content = "An error occurred.")
             Spacer25()
             Column(
                 modifier = Modifier

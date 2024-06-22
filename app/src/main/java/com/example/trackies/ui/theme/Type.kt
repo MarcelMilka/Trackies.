@@ -33,6 +33,14 @@ val MyFonts = Typography(
         color = White
     ),
 
+    //  Headline
+    headlineMedium = TextStyle(
+        fontFamily = quickSand,
+        fontWeight = FontWeight.W700,
+        fontSize = 25.sp,
+        color = White
+    ),
+
 //  DetailBig
     headlineSmall = TextStyle(
         fontFamily = quickSand,

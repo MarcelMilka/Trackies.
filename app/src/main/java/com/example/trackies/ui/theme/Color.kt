@@ -14,4 +14,6 @@ val PrimaryColor = Color(0xFFFE752F)
 val SecondaryColor = Color(0xFF242424)
 val BackgroundColor = Color(0xFF141417)
 
+val CheckedTrackie = Color(0xFFFFA530)
+
 val White50 = Color(0x80FFFFFF)
