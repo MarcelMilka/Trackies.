@@ -1,7 +1,6 @@
 package com.example.trackies.homeScreen.data
 
 import android.util.Log
-import androidx.compose.runtime.LaunchedEffect
 import com.example.trackies.DateTimeClass
 import com.example.trackies.homeScreen.buisness.LicenseViewState
 import com.example.trackies.homeScreen.buisness.TrackieViewState
@@ -53,7 +52,7 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes {
             }
 
 //      "user's information" -> "license"
-        usersInformation.set(LicenseViewState(active = false, validUntil = null, totalAmountOfTrackies = 0))
+        usersInformation.set(LicenseViewState(active = false, validUntil = null))
 
 //      "names of trackies" -> "names of trackies"
         namesOfTrackies.set( hashMapOf("MONDAY" to listOf<String>()) )
@@ -83,10 +82,9 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes {
 
                     val active = document.getBoolean("active")
                     val validUntil = document.getString("validUntil")
-                    val totalAmountOfTrackies = document.getString("totalAmountOfTrackies")
 
-                    if ( active != null && totalAmountOfTrackies != null ) { continuation.resume(LicenseViewState( active = active, validUntil = validUntil, totalAmountOfTrackies = totalAmountOfTrackies.toInt())) }
-                    else { continuation.resume(null) }
+                    if ( active != null ) { continuation.resume(LicenseViewState( active = active, validUntil = validUntil )) }
+                    else { return@addOnSuccessListener }
                 }
                 .addOnFailureListener { continuation.resume(null) }
         }
