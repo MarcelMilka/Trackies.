@@ -15,34 +15,11 @@ class HomeScreenViewModel(private val uniqueIdentifier: String): ViewModel() {
     val uiState: StateFlow<HomeScreenViewState> get() = _uiState.asStateFlow()
 
     init {
-        Log.d("halla!", "init started working")
         repository.isFirstTimeInApp()
 
-        loadData()
-    }
-
-    fun loadData() {
-
         viewModelScope.launch {
-
-            _uiState.update { HomeScreenViewState.Loading }
-
-            val usersInformation = repository.fetchUsersInformation()
-            val usersTrackies = repository.fetchUsersTrackies()
-            val usersStatistics = repository.fetchUsersStatistics()
-
-            if (usersInformation != null) {
-
-                _uiState.update {
-                    (HomeScreenViewState.LoadedSuccessfully(
-                        license = usersInformation,
-                        trackies = usersTrackies,
-                        statistics = usersStatistics)
-                    )
-                }
-            }
-
-            else { _uiState.update { HomeScreenViewState.FailedToLoadData } }
+            val trackiesForToday = repository.fetchTrackiesForToday()
+            Log.d("halla!", "trackies for today: $trackiesForToday")
         }
     }
 }
