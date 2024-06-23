@@ -54,7 +54,7 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes {
             }
 
 //      "user's information" -> "license"
-        usersInformation.set(LicenseViewState(active = false, validUntil = null))
+        usersInformation.set(LicenseViewState(active = false, validUntil = null, totalAmountOfTrackies = 0))
 
 //      "names of trackies" -> "names of trackies"
         namesOfTrackies.set( hashMapOf("MONDAY" to listOf<String>()) )
@@ -82,10 +82,24 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes {
                 .get()
                 .addOnSuccessListener { document ->
 
-                    val active = document.getBoolean("active")
-                    val validUntil = document.getString("validUntil")
+                    val licenseViewState = document.toObject(LicenseViewState::class.java)
+                    if (licenseViewState != null) {
+                        LicenseViewState(
+                            active = licenseViewState.active,
+                            validUntil = licenseViewState.validUntil,
+                            totalAmountOfTrackies = licenseViewState.totalAmountOfTrackies
+                        ).let {fetchedLicenseInformation ->
 
-                    if ( active != null ) { continuation.resume(LicenseViewState( active = active, validUntil = validUntil )) }
+                            if (fetchedLicenseInformation.active != null && fetchedLicenseInformation.totalAmountOfTrackies != null) {
+                                continuation.resume(fetchedLicenseInformation)
+                            }
+
+                            else {
+                                continuation.resume(null)
+                            }
+                        }
+                    }
+
                     else { return@addOnSuccessListener }
                 }
                 .addOnFailureListener { continuation.resume(null) }

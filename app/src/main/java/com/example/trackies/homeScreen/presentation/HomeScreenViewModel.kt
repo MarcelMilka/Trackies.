@@ -29,9 +29,11 @@ class HomeScreenViewModel(private val uniqueIdentifier: String): ViewModel() {
             val licenseInformation = repository.fetchUsersLicenseInformation()
             val trackiesForToday = repository.fetchTrackiesForToday()
 
-            if (licenseInformation != null && trackiesForToday != null ) {
+            if (
+                licenseInformation != null &&
+                trackiesForToday != null
+                ) {
 
-                Log.d("ustaaa", "$trackiesForToday")
                 _uiState.update {
 
                     HomeScreenViewState.LoadedSuccessfully(
