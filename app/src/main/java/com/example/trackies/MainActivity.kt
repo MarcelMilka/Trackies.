@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import com.example.trackies.addNewTrackie.AddNewTrackie
 import com.example.trackies.authentication.repository.FirebaseAuthentication
 import com.example.trackies.authentication.ui.login.LogIn
 import com.example.trackies.authentication.ui.login.RecoverThePassword
@@ -17,7 +18,7 @@ import com.example.trackies.authentication.ui.register.CouldNotRegister
 import com.example.trackies.authentication.ui.register.Register
 import com.example.trackies.authentication.ui.welcomeScreen.WelcomeScreen
 import com.example.trackies.homeScreen.presentation.HomeScreen
-import com.example.trackies.homeScreen.presentation.HomeScreenViewModel
+import com.example.trackies.homeScreen.presentation.SharedViewModel
 
 class MainActivity : ComponentActivity() {
 
@@ -139,12 +140,30 @@ class MainActivity : ComponentActivity() {
 //              Home screen
                 navigation( route = "SignedIn", startDestination = "HomeScreen" ) {
 
+                    val sharedViewModel = SharedViewModel(uniqueIdentifier!!)
+
                     composable( route = "HomeScreen" ) {
 
                         HomeScreen(
+                            viewModel = sharedViewModel,
+                            onAddNewTrackie = { licenseViewState ->
 
-                            uniqueIdentifier = uniqueIdentifier!!,
-                            viewModel = HomeScreenViewModel(uniqueIdentifier!!),
+                                if (licenseViewState.active!!) {
+                                    // TODO: navigate to ui which is responsible for adding new trackie
+                                    navigationController.navigate("AddNewTrackie")
+                                }
+
+                                else {
+                                    if (licenseViewState.totalAmountOfTrackies == 0) {
+                                        navigationController.navigate("AddNewTrackie")
+                                        Log.d("license information", "less tan 1")
+                                    }
+                                    else {
+                                        // TODO: navigate to dialog which shows pricing of trackies
+                                        Log.d("license information", "buy license")
+                                    }
+                                }
+                            },
                             onSignOut = {
 
                                 navigationController.navigate( route = "SignedOut" ) {
@@ -169,6 +188,16 @@ class MainActivity : ComponentActivity() {
                                         Log.d("halla", exception)
                                     }
                                 )
+                            }
+                        )
+                    }
+
+                    composable( route = "AddNewTrackie" ) {
+
+                        AddNewTrackie(
+                            viewModel = sharedViewModel,
+                            onReturn = {
+                                navigationController.navigateUp()
                             }
                         )
                     }
