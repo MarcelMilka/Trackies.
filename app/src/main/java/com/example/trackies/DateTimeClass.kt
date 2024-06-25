@@ -9,7 +9,7 @@ class DateTimeClass {
     fun getCurrentDayOfWeek(): String {
 
         val localDate = LocalDate.now()
-        return localDate.dayOfWeek.toString()
+        return localDate.dayOfWeek.toString().lowercase()
     }
 
     fun getCurrentDate(): String {

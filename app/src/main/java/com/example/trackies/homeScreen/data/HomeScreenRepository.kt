@@ -31,12 +31,7 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes {
             .get()
             .addOnSuccessListener { user ->
 
-                if (user.exists()) {
-                    Log.d("halla!", "i should fetch the user's data")
-                }
-
-                else {
-                    Log.d("halla!", "i should create a new user")
+                if (!(user.exists())) {
                     addNewUser()
                 }
             }
@@ -57,13 +52,14 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes {
         usersInformation.set(LicenseViewState(active = false, validUntil = null, totalAmountOfTrackies = 0))
 
 //      "names of trackies" -> "names of trackies"
-        namesOfTrackies.set( hashMapOf("MONDAY" to listOf<String>()) )
-        namesOfTrackies.update("TUESDAY", listOf<String>())
-        namesOfTrackies.update("WEDNESDAY", listOf<String>())
-        namesOfTrackies.update("THURSDAY", listOf<String>())
-        namesOfTrackies.update("FRIDAY", listOf<String>())
-        namesOfTrackies.update("SATURDAY", listOf<String>())
-        namesOfTrackies.update("SUNDAY", listOf<String>())
+        namesOfTrackies.set( hashMapOf("whole week" to listOf<String>()) )
+        namesOfTrackies.update("monday", listOf<String>() )
+        namesOfTrackies.update("tuesday", listOf<String>())
+        namesOfTrackies.update("wednesday", listOf<String>())
+        namesOfTrackies.update("thursday", listOf<String>())
+        namesOfTrackies.update("friday", listOf<String>())
+        namesOfTrackies.update("saturday", listOf<String>())
+        namesOfTrackies.update("sunday", listOf<String>())
 
 //      "user's trackies" -> "trackies"
         usersTrackies.set({})
@@ -141,21 +137,13 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes {
                             }
                     }
 
-
-                    Tasks.whenAllComplete(tasks).addOnCompleteListener {
-                        continuation.resume(trackiesForToday)
-                    }
-
+                    Tasks.whenAllComplete(tasks).addOnCompleteListener { continuation.resume(trackiesForToday) }
                 }
 
-                else {
-                    continuation.resume(listOf<TrackieViewState>())
-                }
+                else { continuation.resume(listOf<TrackieViewState>()) }
             }
 
-            else {
-                continuation.resume(null)
-            }
+            else { continuation.resume(null) }
         }
     }
 
@@ -194,5 +182,4 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes {
                 .addOnFailureListener { Log.d("HomeScreenRepository", "fetchNamesOfTrackiesForToday, $it") }
         }
     }
-
 }
