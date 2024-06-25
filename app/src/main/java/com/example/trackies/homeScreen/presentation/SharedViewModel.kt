@@ -1,7 +1,10 @@
 package com.example.trackies.homeScreen.presentation
 
+import android.util.Log
+import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.trackies.homeScreen.buisness.TrackieViewState
 import com.example.trackies.homeScreen.data.HomeScreenRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
@@ -24,20 +27,34 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
 
             val licenseInformation = repository.fetchUsersLicenseInformation()
             val trackiesForToday = repository.fetchTrackiesForToday()
+            val namesOfAllTrackies = repository.fetchNamesOfAllTrackies()
 
-            if ( licenseInformation != null && trackiesForToday != null ) {
+            if ( licenseInformation != null && trackiesForToday != null && namesOfAllTrackies != null ) {
 
                 _uiState.update {
 
                     HomeScreenViewState.LoadedSuccessfully(
 
                         license = licenseInformation,
-                        trackies = trackiesForToday
+                        trackies = trackiesForToday,
+                        namesOfAllTrackies = namesOfAllTrackies
                     )
                 }
             }
 
             else { _uiState.update { HomeScreenViewState.FailedToLoadData } }
+        }
+    }
+
+    fun addNewTrackie(trackieViewState: TrackieViewState) {
+
+        viewModelScope.launch {
+
+//          add new trackie to the user's database
+            repository.addNewTrackie(trackieViewState = trackieViewState)
+
+//          add new trackie to the viewState
+
         }
     }
 }

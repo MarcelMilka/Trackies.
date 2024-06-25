@@ -17,6 +17,7 @@ import com.example.trackies.authentication.ui.register.Authenticate
 import com.example.trackies.authentication.ui.register.CouldNotRegister
 import com.example.trackies.authentication.ui.register.Register
 import com.example.trackies.authentication.ui.welcomeScreen.WelcomeScreen
+import com.example.trackies.homeScreen.buisness.TrackieViewState
 import com.example.trackies.homeScreen.presentation.HomeScreen
 import com.example.trackies.homeScreen.presentation.SharedViewModel
 
@@ -196,8 +197,17 @@ class MainActivity : ComponentActivity() {
 
                         AddNewTrackie(
                             viewModel = sharedViewModel,
-                            onReturn = {
-                                navigationController.navigateUp()
+                            onReturn = { navigationController.navigateUp() },
+                            onAdd = {trackie ->
+
+                                val newTrackie = TrackieViewState (
+
+                                    name = trackie.name,
+                                    totalDose = trackie.totalDose,
+                                    measuringUnit = trackie.measuringUnit,
+                                    repeatOn = trackie.repeatOn,
+                                    ingestionTime = trackie.ingestionTime
+                                )
                             }
                         )
                     }

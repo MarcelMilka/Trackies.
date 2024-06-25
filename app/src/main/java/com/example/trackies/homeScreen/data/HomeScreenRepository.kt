@@ -4,7 +4,6 @@ import android.util.Log
 import com.example.trackies.DateTimeClass
 import com.example.trackies.homeScreen.buisness.LicenseViewState
 import com.example.trackies.homeScreen.buisness.TrackieViewState
-import com.example.trackies.homeScreen.presentation.HomeScreenViewState
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -104,7 +103,7 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes {
 
     override suspend fun fetchTrackiesForToday(): List<TrackieViewState>? {
 
-        val namesOfTrackiesForToday: List<String>? = fetchNamesOfTrackiesForToday()
+        val namesOfTrackiesForToday: List<String>? = fetchNamesOfTrackies(currentDateAndTime.getCurrentDayOfWeek())
         val trackiesForToday: MutableList<TrackieViewState> = mutableListOf()
 
         return suspendCoroutine { continuation ->
@@ -147,9 +146,9 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes {
         }
     }
 
-    private suspend fun fetchNamesOfTrackiesForToday(): List<String>? {
+    override suspend fun fetchNamesOfAllTrackies(): List<String>? = run { fetchNamesOfTrackies( array = "whole week" ) }
 
-        val currentDayOfWeek = currentDateAndTime.getCurrentDayOfWeek()
+    private suspend fun fetchNamesOfTrackies(array: String): List<String>? {
 
         return suspendCoroutine { continuation ->
 
@@ -159,7 +158,7 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes {
 
                     if (document.exists()) {
 
-                        val listOfTrackiesForToday = document.get(currentDayOfWeek) as? List<String>
+                        val listOfTrackiesForToday = document.get(array) as? List<String>
 
                         if (listOfTrackiesForToday != null) {
 
@@ -181,5 +180,16 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes {
 
                 .addOnFailureListener { Log.d("HomeScreenRepository", "fetchNamesOfTrackiesForToday, $it") }
         }
+    }
+
+    override suspend fun addNewTrackie(trackieViewState: TrackieViewState) {
+
+//          add new trackie to { (user's trackies) -> (trackies) }
+
+//          update total amount of trackies owned by the user { (user's information) -> (license) -> (totalAmountOfTrackies) }
+
+//          add name of the trackie to { (names of trackies) -> (names of trackies) -> (whole week) }
+
+//          add name of the trackie to { (names of trackies) -> (names of trackies) -> (*particular day of week*) }
     }
 }
