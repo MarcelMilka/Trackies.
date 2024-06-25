@@ -11,7 +11,7 @@ import com.example.trackies.ui.theme.MyFonts
 import com.example.trackies.ui.theme.PrimaryColor
 
 @Composable
-fun TextButton(text: String, isSelected: Boolean, onClick: (Boolean) -> Unit ) {
+fun MediumRadioTextButton(text: String, isSelected: Boolean, onClick: (Boolean) -> Unit ) {
 
 
     var textColor by remember { mutableStateOf(PrimaryColor) }
@@ -35,5 +35,18 @@ fun TextButton(text: String, isSelected: Boolean, onClick: (Boolean) -> Unit ) {
                     onClick( !isSelected )
                 }
             }
+    )
+}
+
+@Composable
+fun MediumTextButton(text: String, onClick: () -> Unit ) {
+
+    Text(
+        text = text,
+        style = MyFonts.titleMedium,
+        color = White,
+        modifier = Modifier
+            .padding( end = 10.dp )
+            .clickable { onClick() }
     )
 }

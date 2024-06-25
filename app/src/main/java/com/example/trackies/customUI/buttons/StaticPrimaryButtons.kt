@@ -34,6 +34,31 @@ fun BigStaticPrimaryButton(textToDisplay: String, onClick: () -> Unit ) {
     }
 }
 
+@Composable
+fun MediumStaticPrimaryButton(textToDisplay: String, enabled: Boolean, onClick: () -> Unit ) {
+
+    Button(
+
+        onClick = { onClick() },
+
+        modifier = Modifier
+            .width(80.dp)
+            .height(50.dp),
+
+        shape = RoundedCornerShape(20.dp),
+
+        enabled = enabled,
+
+        colors = ButtonDefaults.buttonColors(
+            containerColor = PrimaryColor,
+            contentColor = Color.White,
+        ),
+
+        ) {
+        Text(text = textToDisplay, style = MyFonts.titleMedium)
+    }
+}
+
 @Composable fun ButtonAddAnotherTrackie( onClick: () -> Unit ) {
 
     Button(
