@@ -208,6 +208,8 @@ class MainActivity : ComponentActivity() {
                                     repeatOn = trackie.repeatOn,
                                     ingestionTime = trackie.ingestionTime
                                 )
+
+                                sharedViewModel.addNewTrackie(newTrackie)
                             }
                         )
                     }

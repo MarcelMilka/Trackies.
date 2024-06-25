@@ -115,10 +115,10 @@ fun AddNewTrackie(
 
                                 TrackieViewState(
 
-                                    name = name,
-                                    totalDose = totalDose,
-                                    measuringUnit = measuringUnit,
-                                    repeatOn = repeatOn,
+                                    name = name!!,
+                                    totalDose = totalDose!!,
+                                    measuringUnit = measuringUnit!!,
+                                    repeatOn = repeatOn!!,
                                     ingestionTime = ingestionTime
                                 )
                             )

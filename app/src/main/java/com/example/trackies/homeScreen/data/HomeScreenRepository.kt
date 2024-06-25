@@ -4,6 +4,8 @@ import android.util.Log
 import com.example.trackies.DateTimeClass
 import com.example.trackies.homeScreen.buisness.LicenseViewState
 import com.example.trackies.homeScreen.buisness.TrackieViewState
+import com.example.trackies.homeScreen.buisness.entities.LicenseViewStateEntity
+import com.example.trackies.homeScreen.buisness.entities.TrackieViewStateEntity
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -77,16 +79,22 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes {
                 .get()
                 .addOnSuccessListener { document ->
 
-                    val licenseViewState = document.toObject(LicenseViewState::class.java)
+                    val licenseViewState = document.toObject(LicenseViewStateEntity::class.java)
                     if (licenseViewState != null) {
-                        LicenseViewState(
+                        LicenseViewStateEntity(
                             active = licenseViewState.active,
                             validUntil = licenseViewState.validUntil,
                             totalAmountOfTrackies = licenseViewState.totalAmountOfTrackies
-                        ).let {fetchedLicenseInformation ->
+                        ).let { licenseEntity ->
 
-                            if (fetchedLicenseInformation.active != null && fetchedLicenseInformation.totalAmountOfTrackies != null) {
-                                continuation.resume(fetchedLicenseInformation)
+                            if (licenseEntity.active != null && licenseEntity.totalAmountOfTrackies != null) {
+
+                                val licenseInformation = LicenseViewState(
+                                    active = licenseEntity.active,
+                                    validUntil = licenseEntity.validUntil,
+                                    totalAmountOfTrackies = licenseEntity.totalAmountOfTrackies
+                                )
+                                continuation.resume(licenseInformation)
                             }
 
                             else {
@@ -118,16 +126,35 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes {
                             .get()
                             .addOnSuccessListener { document ->
 
-                                val trackieAsNull = document.toObject(TrackieViewState::class.java)
+                                val trackieAsNull = document.toObject(TrackieViewStateEntity::class.java)
                                 if (trackieAsNull != null) {
-                                    TrackieViewState(
+                                    TrackieViewStateEntity(
                                         name = trackieAsNull.name,
                                         totalDose = trackieAsNull.totalDose,
                                         measuringUnit = trackieAsNull.measuringUnit,
                                         repeatOn = trackieAsNull.repeatOn,
                                         ingestionTime = trackieAsNull.ingestionTime
-                                    ).let {
-                                        trackiesForToday.add(it)
+                                    ).let {trackieEntity ->
+
+                                        // TODO: check whether all of the non null parameters are actually non null )
+
+                                        if (trackieEntity.name != null && trackieEntity.totalDose != null && trackieEntity.measuringUnit != null && trackieEntity.repeatOn != null) {
+
+                                            trackiesForToday.add(
+
+                                                TrackieViewState(
+
+                                                    name = trackieEntity.name,
+                                                    totalDose = trackieEntity.totalDose,
+                                                    measuringUnit = trackieEntity.measuringUnit,
+                                                    repeatOn = trackieEntity.repeatOn,
+                                                    ingestionTime = trackieEntity.ingestionTime
+                                                )
+                                            )
+                                        }
+
+                                        else { continuation.resume(null) }
+
                                     }
                                 }
                             }
