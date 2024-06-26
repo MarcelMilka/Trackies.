@@ -15,6 +15,7 @@ import com.example.trackies.customUI.addingNewTrackie.SubstanceName
 import com.example.trackies.customUI.addingNewTrackie.bottomBar.AddNewTrackieBottomBar
 import com.example.trackies.customUI.buttons.*
 import com.example.trackies.customUI.spacers.Spacer40
+import com.example.trackies.homeScreen.buisness.LicenseViewState
 import com.example.trackies.homeScreen.buisness.TrackieViewState
 import com.example.trackies.homeScreen.presentation.HomeScreenViewState
 import com.example.trackies.homeScreen.presentation.SharedViewModel
@@ -28,7 +29,7 @@ import org.checkerframework.checker.units.qual.Substance
 fun AddNewTrackie(
     viewModel: SharedViewModel,
     onReturn: () -> Unit,
-    onAdd: (TrackieViewState) -> Unit
+    onAdd: ( TrackieViewState ) -> Unit
 ) {
 
     val uiState by viewModel.uiState.collectAsState()
@@ -37,6 +38,7 @@ fun AddNewTrackie(
     val snackBarHostState = remember { SnackbarHostState() }
 
     var listOfNames: MutableList<String> by remember { mutableStateOf(mutableListOf()) }
+
     when (uiState) {
         HomeScreenViewState.Loading -> {}
 
@@ -47,19 +49,18 @@ fun AddNewTrackie(
         HomeScreenViewState.FailedToLoadData -> {}
     }
 
-    var name: String? by remember { mutableStateOf(null) }
-    var totalDose: Int? by remember { mutableStateOf(5) }
-    var measuringUnit: String? by remember { mutableStateOf("ml") }
-    var repeatOn: List<String>? by remember { mutableStateOf(mutableListOf("monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday")) }
-    var ingestionTime: Map<String, Int>? by remember { mutableStateOf(mapOf<String, Int>("10:00" to 5)) }
+    var name: String? by remember { mutableStateOf("magnesium") }
+    var totalDose: Int? by remember { mutableStateOf(1) }
+    var measuringUnit: String? by remember { mutableStateOf("pcs") }
+    var repeatOn: List<String>? by remember { mutableStateOf(mutableListOf("monday", "tuesday", "wednesday", "thursday", "friday")) }
+    var ingestionTime: Map<String, Int>? by remember { mutableStateOf(null) }
 
     var buttonAddIsEnabled by remember { mutableStateOf(false) }
 
     LaunchedEffect( name, totalDose, measuringUnit, repeatOn, ingestionTime ) {
 
-        Log.d("chuuuj", "$name")
 
-        if (name != null && !listOfNames.contains(name) && totalDose != null && measuringUnit != null && repeatOn != null && ingestionTime != null) {
+        if ( name != null && !listOfNames.contains(name) && totalDose != null && measuringUnit != null && repeatOn != null) {
             buttonAddIsEnabled = true
         }
 

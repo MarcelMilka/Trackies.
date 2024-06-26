@@ -31,6 +31,10 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
 
             if ( licenseInformation != null && trackiesForToday != null && namesOfAllTrackies != null ) {
 
+                Log.d("GTR-R35", "$licenseInformation")
+                Log.d("GTR-R35", "$trackiesForToday")
+                Log.d("GTR-R35", "$namesOfAllTrackies")
+
                 _uiState.update {
 
                     HomeScreenViewState.LoadedSuccessfully(
@@ -48,13 +52,6 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
 
     fun addNewTrackie(trackieViewState: TrackieViewState) {
 
-        viewModelScope.launch {
-
-//          add new trackie to the user's database
-            repository.addNewTrackie(trackieViewState = trackieViewState)
-
-//          add new trackie to the viewState
-
-        }
+        viewModelScope.launch { repository.addNewTrackie(trackieViewState = trackieViewState) }
     }
 }

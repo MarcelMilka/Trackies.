@@ -209,14 +209,38 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes {
         }
     }
 
-    override suspend fun addNewTrackie(trackieViewState: TrackieViewState) {
+    override suspend fun addNewTrackie(trackieViewState: TrackieViewState): Boolean {
 
-//          add new trackie to { (user's trackies) -> (trackies) }
+        val licenseViewState = fetchUsersLicenseInformation()
 
-//          update total amount of trackies owned by the user { (user's information) -> (license) -> (totalAmountOfTrackies) }
+        return suspendCoroutine { continuation ->
 
-//          add name of the trackie to { (names of trackies) -> (names of trackies) -> (whole week) }
 
-//          add name of the trackie to { (names of trackies) -> (names of trackies) -> (*particular day of week*) }
+            if (licenseViewState != null) {
+
+                licenseViewState.totalAmountOfTrackies
+
+//              add new trackie to { (user's trackies) -> (trackies) }
+                usersTrackies.collection(trackieViewState.name).document(trackieViewState.name).set(trackieViewState)
+
+//              update total amount of trackies owned by the user { (user's information) -> (license) -> (totalAmountOfTrackies) }
+                val updatedTotalAmountOfTrackies = (licenseViewState.totalAmountOfTrackies + 1)
+                usersInformation.update("totalAmountOfTrackies", updatedTotalAmountOfTrackies)
+
+//              add name of the trackie to { (names of trackies) -> (names of trackies) -> (whole week) }
+                namesOfTrackies.update("whole week", FieldValue.arrayUnion(trackieViewState.name))
+
+//              add name of the trackie to { (names of trackies) -> (names of trackies) -> (*particular day of week*) }
+                trackieViewState.repeatOn.forEach { dayOfWeek ->
+
+                    namesOfTrackies.update(dayOfWeek, FieldValue.arrayUnion(trackieViewState.name))
+                }
+
+                continuation.resume(true)
+            }
+
+            else { continuation.resume(false) }
+
+        }
     }
 }
