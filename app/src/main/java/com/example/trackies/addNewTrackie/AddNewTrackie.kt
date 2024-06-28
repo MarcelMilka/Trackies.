@@ -1,7 +1,6 @@
 package com.example.trackies.addNewTrackie
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -11,17 +10,20 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.trackies.customUI.addingNewTrackie.DailyDosage
 import com.example.trackies.customUI.addingNewTrackie.SubstanceName
 import com.example.trackies.customUI.addingNewTrackie.bottomBar.AddNewTrackieBottomBar
 import com.example.trackies.customUI.buttons.*
+import com.example.trackies.customUI.progressIndicators.AddNewTrackieProgressBar
+import com.example.trackies.customUI.spacers.Spacer10
 import com.example.trackies.customUI.spacers.Spacer40
-import com.example.trackies.homeScreen.buisness.LicenseViewState
+import com.example.trackies.customUI.spacers.Spacer5
+import com.example.trackies.customUI.texts.TextMedium
 import com.example.trackies.homeScreen.buisness.TrackieViewState
 import com.example.trackies.homeScreen.presentation.HomeScreenViewState
 import com.example.trackies.homeScreen.presentation.SharedViewModel
 import com.example.trackies.ui.theme.*
 import kotlinx.coroutines.launch
-import org.checkerframework.checker.units.qual.Substance
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -49,7 +51,7 @@ fun AddNewTrackie(
         HomeScreenViewState.FailedToLoadData -> {}
     }
 
-    var name: String? by remember { mutableStateOf("magnesium") }
+    var name: String by remember { mutableStateOf("") }
     var totalDose: Int? by remember { mutableStateOf(1) }
     var measuringUnit: String? by remember { mutableStateOf("pcs") }
     var repeatOn: List<String>? by remember { mutableStateOf(mutableListOf("monday", "tuesday", "wednesday", "thursday", "friday")) }
@@ -60,7 +62,7 @@ fun AddNewTrackie(
     LaunchedEffect( name, totalDose, measuringUnit, repeatOn, ingestionTime ) {
 
 
-        if ( name != null && !listOfNames.contains(name) && totalDose != null && measuringUnit != null && repeatOn != null) {
+        if ( name != "" && !listOfNames.contains(name) && totalDose != null && measuringUnit != null && repeatOn != null) {
             buttonAddIsEnabled = true
         }
 
@@ -77,14 +79,15 @@ fun AddNewTrackie(
         }
     }
 
+//  linear progress indicator
+    var progress by remember { mutableFloatStateOf(0f) }
+
     Scaffold(
 
         modifier = Modifier
             .fillMaxSize(),
 
-        snackbarHost = {
-            SnackbarHost(hostState = snackBarHostState)
-        },
+        snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
 
         bottomBar = {
 
@@ -103,7 +106,7 @@ fun AddNewTrackie(
 
                         onClearAll = {
 
-                            name = null
+                            name = ""
                             totalDose = null
                             measuringUnit = null
                             repeatOn = null
@@ -116,7 +119,7 @@ fun AddNewTrackie(
 
                                 TrackieViewState(
 
-                                    name = name!!,
+                                    name = name,
                                     totalDose = totalDose!!,
                                     measuringUnit = measuringUnit!!,
                                     repeatOn = repeatOn!!,
@@ -156,8 +159,31 @@ fun AddNewTrackie(
 
                         content = {
 
-                            SubstanceName {
-                                name = it
+                            AddNewTrackieProgressBar( currentValue = progress, goal = 4f )
+
+                            Spacer10()
+
+                            when (uiState) {
+
+                                HomeScreenViewState.Loading -> { TextMedium("Loading") }
+
+                                is HomeScreenViewState.LoadedSuccessfully -> {
+
+                                    SubstanceName(
+                                        actualName = name,
+                                        namesOfAllTrackies = (uiState as HomeScreenViewState.LoadedSuccessfully).namesOfAllTrackies,
+                                        onApplyNewName = {
+                                            name = it
+                                            if (it != "") {
+                                                progress++
+                                            }
+                                        }
+                                    )
+
+                                    Spacer5()
+                                }
+
+                                HomeScreenViewState.FailedToLoadData -> { TextMedium("An error occurred while accessing the database.") }
                             }
                         }
                     )

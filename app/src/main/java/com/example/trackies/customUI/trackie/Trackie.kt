@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.trackies.customUI.buttons.IconButtonDetails
 import com.example.trackies.customUI.buttons.MagicButton
-import com.example.trackies.customUI.progressIndicators.ProgressBar
+import com.example.trackies.customUI.progressIndicators.TrackieProgressBar
 import com.example.trackies.customUI.spacers.Spacer5
 import com.example.trackies.customUI.texts.TextMedium
 import com.example.trackies.customUI.texts.TextSmall
@@ -65,7 +65,7 @@ import com.example.trackies.ui.theme.SecondaryColor
 
                         content = {
 
-                            ProgressBar(currentValue = 0, goal = totalDose)
+                            TrackieProgressBar(currentValue = 0, goal = totalDose)
                             TextSmall( content = " 0/$totalDose $measuringUnit" )
                         }
                     )
