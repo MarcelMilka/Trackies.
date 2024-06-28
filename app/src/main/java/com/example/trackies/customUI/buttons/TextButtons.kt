@@ -31,9 +31,7 @@ fun MediumRadioTextButton(text: String, isSelected: Boolean, onClick: (Boolean) 
         modifier = Modifier
             .padding( end = 10.dp )
             .clickable {
-                if (!isSelected) {
-                    onClick( !isSelected )
-                }
+                onClick( !isSelected )
             }
     )
 }

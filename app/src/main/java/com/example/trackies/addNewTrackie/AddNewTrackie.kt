@@ -10,7 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.trackies.customUI.addingNewTrackie.DailyDosage
+import com.example.trackies.customUI.addingNewTrackie.ScheduleDays
 import com.example.trackies.customUI.addingNewTrackie.SubstanceName
 import com.example.trackies.customUI.addingNewTrackie.bottomBar.AddNewTrackieBottomBar
 import com.example.trackies.customUI.buttons.*
@@ -54,7 +54,7 @@ fun AddNewTrackie(
     var name: String by remember { mutableStateOf("") }
     var totalDose: Int? by remember { mutableStateOf(1) }
     var measuringUnit: String? by remember { mutableStateOf("pcs") }
-    var repeatOn: List<String>? by remember { mutableStateOf(mutableListOf("monday", "tuesday", "wednesday", "thursday", "friday")) }
+    var repeatOn: List<String> by remember { mutableStateOf(mutableListOf()) }
     var ingestionTime: Map<String, Int>? by remember { mutableStateOf(null) }
 
     var buttonAddIsEnabled by remember { mutableStateOf(false) }
@@ -109,7 +109,7 @@ fun AddNewTrackie(
                             name = ""
                             totalDose = null
                             measuringUnit = null
-                            repeatOn = null
+                            repeatOn = mutableListOf()
                             ingestionTime = null
                         },
 
@@ -181,6 +181,16 @@ fun AddNewTrackie(
                                     )
 
                                     Spacer5()
+
+                                    ScheduleDays(
+                                        actualDays = repeatOn,
+                                        onApplyChosenDays = {
+                                            repeatOn = it
+                                            if (it.isNotEmpty()) {
+                                                progress++
+                                            }
+                                        }
+                                    )
                                 }
 
                                 HomeScreenViewState.FailedToLoadData -> { TextMedium("An error occurred while accessing the database.") }
