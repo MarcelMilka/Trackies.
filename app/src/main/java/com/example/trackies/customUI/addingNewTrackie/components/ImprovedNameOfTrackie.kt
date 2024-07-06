@@ -14,9 +14,14 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.White
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.sp
 import com.example.trackies.customUI.addingNewTrackie.viewModel.AddNewTrackieViewModel
 import com.example.trackies.customUI.addingNewTrackie.viewModel.IsActive
 import com.example.trackies.customUI.texts.*
@@ -64,6 +69,9 @@ import kotlinx.coroutines.launch
 //  control what should be displayed
     var displayFieldWithInsertedName by remember { mutableStateOf(false) }
     var displayFieldWithTextField by remember { mutableStateOf(false) }
+
+//  focus requester
+    val focusRequester = remember { FocusRequester() }
 
     var hint by remember { mutableStateOf(NameOfTrackieHint.InsertNewName().message) }
 
@@ -238,13 +246,40 @@ import kotlinx.coroutines.launch
 
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .border(2.dp, White)
                                         .height(56.dp),
 
                                     horizontalAlignment = Alignment.Start,
                                     verticalArrangement = Arrangement.SpaceBetween,
 
-                                    content = { TextMedium("display a text field") }
+                                    content = {
+
+                                        TextField(
+
+                                            value = nameOfTheTrackie,
+                                            onValueChange = { nameOfTheTrackie = it },
+
+                                            singleLine = true,
+
+                                            colors = TextFieldDefaults.textFieldColors(
+
+                                                textColor = White,
+                                                cursorColor = White,
+                                                unfocusedLabelColor = White,
+                                                focusedLabelColor = Color.Transparent,
+
+                                                containerColor = Color.Transparent,
+
+                                                unfocusedIndicatorColor = Color.Transparent,
+                                                focusedIndicatorColor = Color.Transparent
+                                            ),
+
+                                            textStyle = TextStyle.Default.copy(fontSize = 20.sp),
+
+                                            modifier = Modifier
+                                                .focusRequester(focusRequester)
+                                                .onGloballyPositioned { focusRequester.requestFocus() }
+                                        )
+                                    }
                                 )
                             }
                         )

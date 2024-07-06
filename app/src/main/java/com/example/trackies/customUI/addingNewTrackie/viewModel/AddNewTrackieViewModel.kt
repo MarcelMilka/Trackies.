@@ -18,6 +18,7 @@ class AddNewTrackieViewModel: ViewModel() {
         }
     }
 
+
     fun clearAll() {
 
         viewState.update {

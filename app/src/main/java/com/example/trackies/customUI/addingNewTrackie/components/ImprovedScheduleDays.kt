@@ -14,11 +14,14 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.White
 import com.example.trackies.customUI.addingNewTrackie.viewModel.AddNewTrackieViewModel
 import com.example.trackies.customUI.addingNewTrackie.viewModel.IsActive
+import com.example.trackies.customUI.buttons.MediumRadioTextButton
+import com.example.trackies.customUI.buttons.MediumSelectableTextButton
 import com.example.trackies.customUI.texts.*
 import com.example.trackies.ui.theme.SecondaryColor
 import kotlinx.coroutines.CoroutineScope
@@ -33,6 +36,14 @@ import kotlinx.coroutines.launch
 ) {
 
     var repeatOn by remember { mutableStateOf(mutableListOf<String>()) }
+
+    var monday by remember { mutableStateOf(false) }
+    var tuesday by remember { mutableStateOf(false) }
+    var wednesday by remember { mutableStateOf(false) }
+    var thursday by remember { mutableStateOf(false) }
+    var friday by remember { mutableStateOf(false) }
+    var saturday by remember { mutableStateOf(false) }
+    var sunday by remember { mutableStateOf(false) }
 
 //  adjust height of the elements
     var areExpanded by remember { mutableStateOf(false) }
@@ -216,7 +227,7 @@ import kotlinx.coroutines.launch
                                     horizontalAlignment = Alignment.Start,
                                     verticalArrangement = Arrangement.Center,
 
-                                    content = {TextMedium("$repeatOn")}
+                                    content = {TextMedium(repeatOn.joinToString(separator = ", "))}
                                 )
                             }
                         )
@@ -230,17 +241,102 @@ import kotlinx.coroutines.launch
 
                             content = {
 
-                                Column(
+                                Row(
 
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .border(2.dp, White)
                                         .height(56.dp),
 
-                                    horizontalAlignment = Alignment.Start,
-                                    verticalArrangement = Arrangement.SpaceBetween,
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically,
 
-                                    content = { TextMedium("display a text field") }
+                                    content = {
+
+                                        MediumSelectableTextButton(text = "mon", isSelected = monday) {
+                                            monday = it
+
+                                            if (it) {
+                                                repeatOn.add("mon")
+                                            } else {
+                                                if (repeatOn.contains("mon")) {
+                                                    repeatOn.remove("mon")
+                                                }
+                                            }
+                                        }
+
+                                        MediumSelectableTextButton(text = "tue", isSelected = tuesday) {
+                                            tuesday = it
+
+                                            if (it) {
+                                                repeatOn.add("tue")
+                                            } else {
+                                                if (repeatOn.contains("tue")) {
+                                                    repeatOn.remove("tue")
+                                                }
+                                            }
+                                        }
+
+                                        MediumSelectableTextButton(text = "wed", isSelected = wednesday) {
+                                            wednesday = it
+
+                                            if (it) {
+                                                repeatOn.add("wed")
+                                            } else {
+                                                if (repeatOn.contains("wed")) {
+                                                    repeatOn.remove("wed")
+                                                }
+                                            }
+                                        }
+
+                                        MediumSelectableTextButton(text = "thu", isSelected = thursday) {
+                                            thursday = it
+
+                                            if (it) {
+                                                repeatOn.add("thu")
+                                            } else {
+                                                if (repeatOn.contains("thu")) {
+                                                    repeatOn.remove("thu")
+                                                }
+                                            }
+                                        }
+
+                                        MediumSelectableTextButton(text = "fri", isSelected = friday) {
+                                            friday = it
+
+                                            if (it) {
+                                                repeatOn.add("fri")
+                                            } else {
+                                                if (repeatOn.contains("fri")) {
+                                                    repeatOn.remove("fri")
+                                                }
+                                            }
+                                        }
+
+                                        MediumSelectableTextButton(text = "sat", isSelected = saturday) {
+                                            saturday = it
+
+                                            if (it) {
+                                                repeatOn.add("sat")
+                                            } else {
+                                                if (repeatOn.contains("sat")) {
+                                                    repeatOn.remove("sat")
+                                                }
+                                            }
+                                        }
+
+                                        MediumSelectableTextButton(text = "sun", isSelected = sunday) {
+                                            sunday = it
+
+                                            if (it) {
+                                                repeatOn.add("sun")
+                                            } else {
+                                                if (repeatOn.contains("sun")) {
+                                                    repeatOn.remove("sun")
+                                                }
+                                            }
+                                        }
+
+                                    }
                                 )
                             }
                         )

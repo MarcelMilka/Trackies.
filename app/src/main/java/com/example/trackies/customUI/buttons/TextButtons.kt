@@ -30,9 +30,37 @@ fun MediumRadioTextButton(text: String, isSelected: Boolean, onClick: (Boolean) 
         color = textColor,
         modifier = Modifier
             .padding( end = 10.dp )
-            .clickable {
-                onClick( !isSelected )
-            }
+            .clickable(
+                enabled = !isSelected,
+                onClick = { onClick( !isSelected ) }
+            )
+    )
+}
+
+@Composable
+fun MediumSelectableTextButton(text: String, isSelected: Boolean, onClick: (Boolean) -> Unit ) {
+
+
+    var textColor by remember { mutableStateOf(PrimaryColor) }
+    textColor = when(isSelected) {
+        true -> {
+            PrimaryColor
+        }
+        false -> {
+            White
+        }
+    }
+
+    Text(
+        text = text,
+        style = MyFonts.titleMedium,
+        color = textColor,
+        modifier = Modifier
+            .padding( end = 10.dp )
+            .clickable(
+                enabled = true,
+                onClick = { onClick( !isSelected ) }
+            )
     )
 }
 

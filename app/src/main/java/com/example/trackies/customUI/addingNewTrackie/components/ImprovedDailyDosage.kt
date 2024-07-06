@@ -11,15 +11,24 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.White
+import androidx.compose.ui.input.nestedscroll.nestedScrollModifierNode
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.sp
 import com.example.trackies.customUI.addingNewTrackie.viewModel.AddNewTrackieViewModel
 import com.example.trackies.customUI.addingNewTrackie.viewModel.IsActive
+import com.example.trackies.customUI.buttons.MediumRadioTextButton
 import com.example.trackies.customUI.texts.*
 import com.example.trackies.ui.theme.SecondaryColor
 import kotlinx.coroutines.CoroutineScope
@@ -33,8 +42,13 @@ import kotlinx.coroutines.launch
     viewModel: AddNewTrackieViewModel
 ) {
 
+//  user's data
     var measuringUnit by remember { mutableStateOf("") }
-    var totalDailyDose by remember { mutableStateOf(0) }
+    var totalDailyDose by remember { mutableIntStateOf(0) }
+
+    var ml by remember { mutableStateOf(false) }
+    var g by remember { mutableStateOf(false) }
+    var pcs by remember { mutableStateOf(false) }
 
 //  adjust height of the elements
     var areExpanded by remember { mutableStateOf(false) }
@@ -70,6 +84,9 @@ import kotlinx.coroutines.launch
 
     var hint by remember { mutableStateOf(DailyDosageHint.InsertDailyDosage().message) }
 
+//  focus requester
+    val focusRequester = remember { FocusRequester() }
+
 //  follow changes
     LaunchedEffect(viewModel.activityState.value) {
 
@@ -103,6 +120,19 @@ import kotlinx.coroutines.launch
 
                 areExpanded = false
             }
+        }
+    }
+
+    LaunchedEffect(ml, g, pcs) {
+
+        if (ml != false || g != false || pcs != false) {
+
+            targetHeightOfTheColumn = 202
+            targetHeightOfTheSurface = 202
+
+            displayFieldWithInsertedDose = false
+            displayFieldWithMeasuringUnits = true
+            displayFieldWithTextField = true
         }
     }
 
@@ -259,13 +289,69 @@ import kotlinx.coroutines.launch
 
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .border(2.dp, White)
+
                                             .height(76.dp),
 
                                         horizontalAlignment = Alignment.Start,
                                         verticalArrangement = Arrangement.SpaceBetween,
 
-                                        content = { TextMedium("display field with measuring units") }
+                                        content = {
+
+                                            Divider()
+
+                                            Row(
+
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .height(20.dp),
+
+                                                horizontalArrangement = Arrangement.Start,
+                                                verticalAlignment = Alignment.Bottom,
+
+                                                content = { TextSmall(content = "choose the measuring unit") }
+                                            )
+
+                                            Row(
+
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .height(56.dp),
+
+                                                horizontalArrangement = Arrangement.Start,
+                                                verticalAlignment = Alignment.CenterVertically,
+
+                                                content = {
+
+                                                    MediumRadioTextButton(text = "ml", isSelected = ml) {
+                                                        ml = it
+                                                        g = !it
+                                                        pcs = !it
+
+                                                        measuringUnit = "ml"
+                                                    }
+
+                                                    Spacer(Modifier.width(5.dp))
+
+                                                    MediumRadioTextButton(text = "g", isSelected = g) {
+                                                        g = it
+                                                        ml = !it
+                                                        pcs = !it
+
+                                                        measuringUnit = "g"
+                                                    }
+
+                                                    Spacer(Modifier.width(5.dp))
+
+                                                    MediumRadioTextButton(text = "pcs", isSelected = pcs) {
+                                                        pcs = it
+                                                        ml = !it
+                                                        g = !it
+
+                                                        measuringUnit = "pcs"
+                                                    }
+                                                }
+                                            )
+                                        }
                                     )
                                 }
                             )
@@ -283,17 +369,65 @@ import kotlinx.coroutines.launch
 
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .border(2.dp, White)
                                             .height(76.dp),
 
                                         horizontalAlignment = Alignment.Start,
                                         verticalArrangement = Arrangement.SpaceBetween,
 
-                                        content = { TextMedium("display field with text field") }
+                                        content = {
+
+                                            Divider()
+
+                                            Row(
+
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .height(20.dp),
+
+                                                horizontalArrangement = Arrangement.Start,
+                                                verticalAlignment = Alignment.Bottom,
+
+                                                content = { TextSmall(content = "choose the total daily dose") }
+                                            )
+
+                                            TextField(
+
+                                                value = if (totalDailyDose == 0) "" else "$totalDailyDose $measuringUnit",
+                                                onValueChange = {
+                                                    val newValue = it.filter { char -> char.isDigit() }
+                                                    totalDailyDose = newValue.toIntOrNull() ?: 0
+                                                },
+
+                                                singleLine = true,
+                                                enabled = true,
+
+                                                colors = TextFieldDefaults.textFieldColors(
+
+                                                    textColor = White,
+                                                    cursorColor = White,
+                                                    unfocusedLabelColor = Color.Transparent,
+                                                    focusedLabelColor = Color.Transparent,
+
+                                                    containerColor = Color.Transparent,
+
+                                                    unfocusedIndicatorColor = Color.Transparent,
+                                                    focusedIndicatorColor = Color.Transparent
+                                                ),
+
+                                                textStyle = TextStyle.Default.copy(fontSize = 20.sp),
+
+                                                keyboardOptions = KeyboardOptions(
+                                                    keyboardType = KeyboardType.Number
+                                                ),
+
+                                                modifier = Modifier
+                                                    .focusRequester(focusRequester)
+                                                    .onGloballyPositioned { focusRequester.requestFocus() }
+                                            )
+                                        }
                                     )
                                 }
                             )
-
                         }
                     )
                 }
@@ -330,7 +464,6 @@ import kotlinx.coroutines.launch
         }
     )
 }
-
 private sealed class DailyDosageHint {
 
     data class InsertDailyDosage (val message: String = "click to insert daily dose")
