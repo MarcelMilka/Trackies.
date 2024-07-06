@@ -41,29 +41,47 @@ fun ScheduleDays(
 
 //  height of the column
     var columnTargetValue by remember { mutableIntStateOf(50) }
-    val columnAdditionalValue by remember { mutableIntStateOf(0) }
+    var columnAdditionalValue by remember { mutableIntStateOf(0) }
 
 //  height of the surface
     var surfaceTargetValue by remember { mutableIntStateOf(50) }
 
 //  chosen days of week
-    val daysOfWeek = listOf("Mon" to "monday", "Tue" to "tuesday", "Wed" to "wednesday", "Thu" to "thursday", "Fri" to "friday", "Sat" to "saturday", "Sun" to "sunday")
+    val daysOfWeek = listOf(
+        "Mon" to "monday",
+        "Tue" to "tuesday",
+        "Wed" to "wednesday",
+        "Thu" to "thursday",
+        "Fri" to "friday",
+        "Sat" to "saturday",
+        "Sun" to "sunday"
+    )
 
     var repeatOn = remember { mutableListOf<String>() }
     val selectionStates = remember { mutableStateMapOf<String, Boolean>().apply {
         daysOfWeek.forEach { (_, day) -> this[day] = false }
-    } }
+        }
+    }
 
     LaunchedEffect(actualDays) {
+
         repeatOn = actualDays.toMutableList()
+
         if (repeatOn.isEmpty()) {
+
             columnTargetValue = 50
             surfaceTargetValue = 50
+
+            daysOfWeek.forEach { (shortName, fullName) ->
+
+                selectionStates[fullName] = false
+            }
+
         }
     }
 
 //  adjust height of the column and surface accordingly to the value of "areExpanded" and "nameIsUnique"
-    LaunchedEffect(areExpanded) {
+    LaunchedEffect(areExpanded, repeatOn) {
 
         when (areExpanded) {
 
@@ -96,6 +114,10 @@ fun ScheduleDays(
 
             }
         }
+
+        if (repeatOn.isEmpty()) { columnAdditionalValue = 20 }
+        else { columnAdditionalValue = 0 }
+
     }
 
 //  animators
@@ -227,7 +249,7 @@ fun ScheduleDays(
                                         )
                                     }
 
-//                                  Radio buttons
+//                                  Radio buttons and supporting text
                                     AnimatedVisibility(
 
                                         visible = !areExpanded,
@@ -254,16 +276,16 @@ fun ScheduleDays(
                                             content = {
 
                                                 daysOfWeek.forEach { (shortName, fullName) ->
+
                                                     MediumRadioTextButton(
                                                         text = shortName,
                                                         isSelected = selectionStates[fullName] ?: false
                                                     ) {
+
                                                         selectionStates[fullName] = !selectionStates[fullName]!!
-                                                        if (selectionStates[fullName] == true) {
-                                                            repeatOn.add(fullName)
-                                                        } else {
-                                                            repeatOn.remove(fullName)
-                                                        }
+
+                                                        if (selectionStates[fullName] == true) { repeatOn.add(fullName) }
+                                                        else { repeatOn.remove(fullName) }
                                                         repeatOn.sortBy { day -> daysOfWeek.indexOfFirst { it.second == day } }
                                                     }
                                                 }
@@ -276,6 +298,18 @@ fun ScheduleDays(
                     )
                 }
             )
+
+
+//          Display supporting text which indicates an error occurred
+            AnimatedVisibility(
+
+                visible = (repeatOn.isEmpty()),
+                enter = fadeIn(animationSpec = tween(500)),
+                exit = fadeOut(animationSpec = tween(500))
+            ) { Text(text = "At least one day of week must be chosen",
+                style = MyFonts.titleSmall,
+                modifier = Modifier.padding(start = 10.dp)
+            ) }
         }
     )
 }

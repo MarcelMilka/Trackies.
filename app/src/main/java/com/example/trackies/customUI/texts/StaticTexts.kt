@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.trackies.ui.theme.MyFonts
+import com.example.trackies.ui.theme.White50
 
 @Composable fun BigHeader(content: String ) {
     Text(
@@ -18,7 +19,6 @@ import com.example.trackies.ui.theme.MyFonts
     Text(
         text = content,
         style = MyFonts.headlineMedium,
-        modifier = Modifier.padding(start = 20.dp)
     )
 }
 
@@ -34,6 +34,15 @@ import com.example.trackies.ui.theme.MyFonts
     Text(
         text = content,
         style = MyFonts.titleMedium
+    )
+}
+
+@Composable fun TextMedium50( content: String ) {
+
+    Text(
+        text = content,
+        style = MyFonts.titleMedium,
+        color = White50
     )
 }
 

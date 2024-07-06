@@ -15,6 +15,10 @@ val quickSand = FontFamily(
     Font(R.font.quicksand_medium),
 )
 
+val quickSandBold = FontFamily(
+    Font(R.font.quicksand_bold)
+)
+
 // Set of Material typography styles to start with
 val MyFonts = Typography(
     bodyLarge = TextStyle(
@@ -35,7 +39,7 @@ val MyFonts = Typography(
 
     //  Headline
     headlineMedium = TextStyle(
-        fontFamily = quickSand,
+        fontFamily = quickSandBold,
         fontWeight = FontWeight.W700,
         fontSize = 25.sp,
         color = White

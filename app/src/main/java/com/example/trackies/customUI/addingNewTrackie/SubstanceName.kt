@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.*
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -46,7 +47,7 @@ fun SubstanceName(
 
 //  height of the column
     var columnTargetValue by remember { mutableIntStateOf(50) }
-    val columnAdditionalValue by remember { mutableIntStateOf(0) }
+    var columnAdditionalValue by remember { mutableIntStateOf(0) }
 
 //  height of the surface
     var surfaceTargetValue by remember { mutableIntStateOf(50) }
@@ -59,7 +60,7 @@ fun SubstanceName(
     }
 
 //  adjust height of the column and surface accordingly to the value of "areExpanded" and "nameIsUnique"
-    LaunchedEffect(areExpanded) {
+    LaunchedEffect(areExpanded, name, nameIsUnique) {
 
         when (areExpanded) {
 
@@ -99,14 +100,20 @@ fun SubstanceName(
                 columnTargetValue = 106
                 surfaceTargetValue = 106
 
-                columnTargetValue = when (nameIsUnique) {
-
-                    true -> { surfaceTargetValue }
-
-                    false -> { surfaceTargetValue + 20 }
-                }
+//                columnTargetValue = when (nameIsUnique) {
+//
+//                    true -> { surfaceTargetValue }
+//
+//                    false -> { surfaceTargetValue + 20 }
+//                }
             }
         }
+
+        if (!nameIsUnique) { columnAdditionalValue = 20 }
+
+        else if (name == "") { columnAdditionalValue = 20 }
+
+        else { columnAdditionalValue = 0 }
     }
 
 //  animators
@@ -293,13 +300,17 @@ fun SubstanceName(
 //          Display supporting text which indicates an error occurred
             AnimatedVisibility(
 
-                visible = !nameIsUnique,
+                visible = (!nameIsUnique || name == ""),
                 enter = fadeIn(animationSpec = tween(500)),
                 exit = fadeOut(animationSpec = tween(500))
-            ) { Text(text = "Trackie of name $name already exists",
+            ) {
+                val error = if (!nameIsUnique) {"Trackie of name $name already exists"} else  { "Name of the new trackie must be inserted" }
+
+                Text(text = error,
                     style = MyFonts.titleSmall,
                     modifier = Modifier.padding(start = 10.dp)
-                ) }
+                )
+            }
         }
     )
 }

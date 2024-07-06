@@ -19,17 +19,13 @@ fun IconButtonToNavigateBetweenActivities ( icon: ImageVector, onClick: () -> Un
 
     IconButton(
 
-        modifier = Modifier
-            .size( 50.dp )
-            .padding( start = 20.dp, top = 20.dp),
-
         onClick = { onClick() },
+
         content = {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
                 tint = White,
-                modifier = Modifier.size( 50.dp )
             )
         }
     )

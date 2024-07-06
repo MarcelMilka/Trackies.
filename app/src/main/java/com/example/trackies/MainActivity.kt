@@ -4,11 +4,10 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.navigation
-import androidx.navigation.compose.rememberNavController
-import com.example.trackies.addNewTrackie.AddNewTrackie
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.navigation.compose.*
 import com.example.trackies.authentication.repository.FirebaseAuthentication
 import com.example.trackies.authentication.ui.login.LogIn
 import com.example.trackies.authentication.ui.login.RecoverThePassword
@@ -20,6 +19,7 @@ import com.example.trackies.authentication.ui.welcomeScreen.WelcomeScreen
 import com.example.trackies.homeScreen.buisness.TrackieViewState
 import com.example.trackies.homeScreen.presentation.HomeScreen
 import com.example.trackies.homeScreen.presentation.SharedViewModel
+import com.example.trackies.switchToPremium.TrackiesPremium
 
 class MainActivity : ComponentActivity() {
 
@@ -143,14 +143,20 @@ class MainActivity : ComponentActivity() {
 
                     val sharedViewModel = SharedViewModel(uniqueIdentifier!!)
 
-                    composable( route = "HomeScreen" ) {
+                    composable(
+
+                        route = "HomeScreen",
+                        enterTransition = {EnterTransition.None },
+                        exitTransition = { ExitTransition.None }
+                    ) {
 
                         HomeScreen(
+
                             viewModel = sharedViewModel,
+
                             onAddNewTrackie = { licenseViewState ->
 
                                 if (licenseViewState.active!!) {
-                                    // TODO: navigate to ui which is responsible for adding new trackie
                                     navigationController.navigate("AddNewTrackie")
                                 }
 
@@ -160,11 +166,11 @@ class MainActivity : ComponentActivity() {
                                         Log.d("license information", "less tan 1")
                                     }
                                     else {
-                                        // TODO: navigate to dialog which shows pricing of trackies
-                                        Log.d("license information", "buy license")
+                                        navigationController.navigate("TrackiesPremium") { popUpTo("HomeScreen") {inclusive = false} }
                                     }
                                 }
                             },
+
                             onSignOut = {
 
                                 navigationController.navigate( route = "SignedOut" ) {
@@ -174,6 +180,7 @@ class MainActivity : ComponentActivity() {
 
                                 firebaseAuthenticator.signOut()
                             },
+
                             onDelete = {
 
                                 firebaseAuthenticator.deleteAccount(
@@ -193,7 +200,12 @@ class MainActivity : ComponentActivity() {
                         )
                     }
 
-                    composable( route = "AddNewTrackie" ) {
+                    composable(
+
+                        route = "AddNewTrackie",
+                        enterTransition = {EnterTransition.None },
+                        exitTransition = { ExitTransition.None }
+                    ) {
 
                         AddNewTrackie(
                             viewModel = sharedViewModel,
@@ -212,6 +224,11 @@ class MainActivity : ComponentActivity() {
                                 sharedViewModel.addNewTrackie(newTrackie)
                             }
                         )
+                    }
+
+                    dialog( route = "TrackiesPremium" ) {
+
+                        TrackiesPremium { navigationController.navigate(route = "HomeScreen") {popUpTo("TrackiesPremium")} }
                     }
                 }
             }

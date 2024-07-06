@@ -7,6 +7,7 @@ import androidx.compose.material.icons.rounded.Person
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.trackies.customUI.buttons.IconButtonToNavigateBetweenActivities
 import com.example.trackies.customUI.lazyColumns.HomeScreenLazyColumn
@@ -26,31 +27,39 @@ fun HomeScreen(
 
     val uiState by viewModel.uiState.collectAsState()
 
-    Column(
+    Box(
 
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                color = BackgroundColor
-            ),
-
-        horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.Top,
+            .background(color = BackgroundColor),
 
         content = {
 
-            IconButtonToNavigateBetweenActivities(icon = Icons.Rounded.Person) {}
+            Column(
 
-            Spacer40()
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(20.dp)
+                    .background(color = BackgroundColor),
 
-            MediumHeader(content = "Your today's trackies")
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.Top,
 
-            Spacer5()
+                content = {
 
-            HomeScreenLazyColumn(
-                uiState = uiState,
-                passLicenseInformation = {
-                    onAddNewTrackie(it) }
+                    IconButtonToNavigateBetweenActivities(icon = Icons.Rounded.Person) {}
+
+                    Spacer40()
+
+                    MediumHeader(content = "Your today's trackies")
+
+                    Spacer5()
+
+                    HomeScreenLazyColumn(
+                        uiState = uiState,
+                        passLicenseInformation = { onAddNewTrackie(it) }
+                    )
+                }
             )
         }
     )

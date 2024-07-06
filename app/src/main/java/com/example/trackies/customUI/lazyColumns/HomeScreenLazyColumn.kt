@@ -24,8 +24,7 @@ import com.example.trackies.homeScreen.presentation.HomeScreenViewState
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
-            .height(250.dp)
-            .padding(start = 20.dp, end = 20.dp),
+            .height(250.dp),
 
         verticalArrangement = Arrangement.Top,
 
@@ -41,10 +40,10 @@ import com.example.trackies.homeScreen.presentation.HomeScreenViewState
 
                     items( uiState.trackies ) {trackie ->
                         Trackie(
-                            name = trackie.name!!,
-                            totalDose = trackie.totalDose!!,
-                            measuringUnit = trackie.measuringUnit!!,
-                            repeatOn = trackie.repeatOn!!,
+                            name = trackie.name,
+                            totalDose = trackie.totalDose,
+                            measuringUnit = trackie.measuringUnit,
+                            repeatOn = trackie.repeatOn,
                             ingestionTime = trackie.ingestionTime
                         )
                         Spacer5()
@@ -57,7 +56,7 @@ import com.example.trackies.homeScreen.presentation.HomeScreenViewState
                 }
 
                 HomeScreenViewState.FailedToLoadData -> {
-                    this.item { MediumHeader("fialed to load data") }
+                    this.item { MediumHeader("failed to load data") }
                 }
             }
         }
