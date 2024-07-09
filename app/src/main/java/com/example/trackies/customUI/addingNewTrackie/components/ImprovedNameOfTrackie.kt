@@ -1,6 +1,7 @@
 package com.example.trackies.customUI.addingNewTrackie.components
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateIntAsState
@@ -36,7 +37,6 @@ import kotlinx.coroutines.launch
 @Composable fun ImprovedNameOfTrackie(
     viewModel: AddNewTrackieViewModel
 ) {
-
     var nameOfTheTrackie by remember { mutableStateOf("") }
 
 //  adjust height of the elements
@@ -76,12 +76,14 @@ import kotlinx.coroutines.launch
     var hint by remember { mutableStateOf(NameOfTrackieHint.InsertNewName().message) }
 
 //  follow changes
-    LaunchedEffect(viewModel.activityState.value) {
+
+//      Deactivate component
+        LaunchedEffect(viewModel.activityState.value) {
 
         viewModel.activityState
             .collect {
 
-            if (areExpanded && viewModel.activityState.value.nameOfTrackieIsActive == false) {
+            if (areExpanded && viewModel.activityState.value.insertNameIsActive == false) {
 
                 if (nameOfTheTrackie == "") {
 
@@ -110,6 +112,28 @@ import kotlinx.coroutines.launch
         }
     }
 
+//      Reset inserted value
+        LaunchedEffect(viewModel.viewState.value) {
+
+            viewModel.viewState.collect {
+
+                if (nameOfTheTrackie != "" && it.name == "") {
+
+                    nameOfTheTrackie = ""
+
+                    areExpanded = false
+
+                    targetHeightOfTheColumn = 50
+                    targetHeightOfTheSurface = 50
+
+                    displayFieldWithInsertedName = false
+                    displayFieldWithTextField = false
+
+                    hint = NameOfTrackieHint.InsertNewName().message
+                }
+            }
+        }
+
     Column( // holder of surface and supporting text
 
         modifier = Modifier
@@ -135,6 +159,7 @@ import kotlinx.coroutines.launch
                         true -> {
 
                             viewModel.deActivate(whatToDeactivate = IsActive.NameOfTrackie)
+                            viewModel.updateName(nameOfTheNewTrackie = nameOfTheTrackie)
 
                             if (nameOfTheTrackie == "") {
 

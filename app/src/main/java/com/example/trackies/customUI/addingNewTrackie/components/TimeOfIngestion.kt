@@ -22,6 +22,7 @@ import com.example.trackies.customUI.addingNewTrackie.viewModel.IsActive
 import com.example.trackies.customUI.texts.TextMedium
 import com.example.trackies.customUI.texts.TextMedium50
 import com.example.trackies.customUI.texts.TextSmall
+import com.example.trackies.homeScreen.buisness.LicenseViewState
 import com.example.trackies.switchToPremium.customUI.Premium
 import com.example.trackies.ui.theme.SecondaryColor
 import kotlinx.coroutines.CoroutineScope
@@ -33,10 +34,12 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimeOfIngestion(
-    viewModel: AddNewTrackieViewModel
+    viewModel: AddNewTrackieViewModel,
+    licenseViewState: LicenseViewState,
+    onBuyLicense: () -> Unit
 ) {
 
-    var timeOfIngestion by remember { mutableStateOf(mutableListOf<String>("ad")) }
+    var timeOfIngestion by remember { mutableStateOf(mutableListOf<String>("")) }
 
 //  adjust height of the elements
     var areExpanded by remember { mutableStateOf(false) }
@@ -76,7 +79,7 @@ fun TimeOfIngestion(
 
         viewModel.activityState.collect {
 
-            if (areExpanded && viewModel.activityState.value.timeOfIngestionIsActive == false) {
+            if (areExpanded && viewModel.activityState.value.insertTimeOfIngestionIsActive == false) {
 
                 if (timeOfIngestion.isEmpty()) {
 
@@ -124,57 +127,62 @@ fun TimeOfIngestion(
 
                 onClick = {
 
-                    when (areExpanded) {
+                    if (licenseViewState.active) {
 
-                        true -> { // collapse
+                        when (areExpanded) {
 
-                            viewModel.deActivate(whatToDeactivate = IsActive.TimeOfIngestion)
+                            true -> { // collapse
 
-                            if (timeOfIngestion.isEmpty()) {
+                                viewModel.deActivate(whatToDeactivate = IsActive.TimeOfIngestion)
 
-                                targetHeightOfTheColumn = 50
-                                targetHeightOfTheSurface = 50
+                                if (timeOfIngestion.isEmpty()) {
 
-                                displayFieldWithInsertedTimes = false
-                                displayFieldWithTextField = true
+                                    targetHeightOfTheColumn = 50
+                                    targetHeightOfTheSurface = 50
 
-                                hint = TimeOfIngestionHint.InsertTimeOfIngestion().message
+                                    displayFieldWithInsertedTimes = false
+                                    displayFieldWithTextField = true
+
+                                    hint = TimeOfIngestionHint.InsertTimeOfIngestion().message
+                                }
+
+                                else {
+
+                                    CoroutineScope(Dispatchers.Default).launch {
+
+                                        displayFieldWithTextField = false
+                                        delay(250)
+
+                                        hint = TimeOfIngestionHint.EditTimeOfIngestion().message
+
+                                        targetHeightOfTheColumn = 80
+                                        targetHeightOfTheSurface = 80
+                                        displayFieldWithInsertedTimes = true
+                                    }
+                                }
                             }
 
-                            else {
+                            false -> { // expand
+
+                                viewModel.activate(whatToActivate = IsActive.TimeOfIngestion)
+                                hint = TimeOfIngestionHint.ConfirmTimeOfIngestion().message
 
                                 CoroutineScope(Dispatchers.Default).launch {
 
-                                    displayFieldWithTextField = false
+                                    displayFieldWithInsertedTimes = false
                                     delay(250)
 
-                                    hint = TimeOfIngestionHint.EditTimeOfIngestion().message
-
-                                    targetHeightOfTheColumn = 80
-                                    targetHeightOfTheSurface = 80
-                                    displayFieldWithInsertedTimes = true
+                                    targetHeightOfTheColumn = 126
+                                    targetHeightOfTheSurface = 126
+                                    displayFieldWithTextField = true
                                 }
                             }
                         }
 
-                        false -> { // expand
-
-                            viewModel.activate(whatToActivate = IsActive.TimeOfIngestion)
-                            hint = TimeOfIngestionHint.ConfirmTimeOfIngestion().message
-
-                            CoroutineScope(Dispatchers.Default).launch {
-
-                                displayFieldWithInsertedTimes = false
-                                delay(250)
-
-                                targetHeightOfTheColumn = 126
-                                targetHeightOfTheSurface = 126
-                                displayFieldWithTextField = true
-                            }
-                        }
+                        areExpanded = !areExpanded
                     }
 
-                    areExpanded = !areExpanded
+                    else { onBuyLicense() }
                 },
 
                 content = {
@@ -213,21 +221,24 @@ fun TimeOfIngestion(
                                     }
                                 )
 
-                                Row(
+                                if (!licenseViewState.active) {
 
-                                    modifier = Modifier
-                                        .weight(1f, true)
-                                        .height(30.dp),
+                                    Row(
 
-                                    horizontalArrangement = Arrangement.End,
-                                    verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier
+                                            .weight(1f, true)
+                                            .height(30.dp),
 
-                                    content = {
+                                        horizontalArrangement = Arrangement.End,
+                                        verticalAlignment = Alignment.CenterVertically,
 
-                                        Premium()
-                                        Spacer(Modifier.width(5.dp))
-                                    }
-                                )
+                                        content = {
+
+                                            Premium()
+                                            Spacer(Modifier.width(5.dp))
+                                        }
+                                    )
+                                }
                             }
                         )
 

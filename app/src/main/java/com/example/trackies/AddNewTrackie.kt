@@ -24,13 +24,18 @@ import com.example.trackies.homeScreen.buisness.TrackieViewState
 import com.example.trackies.homeScreen.presentation.HomeScreenViewState
 import com.example.trackies.homeScreen.presentation.SharedViewModel
 import com.example.trackies.ui.theme.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "CoroutineCreationDuringComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddNewTrackie(
     viewModel: SharedViewModel,
     onReturn: () -> Unit,
+    onNavigateToTrackiesPremium: () -> Unit,
     onAdd: ( TrackieViewState ) -> Unit
 ) {
 
@@ -51,6 +56,11 @@ fun AddNewTrackie(
     val addNewTrackieViewModel = AddNewTrackieViewModel()
 
     var buttonAddIsEnabled by remember { mutableStateOf(false) }
+
+    CoroutineScope(Dispatchers.Main).launch {
+
+        addNewTrackieViewModel.buttonIsEnabled.collect { buttonAddIsEnabled = it }
+    }
 
     Scaffold(
 
@@ -75,17 +85,18 @@ fun AddNewTrackie(
 
                         onAdd = {
 
-                            onAdd(
 
-                                TrackieViewState(
-
-                                    name = "asd",
-                                    totalDose = 1,
-                                    measuringUnit = "ml",
-                                    repeatOn = listOfNames,
-                                    ingestionTime = null
-                                )
-                            )
+//                            onAdd(
+//
+//                                TrackieViewState(
+//
+//                                    name = "asd",
+//                                    totalDose = 1,
+//                                    measuringUnit = "ml",
+//                                    repeatOn = listOfNames,
+//                                    ingestionTime = null
+//                                )
+//                            )
                         }
                     )
                 }
@@ -140,8 +151,11 @@ fun AddNewTrackie(
 
                                     Spacer5()
 
-                                    TimeOfIngestion(viewModel = addNewTrackieViewModel)
-
+                                    TimeOfIngestion(
+                                        viewModel = addNewTrackieViewModel,
+                                        licenseViewState = (uiState as HomeScreenViewState.LoadedSuccessfully).license,
+                                        onBuyLicense = { onNavigateToTrackiesPremium() }
+                                    )
                                 }
 
                                 HomeScreenViewState.FailedToLoadData -> {}

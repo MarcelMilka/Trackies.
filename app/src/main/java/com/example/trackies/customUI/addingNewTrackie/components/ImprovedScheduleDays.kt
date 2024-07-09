@@ -14,13 +14,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.White
 import com.example.trackies.customUI.addingNewTrackie.viewModel.AddNewTrackieViewModel
 import com.example.trackies.customUI.addingNewTrackie.viewModel.IsActive
-import com.example.trackies.customUI.buttons.MediumRadioTextButton
 import com.example.trackies.customUI.buttons.MediumSelectableTextButton
 import com.example.trackies.customUI.texts.*
 import com.example.trackies.ui.theme.SecondaryColor
@@ -74,7 +71,7 @@ import kotlinx.coroutines.launch
 
 //  control what should be displayed
     var displayFieldWithChosenDaysOfWeek by remember { mutableStateOf(false) }
-    var displayFieldWithTextField by remember { mutableStateOf(false) }
+    var displayFieldWithSelectableButtons by remember { mutableStateOf(false) }
 
     var hint by remember { mutableStateOf(ScheduleDaysHint.InsertSchedule().message) }
 
@@ -91,7 +88,7 @@ import kotlinx.coroutines.launch
                     targetHeightOfTheSurface = 50
 
                     displayFieldWithChosenDaysOfWeek = false
-                    displayFieldWithTextField = false
+                    displayFieldWithSelectableButtons = false
 
                     hint = ScheduleDaysHint.InsertSchedule().message
                 }
@@ -102,12 +99,42 @@ import kotlinx.coroutines.launch
                     targetHeightOfTheSurface = 80
 
                     displayFieldWithChosenDaysOfWeek = true
-                    displayFieldWithTextField = false
+                    displayFieldWithSelectableButtons = false
 
                     hint = ScheduleDaysHint.EditSchedule().message
                 }
 
                 areExpanded = false
+            }
+        }
+    }
+
+//  Reset values
+    LaunchedEffect(viewModel.viewState.value) {
+
+        viewModel.viewState.collect {
+
+            if (repeatOn.isNotEmpty() && it.repeatOn.isEmpty()) {
+
+                repeatOn = mutableListOf()
+
+                monday = false
+                tuesday = false
+                wednesday = false
+                thursday = false
+                friday = false
+                saturday = false
+                sunday = false
+
+                areExpanded = false
+
+                targetHeightOfTheColumn = 50
+                targetHeightOfTheSurface = 50
+
+                displayFieldWithChosenDaysOfWeek = false
+                displayFieldWithSelectableButtons = false
+
+                hint = ScheduleDaysHint.InsertSchedule().message
             }
         }
     }
@@ -137,6 +164,7 @@ import kotlinx.coroutines.launch
                         true -> { // collapse
 
                             viewModel.deActivate(whatToDeactivate = IsActive.ScheduleDays)
+                            viewModel.updateRepeatOn(repeatOn)
 
                             if (repeatOn.isEmpty()) {
 
@@ -146,14 +174,14 @@ import kotlinx.coroutines.launch
                                 targetHeightOfTheSurface = 50
 
                                 displayFieldWithChosenDaysOfWeek = false
-                                displayFieldWithTextField = true
+                                displayFieldWithSelectableButtons = false
                             }
 
                             else {
 
                                 CoroutineScope(Dispatchers.Default).launch {
 
-                                    displayFieldWithTextField = false
+                                    displayFieldWithSelectableButtons = false
                                     delay(250)
 
                                     hint = ScheduleDaysHint.EditSchedule().message
@@ -177,7 +205,7 @@ import kotlinx.coroutines.launch
 
                                 targetHeightOfTheColumn = 106
                                 targetHeightOfTheSurface = 106
-                                displayFieldWithTextField = true
+                                displayFieldWithSelectableButtons = true
                             }
                         }
                     }
@@ -235,7 +263,7 @@ import kotlinx.coroutines.launch
                         // display a text field
                         AnimatedVisibility(
 
-                            visible = displayFieldWithTextField,
+                            visible = displayFieldWithSelectableButtons,
                             enter = fadeIn(animationSpec = tween(250)),
                             exit = fadeOut(animationSpec = tween(250)),
 

@@ -1,8 +1,8 @@
 package com.example.trackies.customUI.addingNewTrackie.viewModel
 
 data class ActivityState(
-    var nameOfTrackieIsActive: Boolean = false,
-    var dailyDosageIsActive: Boolean = false,
+    var insertNameIsActive: Boolean = false,
+    var insertTotalDoseIsActive: Boolean = false,
     var scheduleDaysIsActive: Boolean = false,
-    var timeOfIngestionIsActive: Boolean = false,
+    var insertTimeOfIngestionIsActive: Boolean = false,
 )

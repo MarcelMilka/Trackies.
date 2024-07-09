@@ -1,7 +1,6 @@
 package com.example.trackies.customUI.addingNewTrackie.components
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateIntAsState
@@ -21,7 +20,6 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.White
-import androidx.compose.ui.input.nestedscroll.nestedScrollModifierNode
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
@@ -88,11 +86,13 @@ import kotlinx.coroutines.launch
     val focusRequester = remember { FocusRequester() }
 
 //  follow changes
-    LaunchedEffect(viewModel.activityState.value) {
+
+//      Adjust height of the columns and surface
+        LaunchedEffect(viewModel.activityState.value) {
 
         viewModel.activityState.collect {
 
-            if (areExpanded && viewModel.activityState.value.dailyDosageIsActive == false) {
+            if (areExpanded && viewModel.activityState.value.insertTotalDoseIsActive == false) {
 
                 if (measuringUnit == "") {
 
@@ -123,7 +123,8 @@ import kotlinx.coroutines.launch
         }
     }
 
-    LaunchedEffect(ml, g, pcs) {
+//      Increase height of the columns and surface once a measuring unit gets chosen
+        LaunchedEffect(ml, g, pcs) {
 
         if (ml != false || g != false || pcs != false) {
 
@@ -134,7 +135,35 @@ import kotlinx.coroutines.launch
             displayFieldWithMeasuringUnits = true
             displayFieldWithTextField = true
         }
-    }
+        }
+
+//      Reset values
+        LaunchedEffect(viewModel.viewState.value) {
+
+            viewModel.viewState.collect {
+
+                if (measuringUnit != "" && it.measuringUnit == "") {
+
+                    measuringUnit = ""
+                    totalDailyDose = 0
+
+                    ml = false
+                    g = false
+                    pcs = false
+
+                    areExpanded = false
+
+                    targetHeightOfTheColumn = 50
+                    targetHeightOfTheSurface = 50
+
+                    displayFieldWithInsertedDose = false
+                    displayFieldWithMeasuringUnits = false
+                    displayFieldWithTextField = false
+
+                    hint = DailyDosageHint.InsertDailyDosage().message
+                }
+            }
+        }
 
     Column( // holder of surface and supporting text
 
@@ -161,6 +190,7 @@ import kotlinx.coroutines.launch
                         true -> {
 
                             viewModel.deActivate(whatToDeactivate = IsActive.DailyDosage)
+                            viewModel.updateMeasuringUnitAndDose(totalDose = totalDailyDose, measuringUnit = measuringUnit)
 
                             if (measuringUnit == "") {
 

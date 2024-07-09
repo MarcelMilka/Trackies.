@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.navigation.compose.*
@@ -210,6 +209,7 @@ class MainActivity : ComponentActivity() {
                         AddNewTrackie(
                             viewModel = sharedViewModel,
                             onReturn = { navigationController.navigateUp() },
+                            onNavigateToTrackiesPremium = { navigationController.navigate("TrackiesPremium") },
                             onAdd = {trackie ->
 
                                 val newTrackie = TrackieViewState (
@@ -228,7 +228,7 @@ class MainActivity : ComponentActivity() {
 
                     dialog( route = "TrackiesPremium" ) {
 
-                        TrackiesPremium { navigationController.navigate(route = "HomeScreen") {popUpTo("TrackiesPremium")} }
+                        TrackiesPremium { navigationController.navigateUp() }
                     }
                 }
             }
