@@ -255,7 +255,12 @@ import kotlinx.coroutines.launch
                                     horizontalAlignment = Alignment.Start,
                                     verticalArrangement = Arrangement.Center,
 
-                                    content = {TextMedium(repeatOn.joinToString(separator = ", "))}
+                                    content = {
+
+                                        val abbreviatedDays = repeatOn.map { it.take(3) }
+
+                                        TextMedium(abbreviatedDays.joinToString(separator = ", "))
+                                    }
                                 )
                             }
                         )
@@ -284,10 +289,10 @@ import kotlinx.coroutines.launch
                                             monday = it
 
                                             if (it) {
-                                                repeatOn.add("mon")
+                                                repeatOn.add("monday")
                                             } else {
-                                                if (repeatOn.contains("mon")) {
-                                                    repeatOn.remove("mon")
+                                                if (repeatOn.contains("monday")) {
+                                                    repeatOn.remove("monday")
                                                 }
                                             }
                                         }
@@ -296,10 +301,10 @@ import kotlinx.coroutines.launch
                                             tuesday = it
 
                                             if (it) {
-                                                repeatOn.add("tue")
+                                                repeatOn.add("tuesday")
                                             } else {
-                                                if (repeatOn.contains("tue")) {
-                                                    repeatOn.remove("tue")
+                                                if (repeatOn.contains("tuesday")) {
+                                                    repeatOn.remove("tuesday")
                                                 }
                                             }
                                         }
@@ -308,10 +313,10 @@ import kotlinx.coroutines.launch
                                             wednesday = it
 
                                             if (it) {
-                                                repeatOn.add("wed")
+                                                repeatOn.add("wednesday")
                                             } else {
-                                                if (repeatOn.contains("wed")) {
-                                                    repeatOn.remove("wed")
+                                                if (repeatOn.contains("wednesday")) {
+                                                    repeatOn.remove("wednesday")
                                                 }
                                             }
                                         }
@@ -320,10 +325,10 @@ import kotlinx.coroutines.launch
                                             thursday = it
 
                                             if (it) {
-                                                repeatOn.add("thu")
+                                                repeatOn.add("thursday")
                                             } else {
-                                                if (repeatOn.contains("thu")) {
-                                                    repeatOn.remove("thu")
+                                                if (repeatOn.contains("thursday")) {
+                                                    repeatOn.remove("thursday")
                                                 }
                                             }
                                         }
@@ -332,10 +337,10 @@ import kotlinx.coroutines.launch
                                             friday = it
 
                                             if (it) {
-                                                repeatOn.add("fri")
+                                                repeatOn.add("friday")
                                             } else {
-                                                if (repeatOn.contains("fri")) {
-                                                    repeatOn.remove("fri")
+                                                if (repeatOn.contains("friday")) {
+                                                    repeatOn.remove("friday")
                                                 }
                                             }
                                         }
@@ -344,10 +349,10 @@ import kotlinx.coroutines.launch
                                             saturday = it
 
                                             if (it) {
-                                                repeatOn.add("sat")
+                                                repeatOn.add("saturday")
                                             } else {
-                                                if (repeatOn.contains("sat")) {
-                                                    repeatOn.remove("sat")
+                                                if (repeatOn.contains("saturday")) {
+                                                    repeatOn.remove("saturday")
                                                 }
                                             }
                                         }
@@ -356,10 +361,10 @@ import kotlinx.coroutines.launch
                                             sunday = it
 
                                             if (it) {
-                                                repeatOn.add("sun")
+                                                repeatOn.add("sunday")
                                             } else {
-                                                if (repeatOn.contains("sun")) {
-                                                    repeatOn.remove("sun")
+                                                if (repeatOn.contains("sunday")) {
+                                                    repeatOn.remove("sunday")
                                                 }
                                             }
                                         }

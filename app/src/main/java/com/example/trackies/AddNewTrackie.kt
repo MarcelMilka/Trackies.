@@ -85,18 +85,29 @@ fun AddNewTrackie(
 
                         onAdd = {
 
+                            CoroutineScope(Dispatchers.Main).launch {
 
-//                            onAdd(
-//
-//                                TrackieViewState(
-//
-//                                    name = "asd",
-//                                    totalDose = 1,
-//                                    measuringUnit = "ml",
-//                                    repeatOn = listOfNames,
-//                                    ingestionTime = null
-//                                )
-//                            )
+                                addNewTrackieViewModel.viewState.collect {
+
+                                    if (it.name != "" &&
+                                        it.totalDose != 0 &&
+                                        it.measuringUnit != "" &&
+                                        it.repeatOn.isNotEmpty()) {
+
+                                        onAdd(
+
+                                            TrackieViewState(
+
+                                                name = it.name,
+                                                totalDose = it.totalDose,
+                                                measuringUnit = it.measuringUnit,
+                                                repeatOn = it.repeatOn,
+                                                ingestionTime = it.ingestionTime
+                                            )
+                                        )
+                                    }
+                                }
+                            }
                         }
                     )
                 }
