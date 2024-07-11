@@ -1,7 +1,6 @@
 package com.example.trackies.homeScreen.presentation
 
 import android.util.Log
-import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.trackies.homeScreen.buisness.TrackieViewState
@@ -42,7 +41,7 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
                     HomeScreenViewState.LoadedSuccessfully(
 
                         license = licenseInformation,
-                        trackies = trackiesForToday,
+                        trackiesForToday = trackiesForToday,
                         namesOfAllTrackies = namesOfAllTrackies
                     )
                 }
@@ -55,5 +54,13 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
     fun addNewTrackie(trackieViewState: TrackieViewState) {
 
         viewModelScope.launch { repository.addNewTrackie(trackieViewState = trackieViewState) }
+    }
+
+    fun fetchAllTrackies() {
+
+        viewModelScope.launch {
+
+
+        }
     }
 }

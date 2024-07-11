@@ -18,6 +18,7 @@ import com.example.trackies.authentication.ui.welcomeScreen.WelcomeScreen
 import com.example.trackies.homeScreen.buisness.TrackieViewState
 import com.example.trackies.homeScreen.presentation.HomeScreen
 import com.example.trackies.homeScreen.presentation.SharedViewModel
+import com.example.trackies.showAllTrackies.presentation.ShowAllTrackies
 import com.example.trackies.switchToPremium.TrackiesPremium
 
 class MainActivity : ComponentActivity() {
@@ -142,9 +143,7 @@ class MainActivity : ComponentActivity() {
 
                     val sharedViewModel = SharedViewModel(uniqueIdentifier!!)
 
-                    composable(
-
-                        route = "HomeScreen",
+                    composable(route = "HomeScreen",
                         enterTransition = {EnterTransition.None },
                         exitTransition = { ExitTransition.None }
                     ) {
@@ -156,6 +155,11 @@ class MainActivity : ComponentActivity() {
                             onAddNewTrackie = {
 
                                 navigationController.navigate("AddNewTrackie")
+                            },
+
+                            onShowAllTrackies = {
+
+                                navigationController.navigate( route = "ShowAllTrackies" )
                             },
 
                             onSignOut = {
@@ -187,9 +191,7 @@ class MainActivity : ComponentActivity() {
                         )
                     }
 
-                    composable(
-
-                        route = "AddNewTrackie",
+                    composable(route = "AddNewTrackie",
                         enterTransition = {EnterTransition.None },
                         exitTransition = { ExitTransition.None }
                     ) {
@@ -211,6 +213,18 @@ class MainActivity : ComponentActivity() {
 
                                 sharedViewModel.addNewTrackie(newTrackie)
                             }
+                        )
+                    }
+
+                    composable(route = "ShowAllTrackies",
+                        enterTransition = {EnterTransition.None },
+                        exitTransition = { ExitTransition.None }
+                    ) {
+
+                        ShowAllTrackies(
+
+                            viewModel = sharedViewModel,
+                            onReturn = { navigationController.navigateUp() }
                         )
                     }
 

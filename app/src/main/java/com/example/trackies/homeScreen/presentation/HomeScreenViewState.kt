@@ -9,7 +9,7 @@ sealed class HomeScreenViewState {
 
     data class LoadedSuccessfully(
         var license: LicenseViewState,
-        var trackies: List<TrackieViewState>,
+        var trackiesForToday: List<TrackieViewState>,
         var namesOfAllTrackies: List<String>
     ): HomeScreenViewState()
 

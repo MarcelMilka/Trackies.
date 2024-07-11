@@ -6,18 +6,15 @@ import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.unit.dp
 import com.example.trackies.customUI.homeScreen.LoadingTrackie
 import com.example.trackies.customUI.spacers.Spacer5
-import com.example.trackies.customUI.texts.MediumHeader
 import com.example.trackies.customUI.texts.TextMedium
 import com.example.trackies.customUI.texts.TextSmall
 import com.example.trackies.customUI.trackie.Trackie
@@ -74,7 +71,7 @@ import com.example.trackies.homeScreen.presentation.HomeScreenViewState
 
                 is HomeScreenViewState.LoadedSuccessfully -> {
 
-                    targetHeightOfLazyColumn = when (uiState.trackies.count()) {
+                    targetHeightOfLazyColumn = when (uiState.trackiesForToday.count()) {
 
                         0 -> 0
                         1 -> 60
@@ -84,7 +81,7 @@ import com.example.trackies.homeScreen.presentation.HomeScreenViewState
                         else -> 215
                     }
 
-                    items( uiState.trackies.take(3) ) {trackie ->
+                    items( uiState.trackiesForToday.take(3) ) { trackie ->
 
                         Trackie(
                             name = trackie.name,
@@ -98,7 +95,7 @@ import com.example.trackies.homeScreen.presentation.HomeScreenViewState
 
                     item {
 
-                        if (uiState.trackies.count() > 3) {
+                        if (uiState.trackiesForToday.count() > 3) {
 
                             Row(
 
@@ -111,7 +108,7 @@ import com.example.trackies.homeScreen.presentation.HomeScreenViewState
 
                                 content = {
 
-                                    var amountOfTrackiesLeft = uiState.trackies.count() - 3
+                                    var amountOfTrackiesLeft = uiState.trackiesForToday.count() - 3
 
                                     if (amountOfTrackiesLeft == 1) {
                                         TextSmall(content = "+ $amountOfTrackiesLeft more trackie")

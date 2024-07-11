@@ -105,6 +105,8 @@ fun AddNewTrackie(
                                                 ingestionTime = it.ingestionTime
                                             )
                                         )
+
+                                        addNewTrackieViewModel.clearAll()
                                     }
                                 }
                             }

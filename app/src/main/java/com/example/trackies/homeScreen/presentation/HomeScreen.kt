@@ -22,6 +22,7 @@ import com.example.trackies.ui.theme.BackgroundColor
 fun HomeScreen(
     viewModel: SharedViewModel = viewModel(),
     onAddNewTrackie: () -> Unit,
+    onShowAllTrackies: () -> Unit,
     onSignOut: () -> Unit,
     onDelete: () -> Unit,
 ) {
@@ -63,7 +64,7 @@ fun HomeScreen(
 
                     Spacer5()
 
-                    ButtonShowAllTrackies {  }
+                    ButtonShowAllTrackies { onShowAllTrackies() }
 
                     Spacer5()
 
