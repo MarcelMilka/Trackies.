@@ -153,21 +153,9 @@ class MainActivity : ComponentActivity() {
 
                             viewModel = sharedViewModel,
 
-                            onAddNewTrackie = { licenseViewState ->
+                            onAddNewTrackie = {
 
-                                if (licenseViewState.active!!) {
-                                    navigationController.navigate("AddNewTrackie")
-                                }
-
-                                else {
-                                    if (licenseViewState.totalAmountOfTrackies == 0) {
-                                        navigationController.navigate("AddNewTrackie")
-                                        Log.d("license information", "less tan 1")
-                                    }
-                                    else {
-                                        navigationController.navigate("TrackiesPremium") { popUpTo("HomeScreen") {inclusive = false} }
-                                    }
-                                }
+                                navigationController.navigate("AddNewTrackie")
                             },
 
                             onSignOut = {

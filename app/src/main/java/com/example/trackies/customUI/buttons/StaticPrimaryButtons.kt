@@ -59,6 +59,28 @@ fun MediumStaticPrimaryButton(textToDisplay: String, enabled: Boolean, onClick: 
     }
 }
 
+@Composable fun ButtonShowAllTrackies( onClick: () -> Unit ) {
+
+    Button(
+
+        onClick = { onClick() },
+
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(30.dp),
+
+        shape = RoundedCornerShape(10.dp),
+
+        colors = ButtonDefaults.buttonColors(
+            containerColor = SecondaryColor,
+            contentColor = Color.White
+        ),
+
+        ) {
+        Text(text = "show all trackies", style = MyFonts.titleSmall, color = Color.White)
+    }
+}
+
 @Composable fun ButtonAddAnotherTrackie( onClick: () -> Unit ) {
 
     Button(

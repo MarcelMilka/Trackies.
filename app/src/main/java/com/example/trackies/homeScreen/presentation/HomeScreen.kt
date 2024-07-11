@@ -9,18 +9,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.trackies.customUI.buttons.ButtonAddAnotherTrackie
+import com.example.trackies.customUI.buttons.ButtonShowAllTrackies
 import com.example.trackies.customUI.buttons.IconButtonToNavigateBetweenActivities
 import com.example.trackies.customUI.lazyColumns.HomeScreenLazyColumn
 import com.example.trackies.customUI.spacers.Spacer40
 import com.example.trackies.customUI.spacers.Spacer5
 import com.example.trackies.customUI.texts.MediumHeader
-import com.example.trackies.homeScreen.buisness.LicenseViewState
 import com.example.trackies.ui.theme.BackgroundColor
 
 @Composable
 fun HomeScreen(
     viewModel: SharedViewModel = viewModel(),
-    onAddNewTrackie: (LicenseViewState) -> Unit,
+    onAddNewTrackie: () -> Unit,
     onSignOut: () -> Unit,
     onDelete: () -> Unit,
 ) {
@@ -57,8 +58,17 @@ fun HomeScreen(
 
                     HomeScreenLazyColumn(
                         uiState = uiState,
-                        passLicenseInformation = { onAddNewTrackie(it) }
+                        onAddNewTrackie = { onAddNewTrackie() }
                     )
+
+                    Spacer5()
+
+                    ButtonShowAllTrackies {  }
+
+                    Spacer5()
+
+                    ButtonAddAnotherTrackie { onAddNewTrackie() }
+
                 }
             )
         }

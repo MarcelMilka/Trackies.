@@ -1,7 +1,7 @@
 package com.example.trackies.customUI.addingNewTrackie.viewModel
 
 data class AddNewTrackieViewState(
-    var name: String = "a",
+    var name: String = "",
     var totalDose: Int = 0,
     var measuringUnit: String = "",
     var repeatOn: MutableList<String> = mutableListOf<String>(),

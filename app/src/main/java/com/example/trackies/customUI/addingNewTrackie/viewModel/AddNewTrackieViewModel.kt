@@ -18,8 +18,6 @@ class AddNewTrackieViewModel: ViewModel() {
 
             viewState.collect {
 
-                Log.d("whatever it takes", "${it.measuringUnit}")
-
                 if (
 
                     it.name != "" &&

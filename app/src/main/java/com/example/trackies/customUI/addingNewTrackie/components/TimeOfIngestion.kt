@@ -7,8 +7,11 @@ import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
@@ -17,13 +20,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.trackies.customUI.addingNewTrackie.AddTimeOfIngestion
+import com.example.trackies.customUI.addingNewTrackie.SpecifiedTimeOfIngestion
 import com.example.trackies.customUI.addingNewTrackie.viewModel.AddNewTrackieViewModel
 import com.example.trackies.customUI.addingNewTrackie.viewModel.IsActive
+import com.example.trackies.customUI.spacers.Spacer5
 import com.example.trackies.customUI.texts.TextMedium
 import com.example.trackies.customUI.texts.TextMedium50
 import com.example.trackies.customUI.texts.TextSmall
 import com.example.trackies.homeScreen.buisness.LicenseViewState
 import com.example.trackies.switchToPremium.customUI.Premium
+import com.example.trackies.ui.theme.BackgroundColor
 import com.example.trackies.ui.theme.SecondaryColor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -39,7 +46,7 @@ fun TimeOfIngestion(
     onBuyLicense: () -> Unit
 ) {
 
-    var timeOfIngestion by remember { mutableStateOf(mutableListOf<String>("")) }
+    var timeOfIngestion by remember { mutableStateOf(mutableListOf<String>()) }
 
 //  adjust height of the elements
     var areExpanded by remember { mutableStateOf(false) }
@@ -70,7 +77,7 @@ fun TimeOfIngestion(
 
 //  control what should be displayed
     var displayFieldWithInsertedTimes by remember { mutableStateOf(false) }
-    var displayFieldWithTextField by remember { mutableStateOf(false) }
+    var displayLazyColumn by remember { mutableStateOf(false) }
 
     var hint by remember { mutableStateOf(TimeOfIngestionHint.InsertTimeOfIngestion().message) }
 
@@ -87,7 +94,7 @@ fun TimeOfIngestion(
                     targetHeightOfTheSurface = 50
 
                     displayFieldWithInsertedTimes = false
-                    displayFieldWithTextField = false
+                    displayLazyColumn = false
 
                     hint = TimeOfIngestionHint.InsertTimeOfIngestion().message
                 }
@@ -98,7 +105,7 @@ fun TimeOfIngestion(
                     targetHeightOfTheSurface = 80
 
                     displayFieldWithInsertedTimes = true
-                    displayFieldWithTextField = false
+                    displayLazyColumn = false
 
                     hint = TimeOfIngestionHint.EditTimeOfIngestion().message
                 }
@@ -141,7 +148,7 @@ fun TimeOfIngestion(
                                     targetHeightOfTheSurface = 50
 
                                     displayFieldWithInsertedTimes = false
-                                    displayFieldWithTextField = true
+                                    displayLazyColumn = true
 
                                     hint = TimeOfIngestionHint.InsertTimeOfIngestion().message
                                 }
@@ -150,7 +157,7 @@ fun TimeOfIngestion(
 
                                     CoroutineScope(Dispatchers.Default).launch {
 
-                                        displayFieldWithTextField = false
+                                        displayLazyColumn = false
                                         delay(250)
 
                                         hint = TimeOfIngestionHint.EditTimeOfIngestion().message
@@ -172,9 +179,9 @@ fun TimeOfIngestion(
                                     displayFieldWithInsertedTimes = false
                                     delay(250)
 
-                                    targetHeightOfTheColumn = 126
-                                    targetHeightOfTheSurface = 126
-                                    displayFieldWithTextField = true
+                                    targetHeightOfTheColumn = 175
+                                    targetHeightOfTheSurface = 175
+                                    displayLazyColumn = true
                                 }
                             }
                         }
@@ -242,6 +249,8 @@ fun TimeOfIngestion(
                             }
                         )
 
+                        Spacer5()
+
                      // display inserted times
                         AnimatedVisibility(
 
@@ -269,7 +278,7 @@ fun TimeOfIngestion(
                      // display a surface with lazy list
                         AnimatedVisibility(
 
-                            visible = displayFieldWithTextField,
+                            visible = displayLazyColumn,
                             enter = fadeIn(animationSpec = tween(250)),
                             exit = fadeOut(animationSpec = tween(250)),
 
@@ -279,13 +288,40 @@ fun TimeOfIngestion(
 
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .border(2.dp, Color.White)
-                                        .height(76.dp),
+//                                        .border(2.dp, Color.White)
+                                        .height(120.dp)
+                                        .background(color = BackgroundColor, shape = RoundedCornerShape(20.dp)),
 
                                     horizontalAlignment = Alignment.Start,
                                     verticalArrangement = Arrangement.SpaceBetween,
 
-                                    content = { TextMedium("display a lazy list") }
+                                    content = {
+
+                                        LazyColumn(
+
+                                            modifier = Modifier
+                                                .fillMaxSize()
+                                                .padding(5.dp),
+
+                                            horizontalAlignment = Alignment.CenterHorizontally,
+                                            verticalArrangement = Arrangement.Top,
+
+                                            content = {
+
+                                                item {
+
+                                                    AddTimeOfIngestion()
+                                                    Spacer5()
+                                                }
+
+                                                items(listOf<String>("", "")) {
+
+                                                    SpecifiedTimeOfIngestion(time = "15:00", dose = 100, measuringUnit = "ml")
+                                                    Spacer5()
+                                                }
+                                            }
+                                        )
+                                    }
                                 )
                             }
                         )

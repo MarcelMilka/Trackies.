@@ -35,6 +35,8 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
                 Log.d("GTR-R35", "$trackiesForToday")
                 Log.d("GTR-R35", "$namesOfAllTrackies")
 
+                delay(2500)
+
                 _uiState.update {
 
                     HomeScreenViewState.LoadedSuccessfully(
