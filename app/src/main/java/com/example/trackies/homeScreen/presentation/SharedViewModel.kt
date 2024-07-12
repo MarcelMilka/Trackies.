@@ -1,8 +1,10 @@
 package com.example.trackies.homeScreen.presentation
 
 import android.util.Log
+import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.trackies.homeScreen.buisness.LicenseViewState
 import com.example.trackies.homeScreen.buisness.TrackieViewState
 import com.example.trackies.homeScreen.data.HomeScreenRepository
 import kotlinx.coroutines.delay
@@ -42,7 +44,8 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
 
                         license = licenseInformation,
                         trackiesForToday = trackiesForToday,
-                        namesOfAllTrackies = namesOfAllTrackies
+                        namesOfAllTrackies = namesOfAllTrackies,
+                        allTrackies = null
                     )
                 }
             }
@@ -60,7 +63,23 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
 
         viewModelScope.launch {
 
+            val allTrackies = repository.fetchAllTrackies()
 
+            if (allTrackies != null) {
+
+//              a copy of current data
+                val copy = _uiState.value as HomeScreenViewState.LoadedSuccessfully
+
+                _uiState.update {
+
+                    HomeScreenViewState.LoadedSuccessfully(
+                        license = copy.license,
+                        trackiesForToday = copy.trackiesForToday,
+                        namesOfAllTrackies = copy.namesOfAllTrackies,
+                        allTrackies = allTrackies
+                    )
+                }
+            }
         }
     }
 }

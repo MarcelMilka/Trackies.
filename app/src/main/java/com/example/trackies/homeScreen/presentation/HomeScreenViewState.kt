@@ -10,7 +10,8 @@ sealed class HomeScreenViewState {
     data class LoadedSuccessfully(
         var license: LicenseViewState,
         var trackiesForToday: List<TrackieViewState>,
-        var namesOfAllTrackies: List<String>
+        var namesOfAllTrackies: List<String>,
+        var allTrackies: List<TrackieViewState>?
     ): HomeScreenViewState()
 
     object FailedToLoadData: HomeScreenViewState()

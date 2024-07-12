@@ -108,7 +108,6 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes {
                 .addOnFailureListener { continuation.resume(null) }
         }
     }
-
     override suspend fun fetchTrackiesForToday(): List<TrackieViewState>? {
 
         val namesOfTrackiesForToday: List<String>? = fetchNamesOfTrackies(currentDateAndTime.getCurrentDayOfWeek())
@@ -172,9 +171,7 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes {
             else { continuation.resume(null) }
         }
     }
-
     override suspend fun fetchNamesOfAllTrackies(): List<String>? = run { fetchNamesOfTrackies( array = "whole week" ) }
-
     private suspend fun fetchNamesOfTrackies(array: String): List<String>? {
 
         return suspendCoroutine { continuation ->
@@ -208,7 +205,6 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes {
                 .addOnFailureListener { Log.d("HomeScreenRepository", "fetchNamesOfTrackiesForToday, $it") }
         }
     }
-
     override suspend fun addNewTrackie(trackieViewState: TrackieViewState): Boolean {
 
         val licenseViewState = fetchUsersLicenseInformation()
@@ -241,6 +237,68 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes {
 
             else { continuation.resume(false) }
 
+        }
+    }
+
+    override suspend fun fetchAllTrackies(): List<TrackieViewState>? {
+
+        val namesOfTrackiesForToday: List<String>? = fetchNamesOfTrackies("whole week")
+        val trackiesForToday: MutableList<TrackieViewState> = mutableListOf()
+
+        return suspendCoroutine { continuation ->
+
+            if (namesOfTrackiesForToday != null) {
+
+                if (namesOfTrackiesForToday.isNotEmpty()) {
+
+                    val tasks = namesOfTrackiesForToday.map { nameOfTheTrackie ->
+
+                        usersTrackies.collection(nameOfTheTrackie).document(nameOfTheTrackie)
+                            .get()
+                            .addOnSuccessListener { document ->
+
+                                val trackieAsNull = document.toObject(TrackieViewStateEntity::class.java)
+                                if (trackieAsNull != null) {
+                                    TrackieViewStateEntity(
+                                        name = trackieAsNull.name,
+                                        totalDose = trackieAsNull.totalDose,
+                                        measuringUnit = trackieAsNull.measuringUnit,
+                                        repeatOn = trackieAsNull.repeatOn,
+                                        ingestionTime = trackieAsNull.ingestionTime
+                                    ).let {trackieEntity ->
+
+                                        if (trackieEntity.name != null && trackieEntity.totalDose != null && trackieEntity.measuringUnit != null && trackieEntity.repeatOn != null) {
+
+                                            trackiesForToday.add(
+
+                                                TrackieViewState(
+
+                                                    name = trackieEntity.name,
+                                                    totalDose = trackieEntity.totalDose,
+                                                    measuringUnit = trackieEntity.measuringUnit,
+                                                    repeatOn = trackieEntity.repeatOn,
+                                                    ingestionTime = trackieEntity.ingestionTime
+                                                )
+                                            )
+                                        }
+
+                                        else { continuation.resume(null) }
+
+                                    }
+                                }
+                            }
+                            .addOnFailureListener { exception ->
+                                Log.d("HomeScreenRepository", "fetchAllTrackies, an error occurred while fetching data, $exception")
+                            }
+                    }
+
+                    Tasks.whenAllComplete(tasks).addOnCompleteListener { continuation.resume(trackiesForToday) }
+                }
+
+                else { continuation.resume(listOf<TrackieViewState>()) }
+            }
+
+            else { continuation.resume(null) }
         }
     }
 }

@@ -16,7 +16,9 @@ import com.example.trackies.customUI.buttons.MediumRadioTextButton
 import com.example.trackies.customUI.spacers.Spacer40
 import com.example.trackies.customUI.spacers.Spacer5
 import com.example.trackies.customUI.texts.MediumHeader
+import com.example.trackies.customUI.texts.TextMedium
 import com.example.trackies.customUI.trackie.Trackie
+import com.example.trackies.homeScreen.buisness.TrackieViewState
 import com.example.trackies.homeScreen.presentation.HomeScreenViewState
 import com.example.trackies.homeScreen.presentation.SharedViewModel
 import com.example.trackies.ui.theme.BackgroundColor
@@ -31,6 +33,8 @@ fun ShowAllTrackies(
 
     var wholeWeek by remember { mutableStateOf(false) }
     var today by remember { mutableStateOf(true) }
+
+    var whatToDisplay by remember { mutableStateOf(WhatToDisplay.TrackiesForToday) }
 
     Box(
 
@@ -74,54 +78,91 @@ fun ShowAllTrackies(
 
                                 wholeWeek = it
                                 today = !it
+
+                                whatToDisplay = WhatToDisplay.TrackiesForTheWholeWeek
                             }
 
                             MediumRadioTextButton(text = "today", isSelected = today) {
 
                                 today = it
                                 wholeWeek = !it
+
+                                whatToDisplay = WhatToDisplay.TrackiesForToday
                             }
                         }
                     )
 
                     Spacer5()
 
-                    LazyColumn(
+                    when (uiState) {
 
-                        modifier = Modifier
-                            .fillMaxSize(),
+                        HomeScreenViewState.Loading -> {}
 
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Top,
+                        is HomeScreenViewState.LoadedSuccessfully -> {
 
-                        content = {
+                            when(whatToDisplay) {
+                                WhatToDisplay.TrackiesForToday -> {
 
-                            when (uiState) {
-
-                                HomeScreenViewState.Loading -> {}
-
-                                is HomeScreenViewState.LoadedSuccessfully -> {
-
-                                    items(((uiState as HomeScreenViewState.LoadedSuccessfully).trackiesForToday)) { trackieViewState ->
-
-                                        Trackie(
-                                            name = trackieViewState.name,
-                                            totalDose = trackieViewState.totalDose,
-                                            measuringUnit = trackieViewState.measuringUnit,
-                                            repeatOn = trackieViewState.repeatOn,
-                                            ingestionTime = trackieViewState.ingestionTime
-                                        )
-
-                                        Spacer5()
-                                    }
+                                    ShowAllTrackiesLazyColumn((uiState as HomeScreenViewState.LoadedSuccessfully).trackiesForToday)
                                 }
 
-                                HomeScreenViewState.FailedToLoadData -> {}
+                                WhatToDisplay.TrackiesForTheWholeWeek -> {
+
+                                    when((uiState as HomeScreenViewState.LoadedSuccessfully).allTrackies) {
+
+                                        null -> {
+
+                                            TextMedium("loading")
+                                            viewModel.fetchAllTrackies()
+                                        }
+
+                                        else -> {
+
+                                            ShowAllTrackiesLazyColumn((uiState as HomeScreenViewState.LoadedSuccessfully).allTrackies!!)
+                                        }
+                                    }
+                                }
                             }
                         }
-                    )
+
+                        HomeScreenViewState.FailedToLoadData -> {}
+                    }
                 }
             )
+        }
+    )
+}
+
+enum class WhatToDisplay {
+    TrackiesForTheWholeWeek,
+    TrackiesForToday
+}
+
+@Composable fun ShowAllTrackiesLazyColumn(listOfTrackies: List<TrackieViewState>) {
+
+    LazyColumn(
+
+        modifier = Modifier
+            .fillMaxSize(),
+
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top,
+
+        content = {
+
+            items(listOfTrackies) {
+
+                Trackie(
+
+                    name = it.name,
+                    totalDose = it.totalDose,
+                    measuringUnit = it.measuringUnit,
+                    repeatOn = it.repeatOn,
+                    ingestionTime = it.ingestionTime
+                )
+
+                Spacer5()
+            }
         }
     )
 }
