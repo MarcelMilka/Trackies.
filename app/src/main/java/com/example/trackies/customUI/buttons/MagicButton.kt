@@ -1,15 +1,16 @@
 package com.example.trackies.customUI.buttons
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.*
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.EmojiEvents
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,7 +21,7 @@ import com.example.trackies.customUI.texts.TextMedium
 import com.example.trackies.customUI.texts.TextSmall
 import com.example.trackies.ui.theme.CheckedTrackie
 import com.example.trackies.ui.theme.PrimaryColor
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 
 @Composable
 fun MagicButton(
@@ -31,104 +32,168 @@ fun MagicButton(
     onCheck: () -> Unit
 ) {
 
-    var time: Map<String, Int>? = null
-
     var isChecked by remember { mutableStateOf(false) }
 
-    var isPressed by remember { mutableStateOf(false) }
-    var startTime by remember { mutableStateOf(0L) }
+    var targetWidthOfButton by remember { mutableIntStateOf(110) } // 70 or 110
+    val animatedWidthOfButton by animateIntAsState(
+        targetValue = targetWidthOfButton,
+        animationSpec = tween(
+            durationMillis = 250,
+            delayMillis = 0,
+            easing = LinearOutSlowInEasing
+        ),
+        label = "",
+    )
 
-    val targetWidth = if (isChecked) 70.dp else 110.dp
-    val animatedWidth by animateDpAsState(targetValue = targetWidth)
+    val targetColorOfButton = if (isChecked) CheckedTrackie else PrimaryColor
+    val animatedColorOfButton by animateColorAsState(targetValue = targetColorOfButton)
 
-    val targetColor = if (isChecked) CheckedTrackie else PrimaryColor
-    val animatedColor by animateColorAsState(targetValue = targetColor)
+    var buttonIsHeld by remember { mutableStateOf(false) }
 
-    LaunchedEffect(isPressed) {
-        if (isPressed) {
-            startTime = System.currentTimeMillis()
-            delay(2000)
-            val endTime = System.currentTimeMillis()
-            if (isPressed && (endTime - startTime) >= 2000) {
-                isChecked = true
-                onCheck()
-            }
-        } else {
-            isChecked = false
-        }
-    }
+    val scope = rememberCoroutineScope()
 
-    Button(
+    var widthOfSurface by remember { mutableIntStateOf(0) }
 
-        onClick = {
-            isChecked = !isChecked
-            onCheck()
-        },
+    var heightOfSurface by remember { mutableIntStateOf(0) }
 
-        enabled = true,
+    Surface(
 
+        color = animatedColorOfButton,
         shape = RoundedCornerShape(18.dp),
 
         modifier = Modifier
-            .width(animatedWidth)
+            .width(animatedWidthOfButton.dp)
+            .height(50.dp)
             .pointerInput(Unit) {
                 detectTapGestures(
                     onPress = {
-                        isPressed = true
-                        tryAwaitRelease()
-                        isPressed = false
+
+                        if (animatedWidthOfButton != 70) {
+
+                            buttonIsHeld = true
+                            val startTime = System.currentTimeMillis()
+
+                            val coroutineScope = CoroutineScope(Dispatchers.IO).launch {
+
+                                launch {
+
+                                    delay(2000)
+                                    if (buttonIsHeld) { isChecked = true }
+                                }
+
+                                launch {
+
+                                    while (buttonIsHeld) {
+
+                                        if ((System.currentTimeMillis() - startTime) >= 2000L) {
+
+                                            isChecked = true
+                                            targetWidthOfButton = 70
+                                            cancel()
+                                        }
+
+                                        else {
+
+                                            widthOfSurface = (((System.currentTimeMillis() - startTime) * 70) / 2000L).toInt()
+                                            heightOfSurface = (((System.currentTimeMillis() - startTime) * 50) / 2000L).toInt()
+                                        }
+                                    }
+
+                                    if (!buttonIsHeld) {
+
+                                        widthOfSurface = 0
+                                        heightOfSurface = 0
+                                    }
+                                }
+                            }
+
+                            tryAwaitRelease()
+                            coroutineScope.cancel()
+                            buttonIsHeld = false
+                        }
                     }
                 )
-            }
-            .height(50.dp),
-
-        colors = ButtonDefaults.buttonColors(
-            containerColor = animatedColor,
-            contentColor = White,
-            disabledContentColor = PrimaryColor,
-            disabledContainerColor = PrimaryColor
-        ),
+            },
 
         content = {
 
-            when (isChecked) {
+            Box(
 
-                true -> {
+                modifier = Modifier.fillMaxSize(),
 
-                    Icon(
-                        imageVector = Icons.Rounded.EmojiEvents,
-                        contentDescription = null,
-                        tint = White,
+                contentAlignment = Alignment.Center,
+
+                content = {
+
+//                  Orange surface which expands while holding the button
+                    Surface(
+
                         modifier = Modifier
-                            .fillMaxSize()
+                            .width(widthOfSurface.dp)
+                            .height(heightOfSurface.dp),
+
+                        color = CheckedTrackie,
+
+                        shape = RoundedCornerShape(18.dp),
+
+                        content = {}
+                    )
+
+//                  Dose for today
+                    AnimatedVisibility(
+
+                        visible = !isChecked,
+                        enter = fadeIn(animationSpec = tween(250)),
+                        exit = fadeOut(animationSpec = tween(250)),
+
+                        content = {
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.Bottom,
+
+                                content = {
+
+                                    TextMedium(content = "+$totalDose")
+                                    TextSmall(content = measuringUnit)
+                                }
+                            )
+                        }
+                    )
+
+//                  Icon which shows that the goal has been achieved for today
+                    AnimatedVisibility(
+
+                        visible = isChecked,
+                        enter = fadeIn(animationSpec = tween(250)),
+                        exit = fadeOut(animationSpec = tween(250)),
+
+                        content = {
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.Bottom,
+
+                                content = {
+
+                                    Icon(
+
+                                        imageVector = Icons.Rounded.EmojiEvents,
+                                        tint = White,
+                                        contentDescription = null
+                                    )
+                                }
+                            )
+                        }
                     )
                 }
-
-                false -> {
-
-                    if (ingestionTime != null) {}
-
-                    else {
-
-                        Row(
-
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(25.dp)
-                                .align(Alignment.Top),
-
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.Bottom,
-
-                            content = {
-
-                                TextMedium( content = "+$totalDose" )
-                                TextSmall( content = measuringUnit)
-                            }
-                        )
-                    }
-                }
-            }
+            )
         }
     )
 }
