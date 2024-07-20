@@ -1,10 +1,8 @@
 package com.example.trackies.homeScreen.presentation
 
 import android.util.Log
-import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.trackies.homeScreen.buisness.LicenseViewState
 import com.example.trackies.homeScreen.buisness.TrackieViewState
 import com.example.trackies.homeScreen.data.HomeScreenRepository
 import kotlinx.coroutines.delay
@@ -15,8 +13,8 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
 
     private val repository = HomeScreenRepository(uniqueIdentifier = uniqueIdentifier)
 
-    private var _uiState = MutableStateFlow<HomeScreenViewState>(HomeScreenViewState.Loading)
-    val uiState: StateFlow<HomeScreenViewState> get() = _uiState
+    private var _uiState = MutableStateFlow<SharedViewModelViewState>(SharedViewModelViewState.Loading)
+    val uiState: StateFlow<SharedViewModelViewState> get() = _uiState
 
     init {
 
@@ -40,7 +38,7 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
 
                 _uiState.update {
 
-                    HomeScreenViewState.LoadedSuccessfully(
+                    SharedViewModelViewState.LoadedSuccessfully(
 
                         license = licenseInformation,
                         trackiesForToday = trackiesForToday,
@@ -50,7 +48,7 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
                 }
             }
 
-            else { _uiState.update { HomeScreenViewState.FailedToLoadData } }
+            else { _uiState.update { SharedViewModelViewState.FailedToLoadData } }
         }
     }
 
@@ -68,11 +66,11 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
             if (allTrackies != null) {
 
 //              a copy of current data
-                val copy = _uiState.value as HomeScreenViewState.LoadedSuccessfully
+                val copy = _uiState.value as SharedViewModelViewState.LoadedSuccessfully
 
                 _uiState.update {
 
-                    HomeScreenViewState.LoadedSuccessfully(
+                    SharedViewModelViewState.LoadedSuccessfully(
                         license = copy.license,
                         trackiesForToday = copy.trackiesForToday,
                         namesOfAllTrackies = copy.namesOfAllTrackies,

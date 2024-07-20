@@ -3,16 +3,16 @@ package com.example.trackies.homeScreen.presentation
 import com.example.trackies.homeScreen.buisness.LicenseViewState
 import com.example.trackies.homeScreen.buisness.TrackieViewState
 
-sealed class HomeScreenViewState {
+sealed class SharedViewModelViewState {
 
-    object Loading: HomeScreenViewState()
+    object Loading: SharedViewModelViewState()
 
     data class LoadedSuccessfully(
         var license: LicenseViewState,
         var trackiesForToday: List<TrackieViewState>,
         var namesOfAllTrackies: List<String>,
         var allTrackies: List<TrackieViewState>?
-    ): HomeScreenViewState()
+    ): SharedViewModelViewState()
 
-    object FailedToLoadData: HomeScreenViewState()
+    object FailedToLoadData: SharedViewModelViewState()
 }

@@ -19,10 +19,10 @@ import com.example.trackies.customUI.texts.TextMedium
 import com.example.trackies.customUI.texts.TextSmall
 import com.example.trackies.customUI.trackie.Trackie
 import com.example.trackies.homeScreen.buisness.LicenseViewState
-import com.example.trackies.homeScreen.presentation.HomeScreenViewState
+import com.example.trackies.homeScreen.presentation.SharedViewModelViewState
 
 @Composable fun HomeScreenLazyColumn(
-    uiState: HomeScreenViewState,
+    uiState: SharedViewModelViewState,
     onAddNewTrackie: (LicenseViewState) -> Unit
 ) {
 
@@ -48,7 +48,7 @@ import com.example.trackies.homeScreen.presentation.HomeScreenViewState
 
             when (uiState) {
 
-                HomeScreenViewState.Loading -> {
+                SharedViewModelViewState.Loading -> {
 
                     this.item {
 
@@ -69,7 +69,7 @@ import com.example.trackies.homeScreen.presentation.HomeScreenViewState
                     }
                 }
 
-                is HomeScreenViewState.LoadedSuccessfully -> {
+                is SharedViewModelViewState.LoadedSuccessfully -> {
 
                     targetHeightOfLazyColumn = when (uiState.trackiesForToday.count()) {
 
@@ -123,7 +123,7 @@ import com.example.trackies.homeScreen.presentation.HomeScreenViewState
                     }
                 }
 
-                HomeScreenViewState.FailedToLoadData -> {
+                SharedViewModelViewState.FailedToLoadData -> {
 
                     targetHeightOfLazyColumn = 100
 

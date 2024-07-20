@@ -10,7 +10,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.trackies.customUI.buttons.IconButtonToNavigateBetweenActivities
 import com.example.trackies.customUI.buttons.MediumRadioTextButton
 import com.example.trackies.customUI.spacers.Spacer40
@@ -19,17 +18,15 @@ import com.example.trackies.customUI.texts.MediumHeader
 import com.example.trackies.customUI.texts.TextMedium
 import com.example.trackies.customUI.trackie.Trackie
 import com.example.trackies.homeScreen.buisness.TrackieViewState
-import com.example.trackies.homeScreen.presentation.HomeScreenViewState
-import com.example.trackies.homeScreen.presentation.SharedViewModel
+import com.example.trackies.homeScreen.presentation.SharedViewModelViewState
 import com.example.trackies.ui.theme.BackgroundColor
 
 @Composable
 fun ShowAllTrackies(
-    viewModel: SharedViewModel = viewModel(),
+    uiState: SharedViewModelViewState,
     onReturn: () -> Unit,
+    fetchAllUsersTrackies: () -> Unit
 ) {
-
-    val uiState by viewModel.uiState.collectAsState()
 
     var wholeWeek by remember { mutableStateOf(false) }
     var today by remember { mutableStateOf(true) }
@@ -96,36 +93,37 @@ fun ShowAllTrackies(
 
                     when (uiState) {
 
-                        HomeScreenViewState.Loading -> {}
+                        SharedViewModelViewState.Loading -> {}
 
-                        is HomeScreenViewState.LoadedSuccessfully -> {
+                        is SharedViewModelViewState.LoadedSuccessfully -> {
 
                             when(whatToDisplay) {
                                 WhatToDisplay.TrackiesForToday -> {
 
-                                    ShowAllTrackiesLazyColumn((uiState as HomeScreenViewState.LoadedSuccessfully).trackiesForToday)
+                                    ShowAllTrackiesLazyColumn(uiState.trackiesForToday)
                                 }
 
                                 WhatToDisplay.TrackiesForTheWholeWeek -> {
 
-                                    when((uiState as HomeScreenViewState.LoadedSuccessfully).allTrackies) {
+                                    when(uiState.allTrackies) {
 
                                         null -> {
 
                                             TextMedium("loading")
-                                            viewModel.fetchAllTrackies()
+                                            fetchAllUsersTrackies()
+//                                            uiState.fetchAllTrackies()
                                         }
 
                                         else -> {
 
-                                            ShowAllTrackiesLazyColumn((uiState as HomeScreenViewState.LoadedSuccessfully).allTrackies!!)
+                                            ShowAllTrackiesLazyColumn(uiState.allTrackies!!)
                                         }
                                     }
                                 }
                             }
                         }
 
-                        HomeScreenViewState.FailedToLoadData -> {}
+                        SharedViewModelViewState.FailedToLoadData -> {}
                     }
                 }
             )

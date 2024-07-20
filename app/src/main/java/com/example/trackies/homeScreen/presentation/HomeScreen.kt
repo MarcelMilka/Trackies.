@@ -8,7 +8,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.trackies.customUI.buttons.ButtonAddAnotherTrackie
 import com.example.trackies.customUI.buttons.ButtonShowAllTrackies
 import com.example.trackies.customUI.buttons.IconButtonToNavigateBetweenActivities
@@ -20,14 +19,13 @@ import com.example.trackies.ui.theme.BackgroundColor
 
 @Composable
 fun HomeScreen(
-    viewModel: SharedViewModel = viewModel(),
+
+    uiState: SharedViewModelViewState,
     onAddNewTrackie: () -> Unit,
     onShowAllTrackies: () -> Unit,
     onSignOut: () -> Unit,
     onDelete: () -> Unit,
 ) {
-
-    val uiState by viewModel.uiState.collectAsState()
 
     Box(
 

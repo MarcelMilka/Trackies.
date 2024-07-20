@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.runtime.collectAsState
 import androidx.navigation.compose.*
 import com.example.trackies.authentication.repository.FirebaseAuthentication
 import com.example.trackies.authentication.ui.login.LogIn
@@ -150,7 +151,7 @@ class MainActivity : ComponentActivity() {
 
                         HomeScreen(
 
-                            viewModel = sharedViewModel,
+                            uiState = sharedViewModel.uiState.collectAsState().value,
 
                             onAddNewTrackie = {
 
@@ -197,7 +198,7 @@ class MainActivity : ComponentActivity() {
                     ) {
 
                         AddNewTrackie(
-                            viewModel = sharedViewModel,
+                            uiState = sharedViewModel.uiState.collectAsState().value,
                             onReturn = { navigationController.navigateUp() },
                             onNavigateToTrackiesPremium = { navigationController.navigate("TrackiesPremium") },
                             onAdd = {trackie ->
@@ -223,8 +224,9 @@ class MainActivity : ComponentActivity() {
 
                         ShowAllTrackies(
 
-                            viewModel = sharedViewModel,
-                            onReturn = { navigationController.navigateUp() }
+                            uiState = sharedViewModel.uiState.collectAsState().value,
+                            onReturn = { navigationController.navigateUp() },
+                            fetchAllUsersTrackies = { sharedViewModel.fetchAllTrackies() }
                         )
                     }
 

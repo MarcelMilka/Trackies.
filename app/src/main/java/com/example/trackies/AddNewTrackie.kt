@@ -21,36 +21,33 @@ import com.example.trackies.customUI.spacers.Spacer40
 import com.example.trackies.customUI.spacers.Spacer5
 import com.example.trackies.customUI.texts.MediumHeader
 import com.example.trackies.homeScreen.buisness.TrackieViewState
-import com.example.trackies.homeScreen.presentation.HomeScreenViewState
-import com.example.trackies.homeScreen.presentation.SharedViewModel
+import com.example.trackies.homeScreen.presentation.SharedViewModelViewState
 import com.example.trackies.ui.theme.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "CoroutineCreationDuringComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddNewTrackie(
-    viewModel: SharedViewModel,
+    uiState: SharedViewModelViewState,
     onReturn: () -> Unit,
     onNavigateToTrackiesPremium: () -> Unit,
     onAdd: ( TrackieViewState ) -> Unit
 ) {
 
 //  SharedViewModel
-    val uiState by viewModel.uiState.collectAsState()
     var listOfNames by remember { mutableStateOf(mutableListOf<String>()) }
 
     when (uiState) {
-        HomeScreenViewState.Loading -> {}
+        SharedViewModelViewState.Loading -> {}
 
-        is HomeScreenViewState.LoadedSuccessfully -> {
-            listOfNames = (uiState as HomeScreenViewState.LoadedSuccessfully).namesOfAllTrackies.toMutableList()
+        is SharedViewModelViewState.LoadedSuccessfully -> {
+            listOfNames = uiState.namesOfAllTrackies.toMutableList()
         }
 
-        HomeScreenViewState.FailedToLoadData -> {}
+        SharedViewModelViewState.FailedToLoadData -> {}
     }
 
     val addNewTrackieViewModel = AddNewTrackieViewModel()
@@ -148,9 +145,9 @@ fun AddNewTrackie(
 
                             when (uiState) {
 
-                                HomeScreenViewState.Loading -> {}
+                                SharedViewModelViewState.Loading -> {}
 
-                                is HomeScreenViewState.LoadedSuccessfully -> {
+                                is SharedViewModelViewState.LoadedSuccessfully -> {
 
                                     ImprovedNameOfTrackie(viewModel = addNewTrackieViewModel)
 
@@ -166,12 +163,12 @@ fun AddNewTrackie(
 
                                     TimeOfIngestion(
                                         viewModel = addNewTrackieViewModel,
-                                        licenseViewState = (uiState as HomeScreenViewState.LoadedSuccessfully).license,
+                                        licenseViewState = uiState.license,
                                         onBuyLicense = { onNavigateToTrackiesPremium() }
                                     )
                                 }
 
-                                HomeScreenViewState.FailedToLoadData -> {}
+                                SharedViewModelViewState.FailedToLoadData -> {}
 
                             }
                         }
