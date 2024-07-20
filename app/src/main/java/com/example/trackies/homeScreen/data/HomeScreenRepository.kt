@@ -217,7 +217,6 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes {
 
         return suspendCoroutine { continuation ->
 
-
             if (licenseViewState != null) {
 
                 licenseViewState.totalAmountOfTrackies
@@ -236,6 +235,25 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes {
                 trackieViewState.repeatOn.forEach { dayOfWeek ->
 
                     namesOfTrackies.update(dayOfWeek, FieldValue.arrayUnion(trackieViewState.name))
+                }
+
+//              add name of the trackies to { (user's statistics) -> user's weekly statistics) -> (*particular day of week*)
+
+                if (trackieViewState.ingestionTime == null) {
+
+                    val fieldToSave = mutableMapOf<String, Boolean>()
+
+                    fieldToSave.put(key = "ingested", value = false)
+
+                    trackieViewState.repeatOn.forEach { dayOfWeek ->
+
+                        usersWeeklyStatistics
+                            .collection(dayOfWeek)
+                            .document(trackieViewState.name)
+                            .set(fieldToSave)
+                            .addOnSuccessListener { Log.d("HomeScreenRepository, addNewTrackie, ingestionTime == null", "savedSuccessfully") }
+                            .addOnSuccessListener { Log.d("HomeScreenRepository, addNewTrackie, ingestionTime == null", "an error occurred, $it") }
+                    }
                 }
 
                 continuation.resume(true)
