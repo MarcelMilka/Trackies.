@@ -24,7 +24,7 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes {
     private val usersTrackies = user.collection("user's trackies").document("trackies")
     private val namesOfTrackies = user.collection("names of trackies").document("names of trackies")
 
-    private val usersStatistics = user.collection("user's statistics").document("statistics")
+    private val usersWeeklyStatistics = user.collection("user's statistics").document("user's weekly statistics")
 
     override fun isFirstTimeInApp() {
 
@@ -41,7 +41,9 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes {
 
     private fun addNewUser() {
 
-        users.document(uniqueIdentifier).set({})
+        users
+            .document(uniqueIdentifier)
+            .set({})
             .continueWith {
                 val update = hashMapOf<String, Any>(
                     "arity" to FieldValue.delete()
@@ -63,12 +65,16 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes {
         namesOfTrackies.update("sunday", listOf<String>())
 
 //      "user's trackies" -> "trackies"
-        usersTrackies.set({})
+        usersTrackies
+            .set({})
             .continueWith { usersTrackies.update(hashMapOf<String, Any>("arity" to FieldValue.delete())) }
 
-//      "user's statistics" -> "statistics"
-        usersStatistics.set({})
-            .continueWith { usersStatistics.update(hashMapOf<String, Any>("arity" to FieldValue.delete())) }
+//      "user's statistics" -> "user's weekly statistics"
+        usersWeeklyStatistics
+            .set({})
+            .continueWith {
+                usersWeeklyStatistics.update(hashMapOf<String, Any>("arity" to FieldValue.delete()))
+            }
     }
 
     override suspend fun fetchUsersLicenseInformation(): LicenseViewState? {
