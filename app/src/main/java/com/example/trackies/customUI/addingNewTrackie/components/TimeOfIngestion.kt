@@ -13,14 +13,17 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.trackies.customUI.addingNewTrackie.AddTimeOfIngestion
 import com.example.trackies.customUI.addingNewTrackie.SpecifiedTimeOfIngestion
 import com.example.trackies.customUI.addingNewTrackie.viewModel.AddNewTrackieViewModel
 import com.example.trackies.customUI.addingNewTrackie.viewModel.IsActive
@@ -303,20 +306,34 @@ fun TimeOfIngestion(
                                                 .fillMaxSize()
                                                 .padding(5.dp),
 
-                                            horizontalAlignment = Alignment.CenterHorizontally,
+                                            horizontalAlignment = Alignment.Start,
                                             verticalArrangement = Arrangement.Top,
 
                                             content = {
 
-                                                item {
+                                                items(listOf<String>()) {
 
-                                                    AddTimeOfIngestion()
+                                                    SpecifiedTimeOfIngestion(time = "15:00", dose = 100, measuringUnit = "ml")
                                                     Spacer5()
                                                 }
 
-                                                items(listOf<String>("", "")) {
+                                                item {
 
-                                                    SpecifiedTimeOfIngestion(time = "15:00", dose = 100, measuringUnit = "ml")
+                                                    IconButton(
+
+                                                        onClick = {},
+                                                        content = {
+
+                                                            Icon(
+
+                                                                imageVector = Icons.Rounded.Add,
+                                                                tint = Color.White,
+                                                                contentDescription = null,
+                                                                modifier = Modifier
+                                                                    .padding(start = 10.dp)
+                                                            )
+                                                        }
+                                                    )
                                                     Spacer5()
                                                 }
                                             }
