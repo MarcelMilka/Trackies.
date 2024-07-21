@@ -1,5 +1,6 @@
 package com.example.trackies.customUI.trackie
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,7 +21,9 @@ import com.example.trackies.ui.theme.SecondaryColor
     totalDose: Int,
     measuringUnit: String,
     repeatOn: List<String>,
-    ingestionTime: Map<String, Int>?
+    ingestionTime: Map<String, Int>?,
+
+    onCheck: () -> Unit
 ) {
 
     Row(
@@ -88,8 +91,14 @@ import com.example.trackies.ui.theme.SecondaryColor
             MagicButton(
                 ingestionTime = ingestionTime,
                 totalDose = totalDose,
-                measuringUnit = measuringUnit
-            ) {}
+                measuringUnit = measuringUnit,
+
+                onCheck = {
+
+                    onCheck()
+                    Log.d("Trackie.kt has been clicked", "Trackie: ")
+                }
+            )
         }
     )
 }

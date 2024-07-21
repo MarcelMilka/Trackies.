@@ -15,6 +15,7 @@ import com.example.trackies.customUI.lazyColumns.HomeScreenLazyColumn
 import com.example.trackies.customUI.spacers.Spacer40
 import com.example.trackies.customUI.spacers.Spacer5
 import com.example.trackies.customUI.texts.MediumHeader
+import com.example.trackies.homeScreen.buisness.TrackieViewState
 import com.example.trackies.ui.theme.BackgroundColor
 
 @Composable
@@ -22,6 +23,7 @@ fun HomeScreen(
 
     uiState: SharedViewModelViewState,
     onAddNewTrackie: () -> Unit,
+    onCheck: (trackieViewState: TrackieViewState) -> Unit,
     onShowAllTrackies: () -> Unit,
     onSignOut: () -> Unit,
     onDelete: () -> Unit,
@@ -57,7 +59,9 @@ fun HomeScreen(
 
                     HomeScreenLazyColumn(
                         uiState = uiState,
-                        onAddNewTrackie = { onAddNewTrackie() }
+                        onAddNewTrackie = { onAddNewTrackie() },
+
+                        onCheck = { onCheck(it) }
                     )
 
                     Spacer5()

@@ -22,6 +22,7 @@ import com.example.trackies.customUI.texts.TextSmall
 import com.example.trackies.ui.theme.CheckedTrackie
 import com.example.trackies.ui.theme.PrimaryColor
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.actor
 
 @Composable
 fun MagicButton(
@@ -43,14 +44,17 @@ fun MagicButton(
             easing = LinearOutSlowInEasing
         ),
         label = "",
-    )
+    ).also {
+
+        if (it.value == 70) {
+            onCheck()
+        }
+    }
 
     val targetColorOfButton = if (isChecked) CheckedTrackie else PrimaryColor
     val animatedColorOfButton by animateColorAsState(targetValue = targetColorOfButton)
 
     var buttonIsHeld by remember { mutableStateOf(false) }
-
-    val scope = rememberCoroutineScope()
 
     var widthOfSurface by remember { mutableIntStateOf(0) }
 
@@ -73,37 +77,31 @@ fun MagicButton(
                             buttonIsHeld = true
                             val startTime = System.currentTimeMillis()
 
-                            val coroutineScope = CoroutineScope(Dispatchers.IO).launch {
+                            val coroutineScope = CoroutineScope(Dispatchers.Default).launch {
 
-                                launch {
+                                while (buttonIsHeld) {
 
-                                    delay(2000)
-                                    if (buttonIsHeld) { isChecked = true }
+                                    if ((System.currentTimeMillis() - startTime) >= 2000L) {
+
+                                        isChecked = true
+                                        targetWidthOfButton = 70
+
+                                        launch { onCheck() }
+
+                                        cancel()
+                                    }
+
+                                    else {
+
+                                        widthOfSurface = (((System.currentTimeMillis() - startTime) * 70) / 2000L).toInt()
+                                        heightOfSurface = (((System.currentTimeMillis() - startTime) * 50) / 2000L).toInt()
+                                    }
                                 }
 
-                                launch {
+                                if (!buttonIsHeld) {
 
-                                    while (buttonIsHeld) {
-
-                                        if ((System.currentTimeMillis() - startTime) >= 2000L) {
-
-                                            isChecked = true
-                                            targetWidthOfButton = 70
-                                            cancel()
-                                        }
-
-                                        else {
-
-                                            widthOfSurface = (((System.currentTimeMillis() - startTime) * 70) / 2000L).toInt()
-                                            heightOfSurface = (((System.currentTimeMillis() - startTime) * 50) / 2000L).toInt()
-                                        }
-                                    }
-
-                                    if (!buttonIsHeld) {
-
-                                        widthOfSurface = 0
-                                        heightOfSurface = 0
-                                    }
+                                    widthOfSurface = 0
+                                    heightOfSurface = 0
                                 }
                             }
 

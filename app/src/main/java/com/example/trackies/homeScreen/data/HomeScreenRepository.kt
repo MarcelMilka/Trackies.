@@ -38,7 +38,6 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes {
             }
             .addOnFailureListener { Log.d("halla!", "an error occurred while loading data") }
     }
-
     private fun addNewUser() {
 
         users
@@ -76,7 +75,6 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes {
                 usersWeeklyStatistics.update(hashMapOf<String, Any>("arity" to FieldValue.delete()))
             }
     }
-
     override suspend fun fetchUsersLicenseInformation(): LicenseViewState? {
 
         return suspendCoroutine {continuation ->
@@ -263,7 +261,6 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes {
 
         }
     }
-
     override suspend fun fetchAllTrackies(): List<TrackieViewState>? {
 
         val namesOfTrackiesForToday: List<String>? = fetchNamesOfTrackies("whole week")
@@ -324,5 +321,22 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes {
 
             else { continuation.resume(null) }
         }
+    }
+    override fun checkTrackieAsIngestedForToday(trackieViewState: TrackieViewState) {
+
+        Log.d("checkAsIngestedForToday", trackieViewState.name)
+
+//        if (trackieViewState.ingestionTime == null) {
+//
+//            trackieViewState.repeatOn.forEach { dayOfWeek ->
+//
+//                usersWeeklyStatistics
+//                    .collection(currentDateAndTime.getCurrentDayOfWeek()) // current day of week
+//                    .document(trackieViewState.name)
+//                    .update("ingested", true)
+//                    .addOnSuccessListener { Log.d("HomeScreenRepository, checkTrackieAsIngestedForToday, ingestionTime == null", "updatedSuccessfully") }
+//                    .addOnSuccessListener { Log.d("HomeScreenRepository, checkTrackieAsIngestedForToday, ingestionTime == null", "an error occurred, $it") }
+//            }
+//        }
     }
 }

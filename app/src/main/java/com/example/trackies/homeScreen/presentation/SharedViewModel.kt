@@ -57,6 +57,12 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
         viewModelScope.launch { repository.addNewTrackie(trackieViewState = trackieViewState) }
     }
 
+    fun checkTrackieAsIngestedForToday(trackieViewState: TrackieViewState) {
+
+        // TODO: create a map which is going to fetch and update information which trackies are checked and based on it call the method below
+        repository.checkTrackieAsIngestedForToday(trackieViewState)
+    }
+
     fun fetchAllTrackies() {
 
         viewModelScope.launch {

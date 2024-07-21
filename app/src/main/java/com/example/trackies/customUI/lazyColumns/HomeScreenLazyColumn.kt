@@ -19,11 +19,14 @@ import com.example.trackies.customUI.texts.TextMedium
 import com.example.trackies.customUI.texts.TextSmall
 import com.example.trackies.customUI.trackie.Trackie
 import com.example.trackies.homeScreen.buisness.LicenseViewState
+import com.example.trackies.homeScreen.buisness.TrackieViewState
 import com.example.trackies.homeScreen.presentation.SharedViewModelViewState
 
 @Composable fun HomeScreenLazyColumn(
     uiState: SharedViewModelViewState,
-    onAddNewTrackie: (LicenseViewState) -> Unit
+    onAddNewTrackie: (LicenseViewState) -> Unit,
+
+    onCheck: (trackieViewState: TrackieViewState) -> Unit
 ) {
 
     var targetHeightOfLazyColumn by remember { mutableIntStateOf(195) }
@@ -54,7 +57,7 @@ import com.example.trackies.homeScreen.presentation.SharedViewModelViewState
 
                         AnimatedVisibility(
 
-                            visible = true, // TODO: implement a variable which is going to determine whether the error is visible, or not
+                            visible = true,
                             enter = fadeIn(animationSpec = tween(500)),
                             exit = fadeOut(animationSpec = tween(500)),
 
@@ -88,9 +91,13 @@ import com.example.trackies.homeScreen.presentation.SharedViewModelViewState
                             totalDose = trackie.totalDose,
                             measuringUnit = trackie.measuringUnit,
                             repeatOn = trackie.repeatOn,
-                            ingestionTime = trackie.ingestionTime
+                            ingestionTime = trackie.ingestionTime,
+
+                            onCheck = { onCheck(trackie) }
                         )
+
                         Spacer5()
+
                     }
 
                     item {

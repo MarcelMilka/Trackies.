@@ -5,4 +5,5 @@ import com.example.trackies.homeScreen.buisness.TrackieViewState
 interface Writes {
 
     suspend fun addNewTrackie(trackieViewState: TrackieViewState): Boolean
+    fun checkTrackieAsIngestedForToday(trackieViewState: TrackieViewState)
 }

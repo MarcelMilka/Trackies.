@@ -158,6 +158,11 @@ class MainActivity : ComponentActivity() {
                                 navigationController.navigate("AddNewTrackie")
                             },
 
+                            onCheck = { trackieViewState ->
+
+                                sharedViewModel.checkTrackieAsIngestedForToday(trackieViewState = trackieViewState)
+                            },
+
                             onShowAllTrackies = {
 
                                 navigationController.navigate( route = "ShowAllTrackies" )

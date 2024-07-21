@@ -156,7 +156,9 @@ enum class WhatToDisplay {
                     totalDose = it.totalDose,
                     measuringUnit = it.measuringUnit,
                     repeatOn = it.repeatOn,
-                    ingestionTime = it.ingestionTime
+                    ingestionTime = it.ingestionTime,
+
+                    onCheck = {}
                 )
 
                 Spacer5()
