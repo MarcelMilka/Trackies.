@@ -160,6 +160,7 @@ class MainActivity : ComponentActivity() {
 
                             onCheck = { trackieViewState ->
 
+
                                 sharedViewModel.checkTrackieAsIngestedForToday(trackieViewState = trackieViewState)
                             },
 
