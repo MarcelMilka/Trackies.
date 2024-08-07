@@ -1,5 +1,6 @@
 package com.example.trackies.customUI.buttons
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.*
@@ -44,12 +45,7 @@ fun MagicButton(
             easing = LinearOutSlowInEasing
         ),
         label = "",
-    ).also {
-
-        if (it.value == 70) {
-            onCheck()
-        }
-    }
+    )
 
     val targetColorOfButton = if (isChecked) CheckedTrackie else PrimaryColor
     val animatedColorOfButton by animateColorAsState(targetValue = targetColorOfButton)
@@ -86,7 +82,10 @@ fun MagicButton(
                                         isChecked = true
                                         targetWidthOfButton = 70
 
-                                        launch { onCheck() }
+                                        launch {
+
+                                            onCheck()
+                                        }.join()
 
                                         cancel()
                                     }

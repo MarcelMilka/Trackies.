@@ -94,7 +94,6 @@ import com.example.trackies.ui.theme.SecondaryColor
                 measuringUnit = measuringUnit,
 
                 onCheck = {
-
                     onCheck()
                     Log.d("Trackie.kt has been clicked", "Trackie: ")
                 }
