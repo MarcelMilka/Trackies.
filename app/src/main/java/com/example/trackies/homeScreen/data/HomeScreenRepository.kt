@@ -326,17 +326,17 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes {
 
         Log.d("checkAsIngestedForToday", trackieViewState.name)
 
-//        if (trackieViewState.ingestionTime == null) {
-//
-//            trackieViewState.repeatOn.forEach { dayOfWeek ->
-//
-//                usersWeeklyStatistics
-//                    .collection(currentDateAndTime.getCurrentDayOfWeek()) // current day of week
-//                    .document(trackieViewState.name)
-//                    .update("ingested", true)
-//                    .addOnSuccessListener { Log.d("HomeScreenRepository, checkTrackieAsIngestedForToday, ingestionTime == null", "updatedSuccessfully") }
-//                    .addOnSuccessListener { Log.d("HomeScreenRepository, checkTrackieAsIngestedForToday, ingestionTime == null", "an error occurred, $it") }
-//            }
-//        }
+        if (trackieViewState.ingestionTime == null) {
+
+            trackieViewState.repeatOn.forEach { dayOfWeek ->
+
+                usersWeeklyStatistics
+                    .collection(currentDateAndTime.getCurrentDayOfWeek()) // current day of week
+                    .document(trackieViewState.name)
+                    .update("ingested", true)
+                    .addOnSuccessListener { Log.d("HomeScreenRepository, checkTrackieAsIngestedForToday, ingestionTime == null", "updatedSuccessfully") }
+                    .addOnFailureListener { Log.d("HomeScreenRepository, checkTrackieAsIngestedForToday, ingestionTime == null", "an error occurred, $it") }
+            }
+        }
     }
 }
