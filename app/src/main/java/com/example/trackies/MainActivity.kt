@@ -6,6 +6,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.Text
 import androidx.compose.runtime.collectAsState
 import androidx.navigation.compose.*
 import com.example.trackies.authentication.repository.FirebaseAuthentication
@@ -16,6 +18,7 @@ import com.example.trackies.authentication.ui.register.Authenticate
 import com.example.trackies.authentication.ui.register.CouldNotRegister
 import com.example.trackies.authentication.ui.register.Register
 import com.example.trackies.authentication.ui.welcomeScreen.WelcomeScreen
+import com.example.trackies.customUI.texts.TextSmall
 import com.example.trackies.homeScreen.buisness.TrackieViewState
 import com.example.trackies.homeScreen.presentation.HomeScreen
 import com.example.trackies.homeScreen.presentation.SharedViewModel
@@ -39,20 +42,29 @@ class MainActivity : ComponentActivity() {
 
             val navigationController = rememberNavController()
 
-            NavHost( navController = navigationController, startDestination = when (uniqueIdentifier) { null -> {"SignedOut"} else -> {"SignedIn"} } ) {
+            var startDestination = when (uniqueIdentifier) {
+
+                null -> "SignedOut"
+
+                else -> "SignedIn"
+            }
+
+            Log.d("start destination", startDestination)
+
+            NavHost(
+                navController = navigationController,
+                startDestination = startDestination
+            ) {
 
 //              Welcome screen
-                navigation( route = "SignedOut", startDestination = "WelcomeScreen" ) {
+                navigation(route = "SignedOut", startDestination = "WelcomeScreen") {
 
-                    composable( route = "WelcomeScreen" ) {
-
-                        WelcomeScreen { navigationController.navigate( it ) }
-                    }
+                    composable(route = "WelcomeScreen") { WelcomeScreen { navigationController.navigate(it) } }
 
 //                  Sign up
-                    navigation( route = "SignUp", startDestination = "Register" ) {
+                    navigation(route = "SignUp", startDestination = "Register") {
 
-                        composable( route = "Register" ) {
+                        composable(route = "Register") {
 
                             Register { credentials ->
 
@@ -91,9 +103,9 @@ class MainActivity : ComponentActivity() {
                     }
 
 //                  Sign in
-                    navigation( route = "SignIn", startDestination = "Login" ) {
+                    navigation(route = "SignIn", startDestination = "Login") {
 
-                        composable( route = "Login" ) {
+                        composable(route = "Login") {
 
                             LogIn(
                                 onContinue = { credentials ->
@@ -116,7 +128,7 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
-                        composable( route = "RecoverThePassword" ) {
+                        composable(route = "RecoverThePassword") {
                             RecoverThePassword { email ->
 
                                 firebaseAuthenticator.recoverThePassword(
@@ -131,7 +143,7 @@ class MainActivity : ComponentActivity() {
                             }
                         }
 
-                        composable( route = "RecoverThePassword-Information" ) {
+                        composable(route = "RecoverThePassword-Information") {
                             RecoverThePasswordInformation {
                                 navigationController.navigate(it) { popUpTo("SignIn") { inclusive = false } }
                             }
@@ -142,9 +154,10 @@ class MainActivity : ComponentActivity() {
 //              Home screen
                 navigation( route = "SignedIn", startDestination = "HomeScreen" ) {
 
-                    val sharedViewModel = SharedViewModel(uniqueIdentifier!!)
+                    val sharedViewModel by lazy { SharedViewModel(uniqueIdentifier!!) }
 
-                    composable(route = "HomeScreen",
+                    composable(
+                        route = "HomeScreen",
                         enterTransition = {EnterTransition.None },
                         exitTransition = { ExitTransition.None }
                     ) {
@@ -198,7 +211,8 @@ class MainActivity : ComponentActivity() {
                         )
                     }
 
-                    composable(route = "AddNewTrackie",
+                    composable(
+                        route = "AddNewTrackie",
                         enterTransition = {EnterTransition.None },
                         exitTransition = { ExitTransition.None }
                     ) {
@@ -223,7 +237,8 @@ class MainActivity : ComponentActivity() {
                         )
                     }
 
-                    composable(route = "ShowAllTrackies",
+                    composable(
+                        route = "ShowAllTrackies",
                         enterTransition = {EnterTransition.None },
                         exitTransition = { ExitTransition.None }
                     ) {
@@ -236,7 +251,9 @@ class MainActivity : ComponentActivity() {
                         )
                     }
 
-                    dialog( route = "TrackiesPremium" ) {
+                    dialog(
+                        route = "TrackiesPremium"
+                    ) {
 
                         TrackiesPremium { navigationController.navigateUp() }
                     }

@@ -72,6 +72,8 @@ fun HomeScreen(
 
                     ButtonAddAnotherTrackie { onAddNewTrackie() }
 
+                    ButtonShowAllTrackies { onSignOut() }
+
                 }
             )
         }
