@@ -27,12 +27,14 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
             val licenseInformation = repository.fetchUsersLicenseInformation()
             val trackiesForToday = repository.fetchTrackiesForToday()
             val namesOfAllTrackies = repository.fetchNamesOfAllTrackies()
+            val statesOfTrackiesForToday = repository.fetchStatesOfTrackiesForToday()
 
             if ( licenseInformation != null && trackiesForToday != null && namesOfAllTrackies != null ) {
 
                 Log.d("GTR-R35", "$licenseInformation")
                 Log.d("GTR-R35", "$trackiesForToday")
                 Log.d("GTR-R35", "$namesOfAllTrackies")
+                Log.d("SharedViewModel, init, statesOfTrackiesForToday", "$statesOfTrackiesForToday")
 
                 delay(2500)
 
@@ -43,7 +45,8 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
                         license = licenseInformation,
                         trackiesForToday = trackiesForToday,
                         namesOfAllTrackies = namesOfAllTrackies,
-                        allTrackies = null
+                        allTrackies = null,
+                        statesOfTrackiesForToday = null
                     )
                 }
             }
@@ -59,7 +62,6 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
 
     fun checkTrackieAsIngestedForToday(trackieViewState: TrackieViewState) {
 
-        // TODO: create a map which is going to fetch and update information which trackies are checked and based on it call the method below
         repository.checkTrackieAsIngestedForToday(trackieViewState)
     }
 
@@ -80,7 +82,8 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
                         license = copy.license,
                         trackiesForToday = copy.trackiesForToday,
                         namesOfAllTrackies = copy.namesOfAllTrackies,
-                        allTrackies = allTrackies
+                        allTrackies = allTrackies,
+                        statesOfTrackiesForToday = null
                     )
                 }
             }

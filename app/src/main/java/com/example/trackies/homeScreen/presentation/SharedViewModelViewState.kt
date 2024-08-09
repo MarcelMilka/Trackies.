@@ -11,7 +11,8 @@ sealed class SharedViewModelViewState {
         var license: LicenseViewState,
         var trackiesForToday: List<TrackieViewState>,
         var namesOfAllTrackies: List<String>,
-        var allTrackies: List<TrackieViewState>?
+        var allTrackies: List<TrackieViewState>?,
+        var statesOfTrackiesForToday: Map<String,Boolean>?
     ): SharedViewModelViewState()
 
     object FailedToLoadData: SharedViewModelViewState()

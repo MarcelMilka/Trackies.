@@ -9,6 +9,9 @@ import com.example.trackies.homeScreen.buisness.entities.TrackieViewStateEntity
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes {
@@ -337,6 +340,49 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes {
                     .addOnSuccessListener { Log.d("HomeScreenRepository, checkTrackieAsIngestedForToday, ingestionTime == null", "updatedSuccessfully") }
                     .addOnFailureListener { Log.d("HomeScreenRepository, checkTrackieAsIngestedForToday, ingestionTime == null", "an error occurred, $it") }
             }
+        }
+    }
+
+    override suspend fun fetchStatesOfTrackiesForToday(): Map<String, Boolean>? {
+
+        val namesOfTrackiesForToday: List<String>? = fetchNamesOfTrackies(currentDateAndTime.getCurrentDayOfWeek())
+        var namesAndStatesOfTrackies = mutableMapOf<String, Boolean>()
+
+        return suspendCoroutine { continuation ->
+
+            if (namesOfTrackiesForToday != null) {
+
+
+                namesOfTrackiesForToday.onEach {nameOfTheTrackie ->
+
+                    usersWeeklyStatistics
+                        .collection(currentDateAndTime.getCurrentDayOfWeek())
+                        .document(nameOfTheTrackie)
+                        .get()
+                        .addOnSuccessListener {document ->
+
+                            document.getBoolean("ingested").let { stateOfTheTrackie ->
+
+                                if (stateOfTheTrackie != null) {
+
+                                    namesAndStatesOfTrackies[nameOfTheTrackie] = stateOfTheTrackie
+
+                                    if (namesAndStatesOfTrackies.size == namesOfTrackiesForToday.size) {
+                                        continuation.resume(namesAndStatesOfTrackies)
+                                    }
+                                }
+
+                                else { continuation.resume(null) }
+                            }
+                        }
+                        .addOnFailureListener {
+
+                            Log.d("HomeScreenRepository, fetchStatesOfTrackiesForToday", "$it")
+                        }
+                }
+            }
+
+            else { continuation.resume(null) }
         }
     }
 }
