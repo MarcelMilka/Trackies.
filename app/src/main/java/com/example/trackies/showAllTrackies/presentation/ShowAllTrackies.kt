@@ -157,7 +157,7 @@ enum class WhatToDisplay {
                     measuringUnit = it.measuringUnit,
                     repeatOn = it.repeatOn,
                     ingestionTime = it.ingestionTime,
-
+                    stateOfTheTrackie = true, // TODO: edit code
                     onCheck = {}
                 )
 

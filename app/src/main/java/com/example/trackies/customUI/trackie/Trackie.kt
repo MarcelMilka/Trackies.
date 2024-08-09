@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.trackies.customUI.buttons.IconButtonDetails
 import com.example.trackies.customUI.buttons.MagicButton
+import com.example.trackies.customUI.buttons.MagicButtonMarkedAsIngested
 import com.example.trackies.customUI.progressIndicators.TrackieProgressBar
 import com.example.trackies.customUI.spacers.Spacer5
 import com.example.trackies.customUI.texts.TextMedium
@@ -22,6 +23,8 @@ import com.example.trackies.ui.theme.SecondaryColor
     measuringUnit: String,
     repeatOn: List<String>,
     ingestionTime: Map<String, Int>?,
+
+    stateOfTheTrackie: Boolean,
 
     onCheck: () -> Unit
 ) {
@@ -88,16 +91,21 @@ import com.example.trackies.ui.theme.SecondaryColor
                 }
             )
 
-            MagicButton(
-                ingestionTime = ingestionTime,
-                totalDose = totalDose,
-                measuringUnit = measuringUnit,
+            when (stateOfTheTrackie) {
 
-                onCheck = {
-                    onCheck()
-                    Log.d("Trackie.kt has been clicked", "Trackie: ")
+                true -> { MagicButtonMarkedAsIngested() }
+
+                false -> {
+
+                    MagicButton(
+                        ingestionTime = ingestionTime,
+                        totalDose = totalDose,
+                        measuringUnit = measuringUnit,
+
+                        onCheck = { onCheck() }
+                    )
                 }
-            )
+            }
         }
     )
 }

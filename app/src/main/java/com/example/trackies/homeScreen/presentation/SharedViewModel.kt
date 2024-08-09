@@ -29,7 +29,7 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
             val namesOfAllTrackies = repository.fetchNamesOfAllTrackies()
             val statesOfTrackiesForToday = repository.fetchStatesOfTrackiesForToday()
 
-            if ( licenseInformation != null && trackiesForToday != null && namesOfAllTrackies != null ) {
+            if ( licenseInformation != null && trackiesForToday != null && namesOfAllTrackies != null && statesOfTrackiesForToday != null ) {
 
                 Log.d("GTR-R35", "$licenseInformation")
                 Log.d("GTR-R35", "$trackiesForToday")
@@ -46,7 +46,7 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
                         trackiesForToday = trackiesForToday,
                         namesOfAllTrackies = namesOfAllTrackies,
                         allTrackies = null,
-                        statesOfTrackiesForToday = null
+                        statesOfTrackiesForToday = statesOfTrackiesForToday
                     )
                 }
             }
@@ -83,7 +83,7 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
                         trackiesForToday = copy.trackiesForToday,
                         namesOfAllTrackies = copy.namesOfAllTrackies,
                         allTrackies = allTrackies,
-                        statesOfTrackiesForToday = null
+                        statesOfTrackiesForToday = copy.statesOfTrackiesForToday
                     )
                 }
             }

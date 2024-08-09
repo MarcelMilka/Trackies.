@@ -92,12 +92,11 @@ import com.example.trackies.homeScreen.presentation.SharedViewModelViewState
                             measuringUnit = trackie.measuringUnit,
                             repeatOn = trackie.repeatOn,
                             ingestionTime = trackie.ingestionTime,
-
+                            stateOfTheTrackie = uiState.statesOfTrackiesForToday[trackie.name]!!,
                             onCheck = { onCheck(trackie) }
                         )
 
                         Spacer5()
-
                     }
 
                     item {
