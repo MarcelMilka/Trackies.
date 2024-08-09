@@ -62,7 +62,37 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
 
     fun checkTrackieAsIngestedForToday(trackieViewState: TrackieViewState) {
 
+//      update state of a trackie in the database
         repository.checkTrackieAsIngestedForToday(trackieViewState)
+
+//      update state of a trackie in the viewState
+
+    //      a copy of current data
+            val copyOfViewState = _uiState.value as SharedViewModelViewState.LoadedSuccessfully
+
+            val updatedStatesOfTrackiesForToday: MutableMap<String, Boolean> = mutableMapOf()
+
+            copyOfViewState.statesOfTrackiesForToday.forEach {
+
+                if (it.key == trackieViewState.name) {
+                    updatedStatesOfTrackiesForToday[it.key] = true
+                }
+
+                else {
+                    updatedStatesOfTrackiesForToday[it.key] = it.value
+                }
+            }
+
+            _uiState.update {
+
+                SharedViewModelViewState.LoadedSuccessfully(
+                    license = copyOfViewState.license,
+                    trackiesForToday = copyOfViewState.trackiesForToday,
+                    namesOfAllTrackies = copyOfViewState.namesOfAllTrackies,
+                    allTrackies = copyOfViewState.allTrackies,
+                    statesOfTrackiesForToday = updatedStatesOfTrackiesForToday
+                )
+            }
     }
 
     fun fetchAllTrackies() {
