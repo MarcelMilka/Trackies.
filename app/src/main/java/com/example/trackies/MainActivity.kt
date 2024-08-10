@@ -251,9 +251,7 @@ class MainActivity : ComponentActivity() {
                         )
                     }
 
-                    dialog(
-                        route = "TrackiesPremium"
-                    ) {
+                    dialog( route = "TrackiesPremium" ) {
 
                         TrackiesPremium { navigationController.navigateUp() }
                     }

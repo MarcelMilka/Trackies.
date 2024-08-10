@@ -3,6 +3,7 @@ package com.example.trackies.homeScreen.presentation
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.trackies.homeScreen.buisness.LicenseViewState
 import com.example.trackies.homeScreen.buisness.TrackieViewState
 import com.example.trackies.homeScreen.data.HomeScreenRepository
 import kotlinx.coroutines.delay
@@ -57,7 +58,63 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
 
     fun addNewTrackie(trackieViewState: TrackieViewState) {
 
+//      add new trackie in the database
         viewModelScope.launch { repository.addNewTrackie(trackieViewState = trackieViewState) }
+
+//      add new trackie to the viewState
+
+//          a copy of current viewState
+            val copyOfViewState = _uiState.value as SharedViewModelViewState.LoadedSuccessfully
+
+//          a copy of current licenseViewState
+            val copyOfLicenseViewState = copyOfViewState.license.copy()
+
+            val newAmountOfTrackies = copyOfViewState.license.totalAmountOfTrackies + 1
+
+            val newLicenseViewState = LicenseViewState(
+                active = copyOfLicenseViewState.active,
+                validUntil = copyOfLicenseViewState.validUntil,
+                totalAmountOfTrackies = newAmountOfTrackies
+            )
+
+            val newTrackiesForToday = copyOfViewState.trackiesForToday.toMutableList()
+            newTrackiesForToday.add(trackieViewState)
+
+            val newNamesOfAllTrackies = copyOfViewState.namesOfAllTrackies.toMutableList()
+            newNamesOfAllTrackies.add(trackieViewState.name)
+
+            val newAllTrackies = copyOfViewState.allTrackies?.toMutableList()
+
+            if (copyOfViewState.allTrackies != null) {
+
+                newAllTrackies!!.add(trackieViewState)
+            } else { null }
+
+            val newStatesOfTrackiesForToday: MutableMap<String, Boolean> = mutableMapOf()
+
+            copyOfViewState.statesOfTrackiesForToday.forEach {
+
+                newStatesOfTrackiesForToday[it.key] = it.value
+            }
+
+            newStatesOfTrackiesForToday[trackieViewState.name] = false
+
+            Log.d("SharedViewModel, addNewTrackie newLicenseViewState", "$newLicenseViewState") // okay
+            Log.d("SharedViewModel, addNewTrackie newTrackiesForToday", "$newTrackiesForToday") // okay
+            Log.d("SharedViewModel, addNewTrackie newNamesOfAllTrackies", "$newNamesOfAllTrackies") // okay
+            Log.d("SharedViewModel, addNewTrackie newAllTrackies", "$newAllTrackies") // okay
+            Log.d("SharedViewModel, addNewTrackie newStatesOfTrackiesForToday", "$newStatesOfTrackiesForToday") // okay
+
+            _uiState.update {
+
+                SharedViewModelViewState.LoadedSuccessfully(
+                    license = newLicenseViewState,
+                    trackiesForToday = newTrackiesForToday,
+                    namesOfAllTrackies = newNamesOfAllTrackies,
+                    allTrackies = newAllTrackies,
+                    statesOfTrackiesForToday = newStatesOfTrackiesForToday
+                )
+            }
     }
 
     fun checkTrackieAsIngestedForToday(trackieViewState: TrackieViewState) {
