@@ -166,6 +166,8 @@ class MainActivity : ComponentActivity() {
 
                             uiState = sharedViewModel.uiState.collectAsState().value,
 
+                            graphToDisplay = sharedViewModel.graphToDisplay.collectAsState().value,
+
                             onAddNewTrackie = {
 
                                 navigationController.navigate("AddNewTrackie")
@@ -207,7 +209,9 @@ class MainActivity : ComponentActivity() {
                                         Log.d("halla", exception)
                                     }
                                 )
-                            }
+                            },
+
+                            onChangeGraph = { sharedViewModel.changeGraphToDisplay(it) }
                         )
                     }
 

@@ -11,6 +11,8 @@ import androidx.compose.ui.unit.dp
 import com.example.trackies.customUI.buttons.ButtonAddAnotherTrackie
 import com.example.trackies.customUI.buttons.ButtonShowAllTrackies
 import com.example.trackies.customUI.buttons.IconButtonToNavigateBetweenActivities
+import com.example.trackies.customUI.homeScreen.GraphToDisplay
+import com.example.trackies.customUI.homeScreen.RowWithRadioButtons
 import com.example.trackies.customUI.lazyColumns.HomeScreenLazyColumn
 import com.example.trackies.customUI.spacers.Spacer40
 import com.example.trackies.customUI.spacers.Spacer5
@@ -22,11 +24,13 @@ import com.example.trackies.ui.theme.BackgroundColor
 fun HomeScreen(
 
     uiState: SharedViewModelViewState,
+    graphToDisplay: GraphToDisplay,
     onAddNewTrackie: () -> Unit,
     onCheck: (trackieViewState: TrackieViewState) -> Unit,
     onShowAllTrackies: () -> Unit,
     onSignOut: () -> Unit,
     onDelete: () -> Unit,
+    onChangeGraph: (GraphToDisplay) -> Unit
 ) {
 
     Box(
@@ -72,8 +76,17 @@ fun HomeScreen(
 
                     ButtonAddAnotherTrackie { onAddNewTrackie() }
 
-                    ButtonShowAllTrackies { onSignOut() }
+                    Spacer40()
 
+                    MediumHeader(content = "Regularity")
+
+                    Spacer5()
+
+                    RowWithRadioButtons(graphToDisplay = graphToDisplay) { onChangeGraph(it) }
+
+                    Spacer5()
+
+                    // TODO: chart
                 }
             )
         }

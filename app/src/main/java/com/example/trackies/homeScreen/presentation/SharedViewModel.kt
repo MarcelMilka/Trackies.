@@ -3,6 +3,7 @@ package com.example.trackies.homeScreen.presentation
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.trackies.customUI.homeScreen.GraphToDisplay
 import com.example.trackies.homeScreen.buisness.LicenseViewState
 import com.example.trackies.homeScreen.buisness.TrackieViewState
 import com.example.trackies.homeScreen.data.HomeScreenRepository
@@ -15,7 +16,9 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
     private val repository = HomeScreenRepository(uniqueIdentifier = uniqueIdentifier)
 
     private var _uiState = MutableStateFlow<SharedViewModelViewState>(SharedViewModelViewState.Loading)
+    private var _graphToDisplay = MutableStateFlow(GraphToDisplay.Weekly)
     val uiState: StateFlow<SharedViewModelViewState> get() = _uiState
+    val graphToDisplay: StateFlow<GraphToDisplay> get() = _graphToDisplay
 
     init {
 
@@ -176,4 +179,6 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
             }
         }
     }
+
+    fun changeGraphToDisplay(chartToDisplay: GraphToDisplay) { _graphToDisplay.update { chartToDisplay } }
 }
