@@ -12,6 +12,7 @@ import com.example.trackies.customUI.buttons.ButtonAddAnotherTrackie
 import com.example.trackies.customUI.buttons.ButtonShowAllTrackies
 import com.example.trackies.customUI.buttons.IconButtonToNavigateBetweenActivities
 import com.example.trackies.customUI.homeScreen.GraphToDisplay
+import com.example.trackies.customUI.homeScreen.HomeScreenGraph
 import com.example.trackies.customUI.homeScreen.RowWithRadioButtons
 import com.example.trackies.customUI.lazyColumns.HomeScreenLazyColumn
 import com.example.trackies.customUI.spacers.Spacer40
@@ -86,7 +87,19 @@ fun HomeScreen(
 
                     Spacer5()
 
-                    // TODO: chart
+                    HomeScreenGraph(
+
+                        mutableMapOf<String, Int>(
+                            "monday" to 50,
+                            "tuesday" to 70,
+                            "wednesday" to 100,
+                            "thursday" to 90,
+                            "friday" to 100,
+                            "saturday" to 0,
+                            "sunday" to 0,
+                        )
+
+                    )
                 }
             )
         }
