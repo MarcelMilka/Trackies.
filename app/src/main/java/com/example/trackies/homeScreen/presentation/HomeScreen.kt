@@ -49,56 +49,78 @@ fun HomeScreen(
                     .padding(20.dp)
                     .background(color = BackgroundColor),
 
-                horizontalAlignment = Alignment.Start,
-                verticalArrangement = Arrangement.Top,
+                verticalArrangement = Arrangement.SpaceBetween,
 
                 content = {
 
-                    IconButtonToNavigateBetweenActivities(icon = Icons.Rounded.Person) {}
+                    Column(
 
-                    Spacer40()
+                        modifier = Modifier
+                            .fillMaxWidth(),
 
-                    MediumHeader(content = "Your today's trackies")
+                        horizontalAlignment = Alignment.Start,
+                        verticalArrangement = Arrangement.Top,
 
-                    Spacer5()
+                        content = {
 
-                    HomeScreenLazyColumn(
-                        uiState = uiState,
-                        onAddNewTrackie = { onAddNewTrackie() },
+                            IconButtonToNavigateBetweenActivities(icon = Icons.Rounded.Person) {}
 
-                        onCheck = { onCheck(it) }
+                            Spacer40()
+
+                            MediumHeader(content = "Your today's trackies")
+
+                            Spacer5()
+
+                            HomeScreenLazyColumn(
+                                uiState = uiState,
+                                onAddNewTrackie = { onAddNewTrackie() },
+
+                                onCheck = { onCheck(it) }
+                            )
+
+                            Spacer5()
+
+                            ButtonShowAllTrackies { onShowAllTrackies() }
+
+                            Spacer5()
+
+                            ButtonAddAnotherTrackie { onAddNewTrackie() }
+
+                            Spacer40()
+                        }
                     )
 
-                    Spacer5()
+                    Column(
 
-                    ButtonShowAllTrackies { onShowAllTrackies() }
+                        modifier = Modifier
+                            .fillMaxWidth(),
 
-                    Spacer5()
+                        horizontalAlignment = Alignment.Start,
+                        verticalArrangement = Arrangement.Bottom,
 
-                    ButtonAddAnotherTrackie { onAddNewTrackie() }
+                        content = {
 
-                    Spacer40()
+                            MediumHeader(content = "Regularity")
 
-                    MediumHeader(content = "Regularity")
+                            Spacer5()
 
-                    Spacer5()
+                            RowWithRadioButtons(graphToDisplay = graphToDisplay) { onChangeGraph(it) }
 
-                    RowWithRadioButtons(graphToDisplay = graphToDisplay) { onChangeGraph(it) }
+                            Spacer5()
 
-                    Spacer5()
+                            HomeScreenGraph(
 
-                    HomeScreenGraph(
-
-                        mutableMapOf<String, Int>(
-                            "monday" to 50,
-                            "tuesday" to 70,
-                            "wednesday" to 100,
-                            "thursday" to 90,
-                            "friday" to 100,
-                            "saturday" to 0,
-                            "sunday" to 0,
-                        )
-
+                                mutableMapOf<String, Int>(
+                                    "monday" to 50,
+                                    "tuesday" to 70,
+                                    "wednesday" to 100,
+                                    "thursday" to 90,
+                                    "friday" to 100,
+                                    "saturday" to 0,
+                                    "sunday" to 0,
+                                )
+                            )
+                        }
                     )
                 }
             )
