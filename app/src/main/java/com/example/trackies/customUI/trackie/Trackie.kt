@@ -48,7 +48,6 @@ import com.example.trackies.ui.theme.SecondaryColor
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
-//                    .border(2.dp, White)
                     .padding(start = 10.dp, top = 5.dp, bottom = 5.dp)
                     .weight(2f, true),
 
@@ -93,7 +92,10 @@ import com.example.trackies.ui.theme.SecondaryColor
 
             when (stateOfTheTrackie) {
 
-                true -> { MagicButtonMarkedAsIngested() }
+                true -> {
+                    MagicButtonMarkedAsIngested()
+                    Spacer(Modifier.width(5.dp))
+                }
 
                 false -> {
 
@@ -104,6 +106,7 @@ import com.example.trackies.ui.theme.SecondaryColor
 
                         onCheck = { onCheck() }
                     )
+                    Spacer(Modifier.width(5.dp))
                 }
             }
         }
