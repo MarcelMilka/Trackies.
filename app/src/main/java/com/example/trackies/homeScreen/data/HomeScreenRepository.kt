@@ -9,11 +9,12 @@ import com.example.trackies.homeScreen.buisness.entities.TrackieViewStateEntity
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
+import kotlin.coroutines.coroutineContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+import kotlin.math.log
+
 class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes {
 
     private val firebase: FirebaseFirestore = FirebaseFirestore.getInstance()
@@ -384,5 +385,33 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes {
 
             else { continuation.resume(null) }
         }
+    }
+
+    override suspend fun calculateRegularityOfThisWeek(): Map<String, Int>? {
+
+        val currentDayOfWeek = currentDateAndTime.getCurrentDayOfWeek()
+
+        val passedDaysOfWeek = mutableMapOf<String, List<String>>()
+        val leftDaysOfWeek = mutableListOf<String>()
+        var foundCurrentDayOfWeek = false
+
+        listOf("monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday").forEach { dayOfWeek ->
+
+            if (!foundCurrentDayOfWeek) {
+
+                val namesOfTrackiesForThisDayOfWeek = fetchNamesOfTrackies(dayOfWeek)
+
+                if (namesOfTrackiesForThisDayOfWeek != null) {
+
+                    passedDaysOfWeek[dayOfWeek] = namesOfTrackiesForThisDayOfWeek
+                }
+
+                if (dayOfWeek == currentDayOfWeek) { foundCurrentDayOfWeek = true }
+            }
+
+            else { leftDaysOfWeek.add(dayOfWeek) }
+        }
+
+        return null
     }
 }

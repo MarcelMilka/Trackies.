@@ -17,4 +17,6 @@ interface Reads {
     suspend fun fetchAllTrackies(): List<TrackieViewState>?
 
     suspend fun fetchStatesOfTrackiesForToday(): Map<String, Boolean>?
+
+    suspend fun calculateRegularityOfThisWeek(): Map<String, Int>?
 }
