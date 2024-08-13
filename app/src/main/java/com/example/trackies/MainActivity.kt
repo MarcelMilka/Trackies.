@@ -18,6 +18,7 @@ import com.example.trackies.authentication.ui.register.Authenticate
 import com.example.trackies.authentication.ui.register.CouldNotRegister
 import com.example.trackies.authentication.ui.register.Register
 import com.example.trackies.authentication.ui.welcomeScreen.WelcomeScreen
+import com.example.trackies.confirmDeleting.ConfirmDeleting
 import com.example.trackies.customUI.texts.TextSmall
 import com.example.trackies.homeScreen.buisness.TrackieViewState
 import com.example.trackies.homeScreen.presentation.HomeScreen
@@ -267,9 +268,19 @@ class MainActivity : ComponentActivity() {
                         DetailedTrackie(
                             trackieToDisplay = sharedViewModel.trackieToDisplay.collectAsState().value,
                             onReturn = { navigationController.navigateUp() },
-                            onDelete = {}
+                            onDelete = { navigationController.navigate("ConfirmDeleting") }
                         )
                     }
+
+                    dialog( route = "ConfirmDeleting" ) {
+
+                        ConfirmDeleting(
+
+                            onConfirm = { navigationController.navigate("HomeScreen") { popUpTo("HomeScreen") {inclusive = true} } },
+                            onDecline = { navigationController.navigateUp() }
+                        )
+                    }
+
 
                     dialog( route = "TrackiesPremium" ) {
 
