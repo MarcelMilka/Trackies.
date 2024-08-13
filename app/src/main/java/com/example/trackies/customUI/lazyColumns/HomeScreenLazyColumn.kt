@@ -26,7 +26,8 @@ import com.example.trackies.homeScreen.presentation.SharedViewModelViewState
     uiState: SharedViewModelViewState,
     onAddNewTrackie: (LicenseViewState) -> Unit,
 
-    onCheck: (trackieViewState: TrackieViewState) -> Unit
+    onCheck: (trackieViewState: TrackieViewState) -> Unit,
+    onDisplayDetails: (trackieViewState: TrackieViewState) -> Unit
 ) {
 
     var targetHeightOfLazyColumn by remember { mutableIntStateOf(195) }
@@ -93,7 +94,8 @@ import com.example.trackies.homeScreen.presentation.SharedViewModelViewState
                             repeatOn = trackie.repeatOn,
                             ingestionTime = trackie.ingestionTime,
                             stateOfTheTrackie = uiState.statesOfTrackiesForToday[trackie.name]!!,
-                            onCheck = { onCheck(trackie) }
+                            onCheck = { onCheck(trackie) },
+                            onDisplayDetails = { onDisplayDetails(trackie) }
                         )
 
                         Spacer5()

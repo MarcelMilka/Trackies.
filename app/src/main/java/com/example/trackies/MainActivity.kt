@@ -211,12 +211,17 @@ class MainActivity : ComponentActivity() {
                                 )
                             },
 
-                            onChangeGraph = { sharedViewModel.changeGraphToDisplay(it) }
+                            onChangeGraph = { sharedViewModel.changeGraphToDisplay(it) },
+
+                            onDisplayDetails = {trackieViewState ->
+
+                                sharedViewModel.setTrackieToDisplay( trackieToDisplay = trackieViewState )
+                                navigationController.navigate("DetailedTrackie")
+                            }
                         )
                     }
 
-                    composable(
-                        route = "AddNewTrackie",
+                    composable( route = "AddNewTrackie",
                         enterTransition = {EnterTransition.None },
                         exitTransition = { ExitTransition.None }
                     ) {
@@ -241,8 +246,7 @@ class MainActivity : ComponentActivity() {
                         )
                     }
 
-                    composable(
-                        route = "ShowAllTrackies",
+                    composable( route = "ShowAllTrackies",
                         enterTransition = {EnterTransition.None },
                         exitTransition = { ExitTransition.None }
                     ) {
@@ -252,6 +256,18 @@ class MainActivity : ComponentActivity() {
                             uiState = sharedViewModel.uiState.collectAsState().value,
                             onReturn = { navigationController.navigateUp() },
                             fetchAllUsersTrackies = { sharedViewModel.fetchAllTrackies() }
+                        )
+                    }
+
+                    composable( route = "DetailedTrackie",
+                        enterTransition = {EnterTransition.None },
+                        exitTransition = { ExitTransition.None }
+                    ) {
+
+                        DetailedTrackie(
+                            trackieToDisplay = sharedViewModel.trackieToDisplay.collectAsState().value,
+                            onReturn = { navigationController.navigateUp() },
+                            onDelete = {}
                         )
                     }
 

@@ -26,7 +26,8 @@ import com.example.trackies.ui.theme.SecondaryColor
 
     stateOfTheTrackie: Boolean,
 
-    onCheck: () -> Unit
+    onCheck: () -> Unit,
+    onDisplayDetails: () -> Unit
 ) {
 
     Row(
@@ -85,9 +86,7 @@ import com.example.trackies.ui.theme.SecondaryColor
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
 
-                content = {
-                    IconButtonDetails {  }
-                }
+                content = { IconButtonDetails { onDisplayDetails() } }
             )
 
             when (stateOfTheTrackie) {

@@ -3,6 +3,7 @@ package com.example.trackies.customUI.buttons
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Details
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.Search
@@ -40,6 +41,22 @@ fun IconButtonDetails ( onClick: () -> Unit ) {
         content = {
             Icon(
                 imageVector = Icons.Rounded.Search,
+                contentDescription = null,
+                tint = White,
+            )
+        }
+    )
+}
+
+@Composable
+fun IconButtonDelete ( onClick: () -> Unit ) {
+
+    IconButton(
+
+        onClick = { onClick() },
+        content = {
+            Icon(
+                imageVector = Icons.Rounded.Delete,
                 contentDescription = null,
                 tint = White,
             )

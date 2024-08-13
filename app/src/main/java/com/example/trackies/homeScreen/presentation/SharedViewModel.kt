@@ -17,8 +17,10 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
 
     private var _uiState = MutableStateFlow<SharedViewModelViewState>(SharedViewModelViewState.Loading)
     private var _graphToDisplay = MutableStateFlow(GraphToDisplay.Weekly)
+    private var _trackieToDisplay: MutableStateFlow<TrackieViewState?> = MutableStateFlow(null)
     val uiState: StateFlow<SharedViewModelViewState> get() = _uiState
     val graphToDisplay: StateFlow<GraphToDisplay> get() = _graphToDisplay
+    val trackieToDisplay: StateFlow<TrackieViewState?> get() = _trackieToDisplay
 
     init {
 
@@ -181,4 +183,5 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
     }
 
     fun changeGraphToDisplay(chartToDisplay: GraphToDisplay) { _graphToDisplay.update { chartToDisplay } }
+    fun setTrackieToDisplay(trackieToDisplay: TrackieViewState) { _trackieToDisplay.update { trackieToDisplay } }
 }

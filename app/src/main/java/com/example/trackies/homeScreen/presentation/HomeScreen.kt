@@ -31,7 +31,8 @@ fun HomeScreen(
     onShowAllTrackies: () -> Unit,
     onSignOut: () -> Unit,
     onDelete: () -> Unit,
-    onChangeGraph: (GraphToDisplay) -> Unit
+    onChangeGraph: (GraphToDisplay) -> Unit,
+    onDisplayDetails: (trackieViewState: TrackieViewState) -> Unit
 ) {
 
     Box(
@@ -75,7 +76,8 @@ fun HomeScreen(
                                 uiState = uiState,
                                 onAddNewTrackie = { onAddNewTrackie() },
 
-                                onCheck = { onCheck(it) }
+                                onCheck = { onCheck(it) },
+                                onDisplayDetails = { onDisplayDetails(it) }
                             )
 
                             Spacer5()

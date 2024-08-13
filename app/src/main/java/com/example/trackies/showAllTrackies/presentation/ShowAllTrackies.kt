@@ -158,7 +158,8 @@ enum class WhatToDisplay {
                     repeatOn = it.repeatOn,
                     ingestionTime = it.ingestionTime,
                     stateOfTheTrackie = true, // TODO: edit code
-                    onCheck = {}
+                    onCheck = {},
+                    onDisplayDetails = {}
                 )
 
                 Spacer5()
