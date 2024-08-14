@@ -8,7 +8,7 @@ interface DeleteTrackie {
 
     suspend fun deleteTrackieFromNamesOfTrackies(trackieViewState: TrackieViewState, onSuccess: () -> Unit, onFailure: (String) -> Unit)
 
-    suspend fun deleteTrackieFromUsersWeeklyStatistics()
+    suspend fun deleteTrackieFromUsersWeeklyStatistics(trackieViewState: TrackieViewState, onSuccess: () -> Unit, onFailure: (String) -> Unit)
 
-    suspend fun deleteTrackieFromUsersTrackies()
+    suspend fun deleteTrackieFromUsersTrackies(trackieViewState: TrackieViewState, onSuccess: () -> Unit, onFailure: (String) -> Unit)
 }

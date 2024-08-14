@@ -25,7 +25,7 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes, Delet
     private val usersTrackies = user.collection("user's trackies").document("trackies")
     private val namesOfTrackies = user.collection("names of trackies").document("names of trackies")
 
-    private val usersWeeklyStatistics = user.collection("user's statistics").document("user's weekly statistics")
+        private val usersWeeklyStatistics = user.collection("user's statistics").document("user's weekly statistics")
 
     override fun isFirstTimeInApp() {
 
@@ -464,11 +464,32 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes, Delet
             }
     }
 
-    override suspend fun deleteTrackieFromUsersWeeklyStatistics() {
-        TODO("Not yet implemented")
+    override suspend fun deleteTrackieFromUsersWeeklyStatistics(
+        trackieViewState: TrackieViewState,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit
+    ) {
+
+        trackieViewState.repeatOn.forEach { dayOfWeek ->
+
+            usersWeeklyStatistics
+                .collection(dayOfWeek)
+                .document(trackieViewState.name)
+                .delete()
+        }
     }
 
-    override suspend fun deleteTrackieFromUsersTrackies() {
-        TODO("Not yet implemented")
+    override suspend fun deleteTrackieFromUsersTrackies(
+        trackieViewState: TrackieViewState,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit
+    ) {
+
+        fetchAllTrackies()
+        usersTrackies
+            .collection(trackieViewState.name)
+            .document(trackieViewState.name)
+            .delete()
+
     }
 }

@@ -203,6 +203,18 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
                 onSuccess = { Log.d("SharedViewModel, deleteTrackie", "deleteTrackieFromNamesOfTrackies: successfully finished") },
                 onFailure = { Log.d("SharedViewModel, deleteTrackie", "deleteTrackieFromNamesOfTrackies: $it") }
             )
+
+            repository.deleteTrackieFromUsersWeeklyStatistics(
+                trackieViewState = trackieToDelete,
+                onSuccess = { Log.d("SharedViewModel, deleteTrackie", "deleteTrackieFromUsersWeeklyStatistics: successfully finished") },
+                onFailure = { Log.d("SharedViewModel, deleteTrackie", "deleteTrackieFromUsersWeeklyStatistics: $it") }
+            )
+
+            repository.deleteTrackieFromUsersTrackies(
+                trackieViewState = trackieToDelete,
+                onSuccess = { Log.d("SharedViewModel, deleteTrackie", "deleteTrackieFromUsersTrackies: successfully finished") },
+                onFailure = { Log.d("SharedViewModel, deleteTrackie", "deleteTrackieFromUsersTrackies: $it") }
+            )
         }
     }
 }
