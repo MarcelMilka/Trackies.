@@ -197,12 +197,39 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
                 onSuccess = { Log.d("SharedViewModel, deleteTrackie", "decreaseAmountOfTrackies: successfully finished") },
                 onFailure = { Log.d("SharedViewModel, deleteTrackie", "decreaseAmountOfTrackies: $it") }
             )
+            val newLicenseViewState = LicenseViewState(
+                active = copyOfViewState.license.active,
+                validUntil = copyOfViewState.license.validUntil,
+                totalAmountOfTrackies = copyOfViewState.license.totalAmountOfTrackies - 1
+            )
 
             repository.deleteTrackieFromNamesOfTrackies(
                 trackieViewState = trackieToDelete,
                 onSuccess = { Log.d("SharedViewModel, deleteTrackie", "deleteTrackieFromNamesOfTrackies: successfully finished") },
                 onFailure = { Log.d("SharedViewModel, deleteTrackie", "deleteTrackieFromNamesOfTrackies: $it") }
             )
+            val newTrackiesForToday = mutableListOf<TrackieViewState>()
+            copyOfViewState.trackiesForToday.forEach { trackieViewState ->
+
+                if (trackieViewState != trackieToDelete) { newTrackiesForToday.add(trackieViewState) }
+            }
+
+            val newNamesOfAllTrackies = mutableListOf<String>()
+            copyOfViewState.namesOfAllTrackies.forEach { nameOfTrackie ->
+
+                if (nameOfTrackie != trackieToDelete.name) { newNamesOfAllTrackies.add(nameOfTrackie) }
+            }
+
+            var newAllTrackies : MutableList<TrackieViewState>? = mutableListOf()
+            if (copyOfViewState.allTrackies != null) {
+
+                copyOfViewState.allTrackies!!.forEach { trackieViewState ->
+
+                    newAllTrackies!!.add(trackieViewState)
+                }
+            }
+
+            else { newAllTrackies = null }
 
             repository.deleteTrackieFromUsersWeeklyStatistics(
                 trackieViewState = trackieToDelete,
@@ -215,6 +242,17 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
                 onSuccess = { Log.d("SharedViewModel, deleteTrackie", "deleteTrackieFromUsersTrackies: successfully finished") },
                 onFailure = { Log.d("SharedViewModel, deleteTrackie", "deleteTrackieFromUsersTrackies: $it") }
             )
+
+            _uiState.update {
+
+                SharedViewModelViewState.LoadedSuccessfully(
+                    license = newLicenseViewState,
+                    trackiesForToday = newTrackiesForToday,
+                    namesOfAllTrackies = newNamesOfAllTrackies,
+                    allTrackies = newAllTrackies,
+                    statesOfTrackiesForToday = copyOfViewState.statesOfTrackiesForToday
+                )
+            }
         }
     }
 }
