@@ -276,7 +276,12 @@ class MainActivity : ComponentActivity() {
 
                         ConfirmDeleting(
 
-                            onConfirm = { navigationController.navigate("HomeScreen") { popUpTo("HomeScreen") {inclusive = true} } },
+                            trackieToDisplay = sharedViewModel.trackieToDisplay.collectAsState().value,
+                            onConfirm = {
+
+                                navigationController.navigate("HomeScreen") { popUpTo("HomeScreen") {inclusive = true} }
+                                sharedViewModel.deleteTrackie(it)
+                            },
                             onDecline = { navigationController.navigateUp() }
                         )
                     }

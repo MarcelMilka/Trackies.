@@ -7,6 +7,7 @@ import com.example.trackies.customUI.homeScreen.GraphToDisplay
 import com.example.trackies.homeScreen.buisness.LicenseViewState
 import com.example.trackies.homeScreen.buisness.TrackieViewState
 import com.example.trackies.homeScreen.data.HomeScreenRepository
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -184,4 +185,18 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
 
     fun changeGraphToDisplay(chartToDisplay: GraphToDisplay) { _graphToDisplay.update { chartToDisplay } }
     fun setTrackieToDisplay(trackieToDisplay: TrackieViewState) { _trackieToDisplay.update { trackieToDisplay } }
+
+    fun deleteTrackie(trackieToDelete: TrackieViewState) {
+
+        val copyOfViewState = _uiState.value as SharedViewModelViewState.LoadedSuccessfully
+
+        viewModelScope.launch {
+
+//          Decrease the amount of trackies by 1:
+            repository.decreaseAmountOfTrackies(
+                onSuccess = { Log.d("SharedViewModel, deleteTrackie", "decreaseAmountOfTrackies: successfully finished") },
+                onFailure = { Log.d("SharedViewModel, deleteTrackie", "decreaseAmountOfTrackies: $it") }
+            )
+        }
+    }
 }

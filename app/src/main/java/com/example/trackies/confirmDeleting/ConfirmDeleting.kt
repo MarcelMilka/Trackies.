@@ -17,7 +17,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.trackies.customUI.spacers.Spacer5
 import com.example.trackies.customUI.texts.Detail
+import com.example.trackies.customUI.texts.MediumHeader
 import com.example.trackies.customUI.texts.TextMedium
+import com.example.trackies.customUI.texts.TextSmall
+import com.example.trackies.homeScreen.buisness.TrackieViewState
 import com.example.trackies.switchToPremium.customUI.Feature
 import com.example.trackies.switchToPremium.customUI.Premium
 import com.example.trackies.ui.theme.BackgroundColor
@@ -27,8 +30,8 @@ import com.example.trackies.ui.theme.quickSandBold
 
 @Composable
 fun ConfirmDeleting(
-
-    onConfirm: () -> Unit,
+    trackieToDisplay: TrackieViewState?,
+    onConfirm: (trackieViewState: TrackieViewState) -> Unit,
     onDecline: () -> Unit
 ) {
 
@@ -41,28 +44,61 @@ fun ConfirmDeleting(
 
         content = {
 
-            Column(
+            Box(
 
                 modifier = Modifier
                     .fillMaxWidth(0.95f)
                     .fillMaxHeight(0.2f)
                     .background(BackgroundColor, RoundedCornerShape(20.dp)),
 
-                horizontalAlignment = Alignment.Start,
-                verticalArrangement = Arrangement.Top,
-
                 content = {
 
-                    Button(
+                    Column(
 
-                        content = { TextMedium("Confirm") },
-                        onClick = { onConfirm() }
-                    )
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(20.dp),
 
-                    Button(
+                        horizontalAlignment = Alignment.Start,
+                        verticalArrangement = Arrangement.SpaceBetween,
 
-                        content = { TextMedium("Decline") },
-                        onClick = { onDecline() }
+                        content = {
+
+                            if (trackieToDisplay != null) {
+
+                                Column {
+
+                                    TextMedium("Delete ${trackieToDisplay.name}?")
+
+                                    Spacer5()
+
+                                    TextSmall(content = "It will not be possible to retrieve it back.")
+                                }
+
+                                Row (
+
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+
+                                    Button(
+
+                                        colors = ButtonDefaults.buttonColors(containerColor = PrimaryColor),
+                                        content = { TextMedium("Confirm") },
+                                        onClick = { onConfirm(trackieToDisplay) }
+                                    )
+
+                                    Button(
+
+                                        colors = ButtonDefaults.buttonColors(containerColor = PrimaryColor),
+                                        content = { TextMedium("Decline") },
+                                        onClick = { onDecline() }
+                                    )
+                                }
+                            }
+
+                            else { TextSmall(content = "An error occurred.") }
+                        }
                     )
                 }
             )

@@ -15,7 +15,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import kotlin.math.log
 
-class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes {
+class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes, DeleteTrackie {
 
     private val firebase: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val currentDateAndTime = DateTimeClass()
@@ -413,5 +413,41 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes {
         }
 
         return null
+    }
+
+    override suspend fun decreaseAmountOfTrackies(
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit
+    ) {
+
+        usersInformation
+            .get()
+            .addOnSuccessListener { document ->
+
+                val fetchedCurrentTotalAmountOfTrackies = document.get("totalAmountOfTrackies")
+
+                if (fetchedCurrentTotalAmountOfTrackies != null) {
+
+                    val updatedTotalAmountOfTrackies = fetchedCurrentTotalAmountOfTrackies.toString().toInt() - 1
+
+                    usersInformation.update("totalAmountOfTrackies", updatedTotalAmountOfTrackies)
+                        .addOnSuccessListener { onSuccess() }
+                        .addOnFailureListener { onFailure("$it") }
+                }
+
+            }
+            .addOnFailureListener { onFailure(it.toString()) }
+    }
+
+    override suspend fun deleteTrackieFromNamesOfTrackies() {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun deleteTrackieFromUsersWeeklyStatistics() {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun deleteTrackieFromUsersTrackies() {
+        TODO("Not yet implemented")
     }
 }
