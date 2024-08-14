@@ -9,11 +9,8 @@ import com.example.trackies.homeScreen.buisness.entities.TrackieViewStateEntity
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.*
-import kotlin.coroutines.coroutineContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
-import kotlin.math.log
 
 class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes, DeleteTrackie {
 
@@ -439,8 +436,32 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes, Delet
             .addOnFailureListener { onFailure(it.toString()) }
     }
 
-    override suspend fun deleteTrackieFromNamesOfTrackies() {
-        TODO("Not yet implemented")
+    override suspend fun deleteTrackieFromNamesOfTrackies(
+        trackieViewState: TrackieViewState,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit
+    ) {
+
+        namesOfTrackies
+            .get()
+            .addOnSuccessListener { document ->
+
+                listOf("whole week", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday").forEach { array ->
+
+                    val listOfAllNames = document.get(array) as MutableList<String>?
+
+                    if (!listOfAllNames.isNullOrEmpty()) {
+
+                        if (listOfAllNames.contains(trackieViewState.name)) {
+
+                            listOfAllNames.remove(trackieViewState.name)
+                            namesOfTrackies.update(array, listOfAllNames)
+                        }
+                    }
+
+                    else { onFailure("there's not such element like ${trackieViewState.name}") }
+                }
+            }
     }
 
     override suspend fun deleteTrackieFromUsersWeeklyStatistics() {

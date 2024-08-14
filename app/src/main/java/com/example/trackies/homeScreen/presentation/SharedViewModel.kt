@@ -34,7 +34,7 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
             val licenseInformation = repository.fetchUsersLicenseInformation()
             val trackiesForToday = repository.fetchTrackiesForToday()
             val namesOfAllTrackies = repository.fetchNamesOfAllTrackies()
-            val statesOfTrackiesForToday = repository.fetchStatesOfTrackiesForToday()
+            val statesOfTrackiesForToday = repository.fetchStatesOfTrackiesForToday() //mapOf("" to true) todo here's a bug
 
             if ( licenseInformation != null && trackiesForToday != null && namesOfAllTrackies != null && statesOfTrackiesForToday != null ) {
 
@@ -196,6 +196,12 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
             repository.decreaseAmountOfTrackies(
                 onSuccess = { Log.d("SharedViewModel, deleteTrackie", "decreaseAmountOfTrackies: successfully finished") },
                 onFailure = { Log.d("SharedViewModel, deleteTrackie", "decreaseAmountOfTrackies: $it") }
+            )
+
+            repository.deleteTrackieFromNamesOfTrackies(
+                trackieViewState = trackieToDelete,
+                onSuccess = { Log.d("SharedViewModel, deleteTrackie", "deleteTrackieFromNamesOfTrackies: successfully finished") },
+                onFailure = { Log.d("SharedViewModel, deleteTrackie", "deleteTrackieFromNamesOfTrackies: $it") }
             )
         }
     }
