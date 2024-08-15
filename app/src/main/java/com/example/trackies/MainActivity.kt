@@ -23,6 +23,7 @@ import com.example.trackies.customUI.texts.TextSmall
 import com.example.trackies.homeScreen.buisness.TrackieViewState
 import com.example.trackies.homeScreen.presentation.HomeScreen
 import com.example.trackies.homeScreen.presentation.SharedViewModel
+import com.example.trackies.settings.Settings
 import com.example.trackies.showAllTrackies.presentation.ShowAllTrackies
 import com.example.trackies.switchToPremium.TrackiesPremium
 
@@ -169,6 +170,8 @@ class MainActivity : ComponentActivity() {
 
                             graphToDisplay = sharedViewModel.graphToDisplay.collectAsState().value,
 
+                            onOpenSettings = { navigationController.navigate("Settings") },
+
                             onAddNewTrackie = {
 
                                 navigationController.navigate("AddNewTrackie")
@@ -269,6 +272,23 @@ class MainActivity : ComponentActivity() {
                             trackieToDisplay = sharedViewModel.trackieToDisplay.collectAsState().value,
                             onReturn = { navigationController.navigateUp() },
                             onDelete = { navigationController.navigate("ConfirmDeleting") }
+                        )
+                    }
+
+                    composable(
+                        route = "Settings",
+                        enterTransition = {EnterTransition.None },
+                        exitTransition = { ExitTransition.None }
+                    ) {
+
+                        Settings(
+
+                            onReturnHomeScreen = { navigationController.navigateUp() },
+                            onChangeEmail = {},
+                            onChangePassword = {},
+                            onDeleteAccount = {},
+                            onChangeLanguage = {},
+                            onLogout = {}
                         )
                     }
 

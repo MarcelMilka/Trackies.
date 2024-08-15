@@ -26,6 +26,7 @@ fun HomeScreen(
 
     uiState: SharedViewModelViewState,
     graphToDisplay: GraphToDisplay,
+    onOpenSettings: () -> Unit,
     onAddNewTrackie: () -> Unit,
     onCheck: (trackieViewState: TrackieViewState) -> Unit,
     onShowAllTrackies: () -> Unit,
@@ -64,7 +65,7 @@ fun HomeScreen(
 
                         content = {
 
-                            IconButtonToNavigateBetweenActivities(icon = Icons.Rounded.Person) {}
+                            IconButtonToNavigateBetweenActivities(icon = Icons.Rounded.Person) { onOpenSettings() }
 
                             Spacer40()
 

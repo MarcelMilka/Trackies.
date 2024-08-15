@@ -22,6 +22,13 @@ import com.example.trackies.ui.theme.White50
     )
 }
 
+@Composable fun SmallHeader(content: String ) {
+    Text(
+        text = content,
+        style = MyFonts.headlineMedium,
+    )
+}
+
 @Composable fun Detail( content: String ) {
     Text(
         text = content,

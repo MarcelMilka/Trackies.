@@ -123,6 +123,8 @@ fun LoadingTrackie() {
                     )
                 }
             )
+
+            Spacer(Modifier.width(5.dp))
         }
     )
 }
