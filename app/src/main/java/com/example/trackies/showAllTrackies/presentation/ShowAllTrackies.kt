@@ -24,8 +24,9 @@ import com.example.trackies.ui.theme.BackgroundColor
 @Composable
 fun ShowAllTrackies(
     uiState: SharedViewModelViewState,
+    fetchAllUsersTrackies: () -> Unit,
     onReturn: () -> Unit,
-    fetchAllUsersTrackies: () -> Unit
+    onCheck: (TrackieViewState) -> Unit
 ) {
 
     var wholeWeek by remember { mutableStateOf(false) }
@@ -100,7 +101,11 @@ fun ShowAllTrackies(
                             when(whatToDisplay) {
                                 WhatToDisplay.TrackiesForToday -> {
 
-                                    ShowAllTrackiesLazyColumn(uiState.trackiesForToday)
+                                    DisplayAllTrackiesForToday(
+                                        listOfTrackies = uiState.trackiesForToday,
+                                        statesOfTrackiesForToday = uiState.statesOfTrackiesForToday,
+                                        onCheck = { onCheck(it) }
+                                    )
                                 }
 
                                 WhatToDisplay.TrackiesForTheWholeWeek -> {
@@ -111,12 +116,11 @@ fun ShowAllTrackies(
 
                                             TextMedium("loading")
                                             fetchAllUsersTrackies()
-//                                            uiState.fetchAllTrackies()
                                         }
 
                                         else -> {
 
-                                            ShowAllTrackiesLazyColumn(uiState.allTrackies!!)
+                                            DisplayAllTrackies(uiState.allTrackies!!)
                                         }
                                     }
                                 }
@@ -136,7 +140,7 @@ enum class WhatToDisplay {
     TrackiesForToday
 }
 
-@Composable fun ShowAllTrackiesLazyColumn(listOfTrackies: List<TrackieViewState>) {
+@Composable fun DisplayAllTrackies(listOfTrackies: List<TrackieViewState>) {
 
     LazyColumn(
 
@@ -159,6 +163,38 @@ enum class WhatToDisplay {
                     ingestionTime = it.ingestionTime,
                     stateOfTheTrackie = true, // TODO: edit code
                     onCheck = {},
+                    onDisplayDetails = {}
+                )
+
+                Spacer5()
+            }
+        }
+    )
+}
+
+@Composable fun DisplayAllTrackiesForToday(listOfTrackies: List<TrackieViewState>, statesOfTrackiesForToday: Map<String,Boolean>, onCheck: (TrackieViewState) -> Unit) {
+
+    LazyColumn(
+
+        modifier = Modifier
+            .fillMaxSize(),
+
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top,
+
+        content = {
+
+            items(listOfTrackies) {
+
+                Trackie(
+
+                    name = it.name,
+                    totalDose = it.totalDose,
+                    measuringUnit = it.measuringUnit,
+                    repeatOn = it.repeatOn,
+                    ingestionTime = it.ingestionTime,
+                    stateOfTheTrackie = statesOfTrackiesForToday[it.name]!!,
+                    onCheck = { onCheck(it) },
                     onDisplayDetails = {}
                 )
 
