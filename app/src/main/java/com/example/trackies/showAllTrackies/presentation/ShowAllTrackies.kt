@@ -26,7 +26,8 @@ fun ShowAllTrackies(
     uiState: SharedViewModelViewState,
     fetchAllUsersTrackies: () -> Unit,
     onReturn: () -> Unit,
-    onCheck: (TrackieViewState) -> Unit
+    onCheck: (TrackieViewState) -> Unit,
+    onDisplayDetails: (TrackieViewState) -> Unit
 ) {
 
     var wholeWeek by remember { mutableStateOf(false) }
@@ -104,7 +105,8 @@ fun ShowAllTrackies(
                                     DisplayAllTrackiesForToday(
                                         listOfTrackies = uiState.trackiesForToday,
                                         statesOfTrackiesForToday = uiState.statesOfTrackiesForToday,
-                                        onCheck = { onCheck(it) }
+                                        onCheck = { onCheck(it) },
+                                        onDisplayDetails = { onDisplayDetails(it) }
                                     )
                                 }
 
@@ -172,7 +174,12 @@ enum class WhatToDisplay {
     )
 }
 
-@Composable fun DisplayAllTrackiesForToday(listOfTrackies: List<TrackieViewState>, statesOfTrackiesForToday: Map<String,Boolean>, onCheck: (TrackieViewState) -> Unit) {
+@Composable fun DisplayAllTrackiesForToday(
+    listOfTrackies: List<TrackieViewState>,
+    statesOfTrackiesForToday: Map<String,Boolean>,
+    onCheck: (TrackieViewState) -> Unit,
+    onDisplayDetails: (TrackieViewState) -> Unit,
+) {
 
     LazyColumn(
 
@@ -184,18 +191,18 @@ enum class WhatToDisplay {
 
         content = {
 
-            items(listOfTrackies) {
+            items(listOfTrackies) {trackieViewState ->
 
                 Trackie(
 
-                    name = it.name,
-                    totalDose = it.totalDose,
-                    measuringUnit = it.measuringUnit,
-                    repeatOn = it.repeatOn,
-                    ingestionTime = it.ingestionTime,
-                    stateOfTheTrackie = statesOfTrackiesForToday[it.name]!!,
-                    onCheck = { onCheck(it) },
-                    onDisplayDetails = {}
+                    name = trackieViewState.name,
+                    totalDose = trackieViewState.totalDose,
+                    measuringUnit = trackieViewState.measuringUnit,
+                    repeatOn = trackieViewState.repeatOn,
+                    ingestionTime = trackieViewState.ingestionTime,
+                    stateOfTheTrackie = statesOfTrackiesForToday[trackieViewState.name]!!,
+                    onCheck = { onCheck(trackieViewState) },
+                    onDisplayDetails = { onDisplayDetails(trackieViewState) }
                 )
 
                 Spacer5()

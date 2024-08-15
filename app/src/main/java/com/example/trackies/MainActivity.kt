@@ -259,7 +259,12 @@ class MainActivity : ComponentActivity() {
                             uiState = sharedViewModel.uiState.collectAsState().value,
                             fetchAllUsersTrackies = { sharedViewModel.fetchAllTrackies() },
                             onReturn = { navigationController.navigateUp() },
-                            onCheck = { sharedViewModel.checkTrackieAsIngestedForToday(trackieViewState = it) }
+                            onCheck = { sharedViewModel.checkTrackieAsIngestedForToday(trackieViewState = it) },
+                            onDisplayDetails = {trackieViewState ->
+
+                                sharedViewModel.setTrackieToDisplay( trackieToDisplay = trackieViewState )
+                                navigationController.navigate("DetailedTrackie")
+                            }
                         )
                     }
 
