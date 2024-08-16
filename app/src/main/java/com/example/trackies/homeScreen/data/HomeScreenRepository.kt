@@ -9,6 +9,8 @@ import com.example.trackies.homeScreen.buisness.entities.TrackieViewStateEntity
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.*
+import kotlinx.coroutines.tasks.await
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -386,30 +388,67 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes, Delet
 
     override suspend fun calculateRegularityOfThisWeek(): Map<String, Int>? {
 
-        val currentDayOfWeek = currentDateAndTime.getCurrentDayOfWeek()
+        return suspendCoroutine { continuation ->
 
-        val passedDaysOfWeek = mutableMapOf<String, List<String>>()
-        val leftDaysOfWeek = mutableListOf<String>()
-        var foundCurrentDayOfWeek = false
+            val mapWithCalculatedRegularity = mutableMapOf<String, Int>()
+            val currentDayOfWeek = currentDateAndTime.getCurrentDayOfWeek()
+            var foundCurrentDayOfWeek = false
 
-        listOf("monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday").forEach { dayOfWeek ->
+            val jobs = listOf("monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday").map { dayOfWeek ->
 
-            if (!foundCurrentDayOfWeek) {
+                CoroutineScope(Dispatchers.Default).async {
 
-                val namesOfTrackiesForThisDayOfWeek = fetchNamesOfTrackies(dayOfWeek)
+                    if (!foundCurrentDayOfWeek) {
+                        
+                        val namesOfTrackiesForThisDayOfWeek = fetchNamesOfTrackies(dayOfWeek)
 
-                if (namesOfTrackiesForThisDayOfWeek != null) {
+                        var totalAmount = 0
+                        var ingestedAmount = 0
 
-                    passedDaysOfWeek[dayOfWeek] = namesOfTrackiesForThisDayOfWeek
+                        for (nameOfTrackie in namesOfTrackiesForThisDayOfWeek!!) {
+                            val documentSnapshot = usersWeeklyStatistics
+                                .collection(dayOfWeek)
+                                .document(nameOfTrackie)
+                                .get()
+                                .await()
+
+                            documentSnapshot.getBoolean("ingested")?.let { ingested ->
+                                totalAmount += 1
+                                if (ingested) {
+                                    ingestedAmount += 1
+                                }
+                            }
+                        }
+
+                        if (ingestedAmount != 0) { mapWithCalculatedRegularity[dayOfWeek] = ingestedAmount * 100 / totalAmount }
+                        else { mapWithCalculatedRegularity[dayOfWeek] = 0 }
+
+                        if (dayOfWeek == currentDayOfWeek) { foundCurrentDayOfWeek = true }
+
+                    }
+
+                    else { mapWithCalculatedRegularity[dayOfWeek] = 0 }
                 }
-
-                if (dayOfWeek == currentDayOfWeek) { foundCurrentDayOfWeek = true }
             }
 
-            else { leftDaysOfWeek.add(dayOfWeek) }
-        }
+            CoroutineScope(Dispatchers.Default).launch {
+                jobs.awaitAll()
 
-        return null
+                val mapToReturn = mapOf(
+                    "monday" to mapWithCalculatedRegularity["monday"]!!,
+                    "tuesday" to mapWithCalculatedRegularity["tuesday"]!!,
+                    "wednesday" to mapWithCalculatedRegularity["wednesday"]!!,
+                    "thursday" to mapWithCalculatedRegularity["thursday"]!!,
+                    "friday" to mapWithCalculatedRegularity["friday"]!!,
+                    "saturday" to mapWithCalculatedRegularity["saturday"]!!,
+                    "sunday" to mapWithCalculatedRegularity["sunday"]!!,
+                )
+
+
+
+                continuation.resume(mapToReturn)
+            }
+        }
     }
 
     override suspend fun decreaseAmountOfTrackies(

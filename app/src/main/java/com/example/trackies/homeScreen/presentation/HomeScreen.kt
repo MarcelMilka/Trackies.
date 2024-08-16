@@ -111,18 +111,7 @@ fun HomeScreen(
 
                             Spacer5()
 
-                            HomeScreenGraph(
-
-                                mutableMapOf<String, Int>(
-                                    "monday" to 50,
-                                    "tuesday" to 70,
-                                    "wednesday" to 100,
-                                    "thursday" to 90,
-                                    "friday" to 100,
-                                    "saturday" to 0,
-                                    "sunday" to 0,
-                                )
-                            )
+                            HomeScreenGraph(uiState = uiState)
                         }
                     )
                 }

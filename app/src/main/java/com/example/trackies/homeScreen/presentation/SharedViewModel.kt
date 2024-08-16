@@ -31,12 +31,29 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
 
             delay(1000)
 
+            try {
+                val calculatedRegularityOfThisWeek = repository.calculateRegularityOfThisWeek()
+            }
+
+            catch (e: Exception) {
+                Log.d("xnxx", "$e")
+            }
+
             val licenseInformation = repository.fetchUsersLicenseInformation()
             val trackiesForToday = repository.fetchTrackiesForToday()
             val namesOfAllTrackies = repository.fetchNamesOfAllTrackies()
             val statesOfTrackiesForToday = repository.fetchStatesOfTrackiesForToday() //mapOf("" to true) todo here's a bug
+            val calculatedRegularityOfThisWeek = repository.calculateRegularityOfThisWeek()
 
-            if ( licenseInformation != null && trackiesForToday != null && namesOfAllTrackies != null && statesOfTrackiesForToday != null ) {
+
+
+            if (
+                licenseInformation != null &&
+                trackiesForToday != null &&
+                namesOfAllTrackies != null &&
+                statesOfTrackiesForToday != null &&
+                calculatedRegularityOfThisWeek != null
+                ) {
 
                 Log.d("GTR-R35", "$licenseInformation")
                 Log.d("GTR-R35", "$trackiesForToday")
@@ -53,7 +70,8 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
                         trackiesForToday = trackiesForToday,
                         namesOfAllTrackies = namesOfAllTrackies,
                         allTrackies = null,
-                        statesOfTrackiesForToday = statesOfTrackiesForToday
+                        statesOfTrackiesForToday = statesOfTrackiesForToday,
+                        calculatedRegularity = calculatedRegularityOfThisWeek
                     )
                 }
             }
@@ -118,7 +136,8 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
                     trackiesForToday = newTrackiesForToday,
                     namesOfAllTrackies = newNamesOfAllTrackies,
                     allTrackies = newAllTrackies,
-                    statesOfTrackiesForToday = newStatesOfTrackiesForToday
+                    statesOfTrackiesForToday = newStatesOfTrackiesForToday,
+                    calculatedRegularity = copyOfViewState.calculatedRegularity
                 )
             }
     }
@@ -153,7 +172,8 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
                     trackiesForToday = copyOfViewState.trackiesForToday,
                     namesOfAllTrackies = copyOfViewState.namesOfAllTrackies,
                     allTrackies = copyOfViewState.allTrackies,
-                    statesOfTrackiesForToday = updatedStatesOfTrackiesForToday
+                    statesOfTrackiesForToday = updatedStatesOfTrackiesForToday,
+                    calculatedRegularity = copyOfViewState.calculatedRegularity
                 )
             }
     }
@@ -176,7 +196,8 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
                         trackiesForToday = copy.trackiesForToday,
                         namesOfAllTrackies = copy.namesOfAllTrackies,
                         allTrackies = allTrackies,
-                        statesOfTrackiesForToday = copy.statesOfTrackiesForToday
+                        statesOfTrackiesForToday = copy.statesOfTrackiesForToday,
+                        calculatedRegularity = copy.calculatedRegularity
                     )
                 }
             }
@@ -250,7 +271,8 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
                     trackiesForToday = newTrackiesForToday,
                     namesOfAllTrackies = newNamesOfAllTrackies,
                     allTrackies = newAllTrackies,
-                    statesOfTrackiesForToday = copyOfViewState.statesOfTrackiesForToday
+                    statesOfTrackiesForToday = copyOfViewState.statesOfTrackiesForToday,
+                    calculatedRegularity = copyOfViewState.calculatedRegularity
                 )
             }
         }
