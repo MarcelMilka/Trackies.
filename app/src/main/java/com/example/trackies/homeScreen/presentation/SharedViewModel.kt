@@ -287,6 +287,50 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
 
             else { newAllTrackies = null }
 
+            var newWeeklyRegularity = mutableMapOf<String, Map<Int, Int>>()
+            val currentDayOfWeek = dateTimeClass.getCurrentDayOfWeek()
+            var passedCurrentDayOfWeek = false
+
+            trackieToDelete.repeatOn.forEach { dayOfWeek ->
+
+                if (trackieToDelete.repeatOn.contains(dayOfWeek)) {
+
+                    val total = copyOfViewState.weeklyRegularity[dayOfWeek]!!.keys.toIntArray()[0] - 1
+                    val ingested = when (passedCurrentDayOfWeek) {
+
+                        true -> {
+
+                            copyOfViewState.weeklyRegularity[dayOfWeek]!!.keys.toIntArray()[0]
+                        }
+
+                        false -> {
+
+                            if (currentDayOfWeek == dayOfWeek) {
+
+                                passedCurrentDayOfWeek = true
+                                copyOfViewState.statesOfTrackiesForToday[trackieToDelete.name].let { state ->
+
+                                    if (state!!) { copyOfViewState.weeklyRegularity[dayOfWeek]!!.values.toIntArray()[0] - 1 }
+
+                                    else { copyOfViewState.weeklyRegularity[dayOfWeek]!!.values.toIntArray()[0] }
+                                }
+                            }
+
+                            else { copyOfViewState.weeklyRegularity[dayOfWeek]!!.values.toIntArray()[0] - 1 }
+                        }
+                    }
+
+                    newWeeklyRegularity[dayOfWeek] = mapOf(total to ingested)
+                }
+
+                else {
+
+                    val total = copyOfViewState.weeklyRegularity[dayOfWeek]!!.keys.toIntArray()[0]
+                    val ingested = copyOfViewState.weeklyRegularity[dayOfWeek]!!.values.toIntArray()[0]
+                    newWeeklyRegularity[dayOfWeek] = mapOf(total to ingested)
+                }
+            }
+
             repository.deleteTrackieFromUsersWeeklyStatistics(
                 trackieViewState = trackieToDelete,
                 onSuccess = { Log.d("SharedViewModel, deleteTrackie", "deleteTrackieFromUsersWeeklyStatistics: successfully finished") },
@@ -307,7 +351,7 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
                     namesOfAllTrackies = newNamesOfAllTrackies,
                     allTrackies = newAllTrackies,
                     statesOfTrackiesForToday = copyOfViewState.statesOfTrackiesForToday,
-                    weeklyRegularity = copyOfViewState.weeklyRegularity
+                    weeklyRegularity = newWeeklyRegularity
                 )
             }
         }
