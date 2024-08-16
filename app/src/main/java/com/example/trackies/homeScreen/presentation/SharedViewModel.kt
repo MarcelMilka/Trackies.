@@ -178,6 +178,28 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
                 }
             }
 
+            val updatedWeeklyRegularity = mutableMapOf<String, Map<Int, Int>>()
+            val currentDayOfWeek = dateTimeClass.getCurrentDayOfWeek()
+
+            copyOfViewState.weeklyRegularity.forEach { array ->
+
+                if (array.key == currentDayOfWeek) {
+
+                    val total = array.value.keys.toIntArray()[0]
+                    val ingested = array.value.values.toIntArray()[0] + 1
+
+                    updatedWeeklyRegularity.put(key = array.key, value = mapOf(total to ingested))
+                }
+
+                else {
+
+                    val total = array.value.keys.toIntArray()[0]
+                    val ingested = array.value.values.toIntArray()[0]
+
+                    updatedWeeklyRegularity.put(key = array.key, value = mapOf(total to ingested))
+                }
+            }
+
             _uiState.update {
 
                 SharedViewModelViewState.LoadedSuccessfully(
@@ -186,7 +208,7 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
                     namesOfAllTrackies = copyOfViewState.namesOfAllTrackies,
                     allTrackies = copyOfViewState.allTrackies,
                     statesOfTrackiesForToday = updatedStatesOfTrackiesForToday,
-                    weeklyRegularity = copyOfViewState.weeklyRegularity
+                    weeklyRegularity = updatedWeeklyRegularity
                 )
             }
     }
