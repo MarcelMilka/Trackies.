@@ -3,16 +3,18 @@ package com.example.trackies.homeScreen.presentation
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.trackies.DateTimeClass
 import com.example.trackies.customUI.homeScreen.GraphToDisplay
 import com.example.trackies.homeScreen.buisness.LicenseViewState
 import com.example.trackies.homeScreen.buisness.TrackieViewState
 import com.example.trackies.homeScreen.data.HomeScreenRepository
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
+
+    private val dateTimeClass = DateTimeClass()
 
     private val repository = HomeScreenRepository(uniqueIdentifier = uniqueIdentifier)
 
@@ -31,34 +33,19 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
 
             delay(1000)
 
-            try {
-                val calculatedRegularityOfThisWeek = repository.calculateRegularityOfThisWeek()
-            }
-
-            catch (e: Exception) {
-                Log.d("xnxx", "$e")
-            }
-
             val licenseInformation = repository.fetchUsersLicenseInformation()
             val trackiesForToday = repository.fetchTrackiesForToday()
             val namesOfAllTrackies = repository.fetchNamesOfAllTrackies()
             val statesOfTrackiesForToday = repository.fetchStatesOfTrackiesForToday() //mapOf("" to true) todo here's a bug
-            val calculatedRegularityOfThisWeek = repository.calculateRegularityOfThisWeek()
-
-
+            val weeklyRegularity = repository.fetchWeeklyRegularity()
 
             if (
                 licenseInformation != null &&
                 trackiesForToday != null &&
                 namesOfAllTrackies != null &&
                 statesOfTrackiesForToday != null &&
-                calculatedRegularityOfThisWeek != null
+                weeklyRegularity != null
                 ) {
-
-                Log.d("GTR-R35", "$licenseInformation")
-                Log.d("GTR-R35", "$trackiesForToday")
-                Log.d("GTR-R35", "$namesOfAllTrackies")
-                Log.d("SharedViewModel, init, statesOfTrackiesForToday", "$statesOfTrackiesForToday")
 
                 delay(2500)
 
@@ -71,7 +58,7 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
                         namesOfAllTrackies = namesOfAllTrackies,
                         allTrackies = null,
                         statesOfTrackiesForToday = statesOfTrackiesForToday,
-                        calculatedRegularity = calculatedRegularityOfThisWeek
+                        weeklyRegularity = weeklyRegularity
                     )
                 }
             }
@@ -109,10 +96,7 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
 
             val newAllTrackies = copyOfViewState.allTrackies?.toMutableList()
 
-            if (copyOfViewState.allTrackies != null) {
-
-                newAllTrackies!!.add(trackieViewState)
-            } else { null }
+            if (copyOfViewState.allTrackies != null) { newAllTrackies!!.add(trackieViewState) } else { null }
 
             val newStatesOfTrackiesForToday: MutableMap<String, Boolean> = mutableMapOf()
 
@@ -123,11 +107,40 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
 
             newStatesOfTrackiesForToday[trackieViewState.name] = false
 
-            Log.d("SharedViewModel, addNewTrackie newLicenseViewState", "$newLicenseViewState") // okay
-            Log.d("SharedViewModel, addNewTrackie newTrackiesForToday", "$newTrackiesForToday") // okay
-            Log.d("SharedViewModel, addNewTrackie newNamesOfAllTrackies", "$newNamesOfAllTrackies") // okay
-            Log.d("SharedViewModel, addNewTrackie newAllTrackies", "$newAllTrackies") // okay
-            Log.d("SharedViewModel, addNewTrackie newStatesOfTrackiesForToday", "$newStatesOfTrackiesForToday") // okay
+            var newWeeklyRegularity = mutableMapOf<String, Map<Int, Int>>()
+            val currentDayOfWeek = dateTimeClass.getCurrentDayOfWeek()
+            var passedCurrentDayOfWeek = false
+
+
+            copyOfViewState.weeklyRegularity.forEach { array ->
+
+                if (trackieViewState.repeatOn.contains(array.key)) {
+
+
+                    val total = array.value.keys.toIntArray()[0] + 1
+
+                    val ingested =
+                        when (passedCurrentDayOfWeek) {
+
+                            true -> { array.value.values.toIntArray()[0] }
+                            false -> {
+
+                                if  (currentDayOfWeek == array.key) { array.value.values.toIntArray()[0] }
+                                else { array.value.values.toIntArray()[0] + 1 }
+                            }
+                        }
+
+                    newWeeklyRegularity.put(key = array.key, value = mapOf(total to ingested))
+                }
+
+                else {
+
+                    val total = array.value.keys.toIntArray()[0]
+                    val ingested = array.value.values.toIntArray()[0]
+
+                    newWeeklyRegularity.put(key = array.key, value = mapOf(total to ingested))
+                }
+            }
 
             _uiState.update {
 
@@ -137,7 +150,7 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
                     namesOfAllTrackies = newNamesOfAllTrackies,
                     allTrackies = newAllTrackies,
                     statesOfTrackiesForToday = newStatesOfTrackiesForToday,
-                    calculatedRegularity = copyOfViewState.calculatedRegularity
+                    weeklyRegularity = newWeeklyRegularity
                 )
             }
     }
@@ -173,7 +186,7 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
                     namesOfAllTrackies = copyOfViewState.namesOfAllTrackies,
                     allTrackies = copyOfViewState.allTrackies,
                     statesOfTrackiesForToday = updatedStatesOfTrackiesForToday,
-                    calculatedRegularity = copyOfViewState.calculatedRegularity
+                    weeklyRegularity = copyOfViewState.weeklyRegularity
                 )
             }
     }
@@ -197,7 +210,7 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
                         namesOfAllTrackies = copy.namesOfAllTrackies,
                         allTrackies = allTrackies,
                         statesOfTrackiesForToday = copy.statesOfTrackiesForToday,
-                        calculatedRegularity = copy.calculatedRegularity
+                        weeklyRegularity = copy.weeklyRegularity
                     )
                 }
             }
@@ -272,7 +285,7 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
                     namesOfAllTrackies = newNamesOfAllTrackies,
                     allTrackies = newAllTrackies,
                     statesOfTrackiesForToday = copyOfViewState.statesOfTrackiesForToday,
-                    calculatedRegularity = copyOfViewState.calculatedRegularity
+                    weeklyRegularity = copyOfViewState.weeklyRegularity
                 )
             }
         }

@@ -214,6 +214,9 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes, Delet
     }
     override suspend fun addNewTrackie(trackieViewState: TrackieViewState): Boolean {
 
+        val currentDayOfWeek = currentDateAndTime.getCurrentDayOfWeek()
+        var passedCurrentDayOfWeek = false
+
         val licenseViewState = fetchUsersLicenseInformation()
 
         return suspendCoroutine { continuation ->
@@ -239,21 +242,33 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes, Delet
                 }
 
 //              add name of the trackies to { (user's statistics) -> user's weekly statistics) -> (*particular day of week*)
+                listOf("monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday").forEach { dayOfWeek ->
 
-                if (trackieViewState.ingestionTime == null) {
+                    if (!passedCurrentDayOfWeek) {
 
-                    val fieldToSave = mutableMapOf<String, Boolean>()
+                        passedCurrentDayOfWeek =
+                            if (currentDayOfWeek == dayOfWeek) { true }
+                            else { false }
+                    }
 
-                    fieldToSave.put(key = "ingested", value = false)
+                    if (trackieViewState.ingestionTime == null) {
 
-                    trackieViewState.repeatOn.forEach { dayOfWeek ->
+                        if (trackieViewState.repeatOn.contains(dayOfWeek)) {
 
-                        usersWeeklyStatistics
-                            .collection(dayOfWeek)
-                            .document(trackieViewState.name)
-                            .set(fieldToSave)
-                            .addOnSuccessListener { Log.d("HomeScreenRepository, addNewTrackie, ingestionTime == null", "savedSuccessfully") }
-                            .addOnSuccessListener { Log.d("HomeScreenRepository, addNewTrackie, ingestionTime == null", "an error occurred, $it") }
+                            val fieldToSave = mutableMapOf<String, Boolean>()
+
+                            fieldToSave["ingested"] =
+                                if (!passedCurrentDayOfWeek) { true }
+                                else if (currentDayOfWeek == dayOfWeek) { false }
+                                else {false}
+
+                            usersWeeklyStatistics
+                                .collection(dayOfWeek)
+                                .document(trackieViewState.name)
+                                .set(fieldToSave)
+                                .addOnSuccessListener { Log.d("HomeScreenRepository, addNewTrackie, ingestionTime == null", "savedSuccessfully") }
+                                .addOnSuccessListener { Log.d("HomeScreenRepository, addNewTrackie, ingestionTime == null", "an error occurred, $it") }
+                        }
                     }
                 }
 
@@ -386,11 +401,11 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes, Delet
         }
     }
 
-    override suspend fun calculateRegularityOfThisWeek(): Map<String, Int>? {
+    override suspend fun fetchWeeklyRegularity(): Map<String, Map<Int, Int>>? {
 
         return suspendCoroutine { continuation ->
 
-            val mapWithCalculatedRegularity = mutableMapOf<String, Int>()
+            val mapWithCalculatedRegularity = mutableMapOf<String, Map<Int, Int>>()
             val currentDayOfWeek = currentDateAndTime.getCurrentDayOfWeek()
             var foundCurrentDayOfWeek = false
 
@@ -420,14 +435,13 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes, Delet
                             }
                         }
 
-                        if (ingestedAmount != 0) { mapWithCalculatedRegularity[dayOfWeek] = ingestedAmount * 100 / totalAmount }
-                        else { mapWithCalculatedRegularity[dayOfWeek] = 0 }
+                        mapWithCalculatedRegularity[dayOfWeek] = mapOf(totalAmount to ingestedAmount)
 
                         if (dayOfWeek == currentDayOfWeek) { foundCurrentDayOfWeek = true }
 
                     }
 
-                    else { mapWithCalculatedRegularity[dayOfWeek] = 0 }
+                    else { mapWithCalculatedRegularity[dayOfWeek] = mapOf(0 to 0) }
                 }
             }
 
@@ -443,8 +457,6 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes, Delet
                     "saturday" to mapWithCalculatedRegularity["saturday"]!!,
                     "sunday" to mapWithCalculatedRegularity["sunday"]!!,
                 )
-
-
 
                 continuation.resume(mapToReturn)
             }

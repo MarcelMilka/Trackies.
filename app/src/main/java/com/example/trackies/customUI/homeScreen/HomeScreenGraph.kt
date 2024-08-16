@@ -43,7 +43,7 @@ fun HomeScreenGraph(uiState: SharedViewModelViewState) {
 
                 is SharedViewModelViewState.LoadedSuccessfully -> {
 
-                    uiState.calculatedRegularity.forEach {
+                    uiState.weeklyRegularity.forEach {
 
                         Column(
 
@@ -67,7 +67,16 @@ fun HomeScreenGraph(uiState: SharedViewModelViewState) {
 
                                     content = {
 
-                                        val heightInDp = (it.value * 130 / 100).dp
+
+                                        val total = it.value.keys.toIntArray()[0]
+                                        val ingested = it.value.values.toIntArray()[0]
+                                        val percentage = ingested * 100 / total
+
+                                        val height =
+                                            if (total == 0 || ingested == 0) { 0 }
+                                            else { ingested * 130 / total }
+
+
                                         val color = if (activatedBar == it.key) { PrimaryColor } else { SecondaryColor }
 
                                         if ( activatedBar == it.key ) {
@@ -93,7 +102,7 @@ fun HomeScreenGraph(uiState: SharedViewModelViewState) {
 
                                                         content = {
 
-                                                            TextMedium(content = "${it.value}")
+                                                            TextMedium(content = "$percentage")
                                                             TextSmall(content = "%")
                                                         }
                                                     )
@@ -107,7 +116,7 @@ fun HomeScreenGraph(uiState: SharedViewModelViewState) {
 
                                             modifier = Modifier
                                                 .fillMaxWidth(0.5f)
-                                                .height(heightInDp),
+                                                .height(height.dp),
 
                                             shape = RoundedCornerShape(5.dp),
 
