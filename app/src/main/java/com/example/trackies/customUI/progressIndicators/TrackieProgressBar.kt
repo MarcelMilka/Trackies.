@@ -11,9 +11,7 @@ import androidx.compose.ui.unit.dp
 import com.example.trackies.ui.theme.PrimaryColor
 import com.example.trackies.ui.theme.White50
 
-@Composable fun TrackieProgressBar(currentValue: Int, goal: Int ) {
-
-    val progress = (currentValue*100)/goal
+@Composable fun TrackieProgressBar(progress: Int) {
 
     Box (
         modifier = Modifier

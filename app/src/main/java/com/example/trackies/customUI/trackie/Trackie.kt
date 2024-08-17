@@ -1,10 +1,12 @@
 package com.example.trackies.customUI.trackie
 
-import android.util.Log
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -29,6 +31,44 @@ import com.example.trackies.ui.theme.SecondaryColor
     onCheck: () -> Unit,
     onDisplayDetails: () -> Unit
 ) {
+
+    var targetValueOfProgressBar by remember { mutableIntStateOf(0) }
+    var targetValueOfCurrentDose by remember { mutableIntStateOf(0) }
+
+    when (stateOfTheTrackie) {
+
+        true -> {
+
+            targetValueOfProgressBar = 100
+            targetValueOfCurrentDose = totalDose
+        }
+        false -> {
+
+            targetValueOfProgressBar = 0
+            targetValueOfCurrentDose = 0
+        }
+    }
+
+    val progressOfTheProgressBar by animateIntAsState(
+        targetValue = targetValueOfProgressBar,
+        animationSpec = tween(
+            durationMillis = 1000,
+            delayMillis = 50,
+            easing = LinearOutSlowInEasing
+        ),
+        label = "",
+    )
+
+    val progressOfTheCurrentDose by animateIntAsState(
+        targetValue = targetValueOfCurrentDose,
+        animationSpec = tween(
+            durationMillis = 1000,
+            delayMillis = 50,
+            easing = LinearOutSlowInEasing
+        ),
+        label = "",
+    )
+
 
     Row(
 
@@ -71,8 +111,8 @@ import com.example.trackies.ui.theme.SecondaryColor
 
                         content = {
 
-                            TrackieProgressBar(currentValue = 0, goal = totalDose)
-                            TextSmall( content = " 0/$totalDose $measuringUnit" )
+                            TrackieProgressBar(progress = progressOfTheProgressBar)
+                            TextSmall( content = " $progressOfTheCurrentDose/$totalDose $measuringUnit" )
                         }
                     )
                 }

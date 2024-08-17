@@ -150,7 +150,6 @@ enum class WhatToDisplay {
 }
 
 @Composable fun DisplayAllTrackies(
-
     listOfTrackies: List<TrackieViewState>,
     listOfTrackiesForToday: List<TrackieViewState>,
     statesOfTrackiesForToday: Map<String, Boolean>,

@@ -8,8 +8,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.trackies.customUI.buttons.IconButtonDetails
-import com.example.trackies.customUI.buttons.MagicButton
-import com.example.trackies.customUI.buttons.MagicButtonMarkedAsIngested
 import com.example.trackies.customUI.progressIndicators.TrackieProgressBar
 import com.example.trackies.customUI.spacers.Spacer5
 import com.example.trackies.customUI.texts.TextMedium
@@ -68,7 +66,7 @@ fun StaticTrackie(
 
                         content = {
 
-                            TrackieProgressBar(currentValue = 0, goal = totalDose)
+                            TrackieProgressBar(progress = 0)
                             TextSmall( content = " 0/$totalDose $measuringUnit" )
                         }
                     )
