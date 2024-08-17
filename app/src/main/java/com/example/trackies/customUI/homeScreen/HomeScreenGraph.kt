@@ -1,5 +1,9 @@
 package com.example.trackies.customUI.homeScreen
 
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.animateDecay
+import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -70,12 +74,32 @@ fun HomeScreenGraph(uiState: SharedViewModelViewState) {
 
                                         val total = it.value.keys.toIntArray()[0]
                                         val ingested = it.value.values.toIntArray()[0]
-                                        val percentage = ingested * 100 / total
 
-                                        val height =
+                                        val targetPercentage = ingested * 100 / total
+
+                                        val percentage by animateIntAsState(
+                                            targetValue = targetPercentage,
+                                            animationSpec = tween(
+                                                durationMillis = 1000,
+                                                delayMillis = 50,
+                                                easing = LinearOutSlowInEasing
+                                            ),
+                                            label = "",
+                                        )
+
+                                        val targetHeight =
                                             if (total == 0 || ingested == 0) { 0 }
                                             else { ingested * 130 / total }
 
+                                        val height by animateIntAsState(
+                                            targetValue = targetHeight,
+                                            animationSpec = tween(
+                                                durationMillis = 1000,
+                                                delayMillis = 50,
+                                                easing = LinearOutSlowInEasing
+                                            ),
+                                            label = "",
+                                        )
 
                                         val color = if (activatedBar == it.key) { PrimaryColor } else { SecondaryColor }
 
