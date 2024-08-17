@@ -18,12 +18,15 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
 
     private val repository = HomeScreenRepository(uniqueIdentifier = uniqueIdentifier)
 
-    private var _uiState = MutableStateFlow<SharedViewModelViewState>(SharedViewModelViewState.Loading)
-    private var _graphToDisplay = MutableStateFlow(GraphToDisplay.Weekly)
-    private var _trackieToDisplay: MutableStateFlow<TrackieViewState?> = MutableStateFlow(null)
+    private var _uiState = MutableStateFlow<SharedViewModelViewState>(value = SharedViewModelViewState.Loading)
+    private var _graphToDisplay = MutableStateFlow(value = GraphToDisplay.Weekly)
+    private var _trackieToDisplay: MutableStateFlow<TrackieViewState?> = MutableStateFlow(value = null)
+    private var _heightOfHomeScreenLazyColumn = MutableStateFlow(value = 195)
     val uiState: StateFlow<SharedViewModelViewState> get() = _uiState
     val graphToDisplay: StateFlow<GraphToDisplay> get() = _graphToDisplay
     val trackieToDisplay: StateFlow<TrackieViewState?> get() = _trackieToDisplay
+
+    val heightOfHomeScreenLazyColumn: StateFlow<Int> get() = _heightOfHomeScreenLazyColumn
 
     init {
 
@@ -69,6 +72,8 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
 
     fun addNewTrackie(trackieViewState: TrackieViewState) {
 
+        val currentDayOfWeek = dateTimeClass.getCurrentDayOfWeek()
+
 //      add new trackie in the database
         viewModelScope.launch { repository.addNewTrackie(trackieViewState = trackieViewState) }
 
@@ -89,7 +94,10 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
             )
 
             val newTrackiesForToday = copyOfViewState.trackiesForToday.toMutableList()
-            newTrackiesForToday.add(trackieViewState)
+            if (trackieViewState.repeatOn.contains(currentDayOfWeek)) {
+
+                newTrackiesForToday.add(trackieViewState)
+            }
 
             val newNamesOfAllTrackies = copyOfViewState.namesOfAllTrackies.toMutableList()
             newNamesOfAllTrackies.add(trackieViewState.name)
@@ -108,7 +116,6 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
             newStatesOfTrackiesForToday[trackieViewState.name] = false
 
             var newWeeklyRegularity = mutableMapOf<String, Map<Int, Int>>()
-            val currentDayOfWeek = dateTimeClass.getCurrentDayOfWeek()
             var passedCurrentDayOfWeek = false
 
 
@@ -122,10 +129,16 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
                     val ingested =
                         when (passedCurrentDayOfWeek) {
 
-                            true -> { array.value.values.toIntArray()[0] }
+                            true -> { 0 }
+
                             false -> {
 
-                                if  (currentDayOfWeek == array.key) { array.value.values.toIntArray()[0] }
+                                if  (currentDayOfWeek == array.key) {
+
+                                    passedCurrentDayOfWeek = true
+                                    array.value.values.toIntArray()[0]
+                                }
+
                                 else { array.value.values.toIntArray()[0] + 1 }
                             }
                         }
@@ -281,7 +294,10 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
 
                 copyOfViewState.allTrackies!!.forEach { trackieViewState ->
 
-                    newAllTrackies!!.add(trackieViewState)
+                    if (trackieToDelete.name != trackieViewState.name ) {
+
+                        newAllTrackies!!.add(trackieViewState)
+                    }
                 }
             }
 
@@ -291,17 +307,14 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
             val currentDayOfWeek = dateTimeClass.getCurrentDayOfWeek()
             var passedCurrentDayOfWeek = false
 
-            trackieToDelete.repeatOn.forEach { dayOfWeek ->
+            listOf("monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday").forEach { dayOfWeek ->
 
                 if (trackieToDelete.repeatOn.contains(dayOfWeek)) {
 
                     val total = copyOfViewState.weeklyRegularity[dayOfWeek]!!.keys.toIntArray()[0] - 1
                     val ingested = when (passedCurrentDayOfWeek) {
 
-                        true -> {
-
-                            copyOfViewState.weeklyRegularity[dayOfWeek]!!.keys.toIntArray()[0]
-                        }
+                        true -> { 0 }
 
                         false -> {
 
@@ -320,6 +333,7 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
                         }
                     }
 
+                    Log.d("panta rhei", "day of week: $dayOfWeek total: $total ingested: $ingested")
                     newWeeklyRegularity[dayOfWeek] = mapOf(total to ingested)
                 }
 
@@ -330,6 +344,9 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
                     newWeeklyRegularity[dayOfWeek] = mapOf(total to ingested)
                 }
             }
+
+            Log.d("new weekly regularity", "$newWeeklyRegularity")
+
 
             repository.deleteTrackieFromUsersWeeklyStatistics(
                 trackieViewState = trackieToDelete,

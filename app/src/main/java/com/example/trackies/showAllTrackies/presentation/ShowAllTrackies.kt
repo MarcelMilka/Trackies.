@@ -16,6 +16,7 @@ import com.example.trackies.customUI.spacers.Spacer40
 import com.example.trackies.customUI.spacers.Spacer5
 import com.example.trackies.customUI.texts.MediumHeader
 import com.example.trackies.customUI.texts.TextMedium
+import com.example.trackies.customUI.trackie.StaticTrackie
 import com.example.trackies.customUI.trackie.Trackie
 import com.example.trackies.homeScreen.buisness.TrackieViewState
 import com.example.trackies.homeScreen.presentation.SharedViewModelViewState
@@ -122,7 +123,13 @@ fun ShowAllTrackies(
 
                                         else -> {
 
-                                            DisplayAllTrackies(uiState.allTrackies!!)
+                                            DisplayAllTrackies(
+                                                listOfTrackies = uiState.allTrackies!!,
+                                                listOfTrackiesForToday = uiState.trackiesForToday,
+                                                statesOfTrackiesForToday = uiState.statesOfTrackiesForToday,
+                                                onCheck = { onCheck(it) },
+                                                onDisplayDetails = { onDisplayDetails(it) }
+                                            )
                                         }
                                     }
                                 }
@@ -142,7 +149,14 @@ enum class WhatToDisplay {
     TrackiesForToday
 }
 
-@Composable fun DisplayAllTrackies(listOfTrackies: List<TrackieViewState>) {
+@Composable fun DisplayAllTrackies(
+
+    listOfTrackies: List<TrackieViewState>,
+    listOfTrackiesForToday: List<TrackieViewState>,
+    statesOfTrackiesForToday: Map<String, Boolean>,
+    onCheck: (TrackieViewState) -> Unit,
+    onDisplayDetails: (TrackieViewState) -> Unit
+) {
 
     LazyColumn(
 
@@ -154,19 +168,35 @@ enum class WhatToDisplay {
 
         content = {
 
-            items(listOfTrackies) {
+            items((listOfTrackiesForToday + listOfTrackies).toSet().toList()) {trackieViewState ->
 
-                Trackie(
+                if (listOfTrackiesForToday.contains(trackieViewState)) {
 
-                    name = it.name,
-                    totalDose = it.totalDose,
-                    measuringUnit = it.measuringUnit,
-                    repeatOn = it.repeatOn,
-                    ingestionTime = it.ingestionTime,
-                    stateOfTheTrackie = true, // TODO: edit code
-                    onCheck = {},
-                    onDisplayDetails = {}
-                )
+                    Trackie(
+
+                        name = trackieViewState.name,
+                        totalDose = trackieViewState.totalDose,
+                        measuringUnit = trackieViewState.measuringUnit,
+                        repeatOn = trackieViewState.repeatOn,
+                        ingestionTime = trackieViewState.ingestionTime,
+                        stateOfTheTrackie = statesOfTrackiesForToday[trackieViewState.name]!!,
+                        onCheck = { onCheck(trackieViewState) },
+                        onDisplayDetails = { onDisplayDetails(trackieViewState) }
+                    )
+                }
+
+                else {
+
+                    StaticTrackie(
+
+                        name = trackieViewState.name,
+                        totalDose = trackieViewState.totalDose,
+                        measuringUnit = trackieViewState.measuringUnit,
+                        repeatOn = trackieViewState.repeatOn,
+                        ingestionTime = trackieViewState.ingestionTime,
+                        onDisplayDetails = { onDisplayDetails(trackieViewState) }
+                    )
+                }
 
                 Spacer5()
             }
