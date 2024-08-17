@@ -1,6 +1,7 @@
 package com.example.trackies.homeScreen.presentation
 
 import android.util.Log
+import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.trackies.DateTimeClass
@@ -64,6 +65,11 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
                         weeklyRegularity = weeklyRegularity
                     )
                 }
+
+                adjustHeightOfLazyColumn(
+                    amountOfTrackiesToDisplay = (uiState.value as SharedViewModelViewState.LoadedSuccessfully).trackiesForToday.count(),
+                    adjustedHeight = {_heightOfHomeScreenLazyColumn.value = it}
+                )
             }
 
             else { _uiState.update { SharedViewModelViewState.FailedToLoadData } }
@@ -154,6 +160,12 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
                     newWeeklyRegularity.put(key = array.key, value = mapOf(total to ingested))
                 }
             }
+
+
+        adjustHeightOfLazyColumn(
+            amountOfTrackiesToDisplay = newTrackiesForToday.count(),
+            adjustedHeight = {_heightOfHomeScreenLazyColumn.value = it}
+        )
 
             _uiState.update {
 
@@ -360,6 +372,11 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
                 onFailure = { Log.d("SharedViewModel, deleteTrackie", "deleteTrackieFromUsersTrackies: $it") }
             )
 
+            adjustHeightOfLazyColumn(
+                amountOfTrackiesToDisplay = newTrackiesForToday.count(),
+                adjustedHeight = {_heightOfHomeScreenLazyColumn.value = it}
+            )
+
             _uiState.update {
 
                 SharedViewModelViewState.LoadedSuccessfully(
@@ -372,5 +389,18 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
                 )
             }
         }
+    }
+}
+
+private fun adjustHeightOfLazyColumn(amountOfTrackiesToDisplay: Int, adjustedHeight: (Int) -> Unit) {
+
+    when (amountOfTrackiesToDisplay) {
+
+        0 -> { adjustedHeight(0) }
+        1 -> { adjustedHeight(60) }
+        2 -> { adjustedHeight(125) }
+        3 -> { adjustedHeight(195) }
+
+        else -> { adjustedHeight(215) }
     }
 }

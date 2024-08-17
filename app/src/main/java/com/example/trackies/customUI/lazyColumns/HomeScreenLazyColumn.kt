@@ -21,16 +21,17 @@ import com.example.trackies.customUI.trackie.Trackie
 import com.example.trackies.homeScreen.buisness.LicenseViewState
 import com.example.trackies.homeScreen.buisness.TrackieViewState
 import com.example.trackies.homeScreen.presentation.SharedViewModelViewState
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable fun HomeScreenLazyColumn(
+    heightOfHomeScreenLazyColumn: StateFlow<Int>,
     uiState: SharedViewModelViewState,
-    onAddNewTrackie: (LicenseViewState) -> Unit,
 
     onCheck: (trackieViewState: TrackieViewState) -> Unit,
     onDisplayDetails: (trackieViewState: TrackieViewState) -> Unit
 ) {
 
-    var targetHeightOfLazyColumn by remember { mutableIntStateOf(195) }
+    var targetHeightOfLazyColumn = heightOfHomeScreenLazyColumn.collectAsState().value
     val heightOfLazyColumn by animateIntAsState(
         targetValue = targetHeightOfLazyColumn,
         animationSpec = tween(
@@ -74,16 +75,6 @@ import com.example.trackies.homeScreen.presentation.SharedViewModelViewState
                 }
 
                 is SharedViewModelViewState.LoadedSuccessfully -> {
-
-                    targetHeightOfLazyColumn = when (uiState.trackiesForToday.count()) {
-
-                        0 -> 0
-                        1 -> 60
-                        2 -> 125
-                        3 -> 195
-
-                        else -> 215
-                    }
 
                     items( uiState.trackiesForToday.take(3) ) { trackie ->
 

@@ -165,6 +165,7 @@ class MainActivity : ComponentActivity() {
                     ) {
 
                         HomeScreen(
+                            heightOfHomeScreenLazyColumn = sharedViewModel.heightOfHomeScreenLazyColumn,
 
                             uiState = sharedViewModel.uiState.collectAsState().value,
 

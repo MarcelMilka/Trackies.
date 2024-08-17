@@ -20,10 +20,11 @@ import com.example.trackies.customUI.spacers.Spacer5
 import com.example.trackies.customUI.texts.MediumHeader
 import com.example.trackies.homeScreen.buisness.TrackieViewState
 import com.example.trackies.ui.theme.BackgroundColor
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun HomeScreen(
-
+    heightOfHomeScreenLazyColumn: StateFlow<Int>,
     uiState: SharedViewModelViewState,
     graphToDisplay: GraphToDisplay,
     onOpenSettings: () -> Unit,
@@ -74,8 +75,8 @@ fun HomeScreen(
                             Spacer5()
 
                             HomeScreenLazyColumn(
+                                heightOfHomeScreenLazyColumn = heightOfHomeScreenLazyColumn,
                                 uiState = uiState,
-                                onAddNewTrackie = { onAddNewTrackie() },
 
                                 onCheck = { onCheck(it) },
                                 onDisplayDetails = { onDisplayDetails(it) }
