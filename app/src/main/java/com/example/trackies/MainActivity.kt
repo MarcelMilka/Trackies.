@@ -275,6 +275,8 @@ class MainActivity : ComponentActivity() {
                     ) {
 
                         DetailedTrackie(
+
+                            uiState = sharedViewModel.uiState.collectAsState().value,
                             trackieToDisplay = sharedViewModel.trackieToDisplay.collectAsState().value,
                             onReturn = { navigationController.navigateUp() },
                             onDelete = { navigationController.navigate("ConfirmDeleting") }

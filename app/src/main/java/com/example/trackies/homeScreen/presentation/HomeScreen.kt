@@ -112,7 +112,6 @@ fun HomeScreen(
 
                             Spacer5()
 
-                            //  TODO: this composable contains a bug which crashes the app onStart
                             HomeScreenGraph(uiState = uiState)
                         }
                     )
