@@ -37,11 +37,17 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
 
             delay(1000)
 
-            val licenseInformation = repository.fetchUsersLicenseInformation()
-            val trackiesForToday = repository.fetchTrackiesForToday()
-            val namesOfAllTrackies = repository.fetchNamesOfAllTrackies()
-            val statesOfTrackiesForToday = repository.fetchStatesOfTrackiesForToday() //mapOf("" to true) todo here's a bug
-            val weeklyRegularity = repository.fetchWeeklyRegularity()
+            val licenseInformation = repository.fetchUsersLicenseInformation() // 1
+            val trackiesForToday = repository.fetchTrackiesForToday() // 2
+            val namesOfAllTrackies = repository.fetchNamesOfAllTrackies() // 3
+            val statesOfTrackiesForToday = repository.fetchStatesOfTrackiesForToday()
+            val weeklyRegularity = repository.fetchWeeklyRegularity() // 5 does not finish
+
+            Log.d("r35 damn", "1 = $licenseInformation")
+            Log.d("r35 damn", "2 = $trackiesForToday")
+            Log.d("r35 damn", "3 = $namesOfAllTrackies")
+            Log.d("r35 damn", "4 = $statesOfTrackiesForToday")
+            Log.d("r35 damn", "5 = $weeklyRegularity")
 
             if (
                 licenseInformation != null &&

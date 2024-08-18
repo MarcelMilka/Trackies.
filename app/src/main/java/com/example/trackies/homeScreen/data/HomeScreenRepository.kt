@@ -101,6 +101,7 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes, Delet
                                     validUntil = licenseEntity.validUntil,
                                     totalAmountOfTrackies = licenseEntity.totalAmountOfTrackies
                                 )
+
                                 continuation.resume(licenseInformation)
                             }
 
@@ -172,13 +173,13 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes, Delet
                     Tasks.whenAllComplete(tasks).addOnCompleteListener { continuation.resume(trackiesForToday) }
                 }
 
-                else { continuation.resume(listOf<TrackieViewState>()) }
+                else { continuation.resume(listOf()).also { Log.d("immagrinder", "2") } }
             }
 
             else { continuation.resume(null) }
         }
     }
-    override suspend fun fetchNamesOfAllTrackies(): List<String>? = run { fetchNamesOfTrackies( array = "whole week" ) }
+    override suspend fun fetchNamesOfAllTrackies(): List<String>? = run { fetchNamesOfTrackies( array = "whole week") }
     private suspend fun fetchNamesOfTrackies(array: String): List<String>? {
 
         return suspendCoroutine { continuation ->
@@ -367,40 +368,46 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes, Delet
 
             if (namesOfTrackiesForToday != null) {
 
+                if (namesOfTrackiesForToday.isNotEmpty()) {
 
-                namesOfTrackiesForToday.onEach {nameOfTheTrackie ->
+                    namesOfTrackiesForToday.onEach {nameOfTheTrackie ->
 
-                    usersWeeklyStatistics
-                        .collection(currentDateAndTime.getCurrentDayOfWeek())
-                        .document(nameOfTheTrackie)
-                        .get()
-                        .addOnSuccessListener {document ->
+                        usersWeeklyStatistics
+                            .collection(currentDateAndTime.getCurrentDayOfWeek())
+                            .document(nameOfTheTrackie)
+                            .get()
+                            .addOnSuccessListener {document ->
 
-                            document.getBoolean("ingested").let { stateOfTheTrackie ->
+                                document.getBoolean("ingested").let { stateOfTheTrackie ->
 
-                                if (stateOfTheTrackie != null) {
+                                    if (stateOfTheTrackie != null) {
 
-                                    namesAndStatesOfTrackies[nameOfTheTrackie] = stateOfTheTrackie
+                                        namesAndStatesOfTrackies[nameOfTheTrackie] = stateOfTheTrackie
 
-                                    if (namesAndStatesOfTrackies.size == namesOfTrackiesForToday.size) {
-                                        continuation.resume(namesAndStatesOfTrackies)
+                                        if (namesAndStatesOfTrackies.size == namesOfTrackiesForToday.size) {
+
+                                            continuation.resume(namesAndStatesOfTrackies)
+                                        }
                                     }
+
+                                    else { continuation.resume(null) }
                                 }
-
-                                else { continuation.resume(null) }
                             }
-                        }
-                        .addOnFailureListener {
+                            .addOnFailureListener {
 
-                            Log.d("HomeScreenRepository, fetchStatesOfTrackiesForToday", "$it")
-                        }
+                                Log.d("HomeScreenRepository, fetchStatesOfTrackiesForToday", "$it")
+                            }
+                    }
                 }
+
+                else { continuation.resume( emptyMap()) }
             }
 
             else { continuation.resume(null) }
         }
     }
 
+    // TODO: this function fucks up
     override suspend fun fetchWeeklyRegularity(): Map<String, Map<Int, Int>>? {
 
         return suspendCoroutine { continuation ->
@@ -420,25 +427,34 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes, Delet
                         var totalAmount = 0
                         var ingestedAmount = 0
 
-                        for (nameOfTrackie in namesOfTrackiesForThisDayOfWeek!!) {
-                            val documentSnapshot = usersWeeklyStatistics
-                                .collection(dayOfWeek)
-                                .document(nameOfTrackie)
-                                .get()
-                                .await()
+                        if (namesOfTrackiesForThisDayOfWeek != null) {
 
-                            documentSnapshot.getBoolean("ingested")?.let { ingested ->
-                                totalAmount += 1
-                                if (ingested) {
-                                    ingestedAmount += 1
+                            if (namesOfTrackiesForThisDayOfWeek.isNotEmpty()) {
+
+                                for (nameOfTrackie in namesOfTrackiesForThisDayOfWeek) {
+                                    val documentSnapshot = usersWeeklyStatistics
+                                        .collection(dayOfWeek)
+                                        .document(nameOfTrackie)
+                                        .get()
+                                        .await()
+
+                                    documentSnapshot.getBoolean("ingested")?.let { ingested ->
+                                        totalAmount += 1
+                                        if (ingested) {
+                                            ingestedAmount += 1
+                                        }
+                                    }
                                 }
+
+                                mapWithCalculatedRegularity[dayOfWeek] = mapOf(totalAmount to ingestedAmount)
                             }
+
+                            else { mapWithCalculatedRegularity[dayOfWeek] = mapOf(0 to 0) }
+
+                            if (dayOfWeek == currentDayOfWeek) { foundCurrentDayOfWeek = true }
                         }
 
-                        mapWithCalculatedRegularity[dayOfWeek] = mapOf(totalAmount to ingestedAmount)
-
-                        if (dayOfWeek == currentDayOfWeek) { foundCurrentDayOfWeek = true }
-
+                        else { continuation.resume(null) }
                     }
 
                     else { mapWithCalculatedRegularity[dayOfWeek] = mapOf(0 to 0) }

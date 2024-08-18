@@ -75,7 +75,13 @@ fun HomeScreenGraph(uiState: SharedViewModelViewState) {
                                         val total = it.value.keys.toIntArray()[0]
                                         val ingested = it.value.values.toIntArray()[0]
 
-                                        val targetPercentage = ingested * 100 / total
+                                        val targetPercentage =
+                                            if (total == 0 || ingested == 0 ) {
+                                                0
+                                            }
+                                            else {
+                                                ingested * 100 / total
+                                            }
 
                                         val percentage by animateIntAsState(
                                             targetValue = targetPercentage,
