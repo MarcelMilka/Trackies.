@@ -559,4 +559,38 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes, Delet
             .delete()
 
     }
+
+    override suspend fun fetchWeeklyRegularityOfTheTrackie(trackieViewState: TrackieViewState): MutableMap<String, Int>? {
+
+        val mapToReturn = mutableMapOf<String, Int>()
+
+        return try {
+
+            for (dayOfWeek in trackieViewState.repeatOn) {
+
+                val document = usersWeeklyStatistics
+                    .collection(dayOfWeek)
+                    .document(trackieViewState.name)
+                    .get()
+                    .await()
+
+                val ingested = document.getBoolean("ingested")
+
+                if (ingested != null) {
+
+                    when (ingested) {
+
+                        true -> mapToReturn[dayOfWeek] = 100
+
+                        false -> mapToReturn[dayOfWeek] = 0
+                    }
+                }
+                else { return null }
+            }
+
+            mapToReturn
+
+        }
+        catch (e: Exception) { null }
+    }
 }
