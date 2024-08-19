@@ -13,7 +13,8 @@ sealed class SharedViewModelViewState {
         var namesOfAllTrackies: List<String>,
         var allTrackies: List<TrackieViewState>?,
         var statesOfTrackiesForToday: Map<String,Boolean>,
-        var weeklyRegularity: Map<String, Map<Int, Int>>
+        var weeklyRegularity: Map<String, Map<Int, Int>>,
+        var weeklyRegularityOfParticularTrackies: Map<String, Map<String, Int>>?
     ): SharedViewModelViewState()
 
     object FailedToLoadData: SharedViewModelViewState()

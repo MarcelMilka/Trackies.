@@ -6,8 +6,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.Text
 import androidx.compose.runtime.collectAsState
 import androidx.navigation.compose.*
 import com.example.trackies.authentication.repository.FirebaseAuthentication
@@ -19,7 +17,6 @@ import com.example.trackies.authentication.ui.register.CouldNotRegister
 import com.example.trackies.authentication.ui.register.Register
 import com.example.trackies.authentication.ui.welcomeScreen.WelcomeScreen
 import com.example.trackies.confirmDeleting.ConfirmDeleting
-import com.example.trackies.customUI.texts.TextSmall
 import com.example.trackies.homeScreen.buisness.TrackieViewState
 import com.example.trackies.homeScreen.presentation.HomeScreen
 import com.example.trackies.homeScreen.presentation.SharedViewModel
@@ -217,9 +214,9 @@ class MainActivity : ComponentActivity() {
 
                             onChangeGraph = { sharedViewModel.changeGraphToDisplay(it) },
 
-                            onDisplayDetails = {trackieViewState ->
+                            onDisplayDetails = { trackieViewState ->
 
-                                sharedViewModel.setTrackieToDisplay( trackieToDisplay = trackieViewState )
+                                sharedViewModel.fetchWeeklyRegularityOfTheTrackie( trackieToDisplay = trackieViewState )
                                 navigationController.navigate("DetailedTrackie")
                             }
                         )
@@ -263,7 +260,7 @@ class MainActivity : ComponentActivity() {
                             onCheck = { sharedViewModel.checkTrackieAsIngestedForToday(trackieViewState = it) },
                             onDisplayDetails = {trackieViewState ->
 
-                                sharedViewModel.setTrackieToDisplay( trackieToDisplay = trackieViewState )
+                                sharedViewModel.fetchWeeklyRegularityOfTheTrackie( trackieToDisplay = trackieViewState )
                                 navigationController.navigate("DetailedTrackie")
                             }
                         )
@@ -276,8 +273,8 @@ class MainActivity : ComponentActivity() {
 
                         DetailedTrackie(
 
-                            uiState = sharedViewModel.uiState.collectAsState().value,
-                            trackieToDisplay = sharedViewModel.trackieToDisplay.collectAsState().value,
+                            detailedTrackieUIstate = sharedViewModel.weeklyRegularityOfTheTrackie.collectAsState().value,
+                            trackieToDisplay = sharedViewModel.weeklyRegularityOfTheTrackie,
                             onReturn = { navigationController.navigateUp() },
                             onDelete = { navigationController.navigate("ConfirmDeleting") }
                         )
