@@ -560,9 +560,10 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes, Delet
 
     }
 
-    override suspend fun fetchWeeklyRegularityOfTheTrackie(trackieViewState: TrackieViewState): MutableMap<String, Int>? {
+    override suspend fun fetchWeeklyRegularityOfTheTrackie(trackieViewState: TrackieViewState): MutableMap<String, Map<String, Int>>? {
 
-        val mapToReturn = mutableMapOf<String, Int>()
+        val mapToReturn = mutableMapOf<String, Map<String, Int>>()
+        val valueOfMapToReturn = mutableMapOf<String, Int>()
 
         return try {
 
@@ -580,14 +581,15 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes, Delet
 
                     when (ingested) {
 
-                        true -> mapToReturn[dayOfWeek] = 100
+                        true -> valueOfMapToReturn[dayOfWeek] = 100
 
-                        false -> mapToReturn[dayOfWeek] = 0
+                        false -> valueOfMapToReturn[dayOfWeek] = 0
                     }
                 }
                 else { return null }
             }
 
+            mapToReturn[trackieViewState.name] = valueOfMapToReturn
             mapToReturn
 
         }
