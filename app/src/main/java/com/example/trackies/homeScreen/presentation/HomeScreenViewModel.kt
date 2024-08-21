@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.trackies.DateTimeClass
-import com.example.trackies.customUI.homeScreen.HomeScreenGraphToDisplay
+import com.example.trackies.enumClasses.HomeScreenGraphToDisplay
 import com.example.trackies.homeScreen.buisness.LicenseViewState
 import com.example.trackies.homeScreen.buisness.TrackieViewState
 import com.example.trackies.homeScreen.data.HomeScreenRepository

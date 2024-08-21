@@ -16,8 +16,8 @@ import com.example.trackies.customUI.spacers.Spacer40
 import com.example.trackies.customUI.spacers.Spacer5
 import com.example.trackies.customUI.texts.MediumHeader
 import com.example.trackies.customUI.texts.TextMedium
-import com.example.trackies.customUI.trackie.StaticTrackie
-import com.example.trackies.customUI.trackie.Trackie
+import com.example.trackies.sharedComponentsOfUi.trackie.StaticTrackie
+import com.example.trackies.sharedComponentsOfUi.trackie.Trackie
 import com.example.trackies.homeScreen.buisness.TrackieViewState
 import com.example.trackies.homeScreen.presentation.SharedViewModelViewState
 import com.example.trackies.ui.theme.BackgroundColor

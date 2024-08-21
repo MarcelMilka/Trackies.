@@ -1,6 +1,5 @@
-package com.example.trackies.customUI.buttons
+package com.example.trackies.sharedComponentsOfUi.trackie
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.*
@@ -23,7 +22,6 @@ import com.example.trackies.customUI.texts.TextSmall
 import com.example.trackies.ui.theme.CheckedTrackie
 import com.example.trackies.ui.theme.PrimaryColor
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.actor
 
 @Composable
 fun MagicButton(

@@ -1,4 +1,4 @@
-package com.example.trackies.customUI.trackie
+package com.example.trackies.sharedComponentsOfUi.trackie
 
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateIntAsState
@@ -11,9 +11,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.trackies.customUI.buttons.IconButtonDetails
-import com.example.trackies.customUI.buttons.MagicButton
-import com.example.trackies.customUI.buttons.MagicButtonMarkedAsIngested
-import com.example.trackies.customUI.progressIndicators.TrackieProgressBar
 import com.example.trackies.customUI.spacers.Spacer5
 import com.example.trackies.customUI.texts.TextMedium
 import com.example.trackies.customUI.texts.TextSmall

@@ -1,4 +1,4 @@
-package com.example.trackies.customUI.progressIndicators
+package com.example.trackies.sharedComponentsOfUi.trackie
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

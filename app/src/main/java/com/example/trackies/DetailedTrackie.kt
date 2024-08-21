@@ -11,7 +11,11 @@ import androidx.compose.ui.unit.dp
 import com.example.trackies.customUI.buttons.IconButtonToNavigateBetweenActivities
 import com.example.trackies.customUI.spacers.Spacer40
 import com.example.trackies.detailedTrackie.presentation.DetailedTrackieViewState
-import com.example.trackies.detailedTrackie.presentation.ui.*
+import com.example.trackies.detailedTrackie.presentation.ui.failedToLoadData.UiFailedToLoadData
+import com.example.trackies.detailedTrackie.presentation.ui.loadedSuccessfully.LowerPartOfUiLoadedSuccessfully
+import com.example.trackies.detailedTrackie.presentation.ui.loadedSuccessfully.UpperPartOfUiLoadedSuccessfully
+import com.example.trackies.detailedTrackie.presentation.ui.loading.LowerPartOfUiLoading
+import com.example.trackies.detailedTrackie.presentation.ui.loading.UpperPartOfUiLoading
 import com.example.trackies.homeScreen.buisness.TrackieViewState
 import com.example.trackies.ui.theme.*
 

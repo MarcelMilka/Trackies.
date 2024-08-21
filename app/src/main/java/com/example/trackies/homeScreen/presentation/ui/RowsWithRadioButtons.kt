@@ -1,16 +1,18 @@
-package com.example.trackies.customUI.homeScreen
+package com.example.trackies.homeScreen.presentation.ui
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.trackies.customUI.buttons.MediumRadioTextButton
+import com.example.trackies.enumClasses.HomeScreenGraphToDisplay
+import com.example.trackies.ui.theme.SecondaryColor
 
-@Composable fun RowWithRadioButtons(graphToDisplay: HomeScreenGraphToDisplay, changeGraphToDisplay: (HomeScreenGraphToDisplay) -> Unit ) {
+@Composable
+fun RowWithRadioButtonsLoadedSuccessfully(graphToDisplay: HomeScreenGraphToDisplay, changeGraphToDisplay: (HomeScreenGraphToDisplay) -> Unit ) {
 
     var displayWeeklyChart by remember { mutableStateOf(true) }
     var displayMonthlyChart by remember { mutableStateOf(false) }
@@ -79,8 +81,34 @@ import com.example.trackies.customUI.buttons.MediumRadioTextButton
     }
 }
 
-enum class HomeScreenGraphToDisplay {
-    Weekly,
-    Monthly,
-    Yearly
+@Composable
+fun RowWithRadioButtonsLoading() {
+
+    Row(
+
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(20.dp),
+
+        horizontalArrangement = Arrangement.Start,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+        repeat(3) {
+
+            Spacer(Modifier.width(10.dp))
+
+            Box(
+
+                modifier = Modifier
+                    .width(45.dp)
+                    .height(15.dp)
+                    .background(
+
+                        color = SecondaryColor,
+                        shape = RoundedCornerShape(10.dp)
+                    )
+            )
+        }
+    }
 }

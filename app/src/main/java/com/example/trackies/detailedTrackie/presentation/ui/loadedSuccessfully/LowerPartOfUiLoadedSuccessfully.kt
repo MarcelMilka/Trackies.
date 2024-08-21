@@ -1,4 +1,4 @@
-package com.example.trackies.detailedTrackie.presentation.ui
+package com.example.trackies.detailedTrackie.presentation.ui.loadedSuccessfully
 
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateIntAsState

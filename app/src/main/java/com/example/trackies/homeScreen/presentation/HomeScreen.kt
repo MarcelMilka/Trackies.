@@ -2,24 +2,22 @@ package com.example.trackies.homeScreen.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.trackies.customUI.buttons.ButtonAddAnotherTrackie
-import com.example.trackies.customUI.buttons.ButtonShowAllTrackies
 import com.example.trackies.customUI.buttons.IconButtonToNavigateBetweenActivities
-import com.example.trackies.customUI.homeScreen.HomeScreenGraphToDisplay
-import com.example.trackies.customUI.homeScreen.HomeScreenGraph
-import com.example.trackies.customUI.homeScreen.RowWithRadioButtons
-import com.example.trackies.customUI.lazyColumns.HomeScreenLazyColumn
 import com.example.trackies.customUI.spacers.Spacer40
 import com.example.trackies.customUI.spacers.Spacer5
 import com.example.trackies.customUI.texts.MediumHeader
+import com.example.trackies.enumClasses.HomeScreenGraphToDisplay
 import com.example.trackies.homeScreen.buisness.TrackieViewState
+import com.example.trackies.homeScreen.presentation.ui.*
 import com.example.trackies.ui.theme.BackgroundColor
+import com.example.trackies.ui.theme.SecondaryColor
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
@@ -31,8 +29,6 @@ fun HomeScreen(
     onAddNewTrackie: () -> Unit,
     onMarkTrackieAsIngestedForToday: (trackieViewState: TrackieViewState) -> Unit,
     onShowAllTrackies: () -> Unit,
-    onSignOut: () -> Unit,
-    onDeleteAccount: () -> Unit,
     onChangeGraph: (HomeScreenGraphToDisplay) -> Unit,
     onDisplayDetailedTrackie: (trackieViewState: TrackieViewState) -> Unit
 ) {
@@ -70,25 +66,60 @@ fun HomeScreen(
 
                             Spacer40()
 
-                            MediumHeader(content = "Your today's trackies")
+                            when (uiState) {
 
-                            Spacer5()
+                                SharedViewModelViewState.Loading -> {
 
-                            HomeScreenLazyColumn(
-                                heightOfHomeScreenLazyColumn = heightOfHomeScreenLazyColumn,
-                                uiState = uiState,
+                                    Box(
 
-                                onCheck = { onMarkTrackieAsIngestedForToday(it) },
-                                onDisplayDetails = { onDisplayDetailedTrackie(it) }
-                            )
+                                        modifier = Modifier
+                                            .fillMaxWidth(0.80f)
+                                            .height(30.dp)
+                                            .background(
 
-                            Spacer5()
+                                                color = SecondaryColor,
+                                                shape = RoundedCornerShape(20.dp)
+                                            )
+                                    )
 
-                            ButtonShowAllTrackies { onShowAllTrackies() }
+                                    Spacer5()
 
-                            Spacer5()
+                                    PreviewOfListOfTrackiesLoading()
 
-                            ButtonAddAnotherTrackie { onAddNewTrackie() }
+                                    Spacer5()
+
+                                    LoadingButtonShowAllTrackies()
+
+                                    Spacer5()
+
+                                    LoadingButtonAddAnotherTrackie()
+                                }
+
+                                is SharedViewModelViewState.LoadedSuccessfully -> {
+
+                                    MediumHeader(content = "Your today's trackies")
+
+                                    Spacer5()
+
+                                    PreviewOfListOfTrackiesLoadedSuccessfully(
+                                        heightOfHomeScreenLazyColumn = heightOfHomeScreenLazyColumn,
+                                        uiState = uiState,
+
+                                        onCheck = { onMarkTrackieAsIngestedForToday(it) },
+                                        onDisplayDetails = { onDisplayDetailedTrackie(it) }
+                                    )
+
+                                    Spacer5()
+
+                                    ButtonShowAllTrackies { onShowAllTrackies() }
+
+                                    Spacer5()
+
+                                    ButtonAddAnotherTrackie { onAddNewTrackie() }
+                                }
+
+                                SharedViewModelViewState.FailedToLoadData -> {}
+                            }
 
                             Spacer40()
                         }
@@ -104,15 +135,46 @@ fun HomeScreen(
 
                         content = {
 
-                            MediumHeader(content = "Regularity")
+                            when (uiState) {
 
-                            Spacer5()
+                                SharedViewModelViewState.Loading -> {
 
-                            RowWithRadioButtons(graphToDisplay = typeOfHomeScreenGraphToDisplay) { onChangeGraph(it) }
+                                    Box(
 
-                            Spacer5()
+                                        modifier = Modifier
+                                            .fillMaxWidth(0.80f)
+                                            .height(30.dp)
+                                            .background(
 
-                            HomeScreenGraph(uiState = uiState)
+                                                color = SecondaryColor,
+                                                shape = RoundedCornerShape(20.dp)
+                                            )
+                                    )
+
+                                    Spacer5()
+
+                                    RowWithRadioButtonsLoading()
+
+                                    Spacer5()
+
+                                    RegularityChartLoading()
+                                }
+
+                                is SharedViewModelViewState.LoadedSuccessfully -> {
+
+                                    MediumHeader(content = "Regularity")
+
+                                    Spacer5()
+
+                                    RowWithRadioButtonsLoadedSuccessfully(graphToDisplay = typeOfHomeScreenGraphToDisplay) { onChangeGraph(it) }
+
+                                    Spacer5()
+
+                                    RegularityChartLoadedSuccessFully(uiState = uiState)
+                                }
+
+                                SharedViewModelViewState.FailedToLoadData -> {}
+                            }
                         }
                     )
                 }

@@ -1,4 +1,4 @@
-package com.example.trackies.detailedTrackie.presentation.ui
+package com.example.trackies.detailedTrackie.presentation.ui.failedToLoadData
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

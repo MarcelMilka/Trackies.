@@ -188,32 +188,32 @@ class MainActivity : ComponentActivity() {
                                 navigationController.navigate( route = "ShowAllTrackies" )
                             },
 
-                            onSignOut = {
-
-                                navigationController.navigate( route = "SignedOut" ) {
-
-                                    popUpTo( route = "SignedIn" ) { inclusive = true }
-                                }
-
-                                firebaseAuthenticator.signOut()
-                            },
-
-                            onDeleteAccount = {
-
-                                firebaseAuthenticator.deleteAccount(
-
-                                    onComplete = {
-
-                                        navigationController.navigate( route = "SignedOut" ) {
-
-                                            popUpTo( route = "SignedIn" ) { inclusive = true }
-                                        }
-                                    },
-                                    onFailure = {exception ->
-                                        Log.d("halla", exception)
-                                    }
-                                )
-                            },
+//                            onSignOut = {
+//
+//                                navigationController.navigate( route = "SignedOut" ) {
+//
+//                                    popUpTo( route = "SignedIn" ) { inclusive = true }
+//                                }
+//
+//                                firebaseAuthenticator.signOut()
+//                            },
+//
+//                            onDeleteAccount = {
+//
+//                                firebaseAuthenticator.deleteAccount(
+//
+//                                    onComplete = {
+//
+//                                        navigationController.navigate( route = "SignedOut" ) {
+//
+//                                            popUpTo( route = "SignedIn" ) { inclusive = true }
+//                                        }
+//                                    },
+//                                    onFailure = {exception ->
+//                                        Log.d("halla", exception)
+//                                    }
+//                                )
+//                            },
 
                             onChangeGraph = { homeScreenViewModel.changeGraphToDisplay(it) },
 

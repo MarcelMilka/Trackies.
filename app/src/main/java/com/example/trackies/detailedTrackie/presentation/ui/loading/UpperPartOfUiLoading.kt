@@ -1,4 +1,4 @@
-package com.example.trackies.detailedTrackie.presentation.ui
+package com.example.trackies.detailedTrackie.presentation.ui.loading
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape

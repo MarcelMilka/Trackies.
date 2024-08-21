@@ -1,4 +1,4 @@
-package com.example.trackies.customUI.homeScreen
+package com.example.trackies.sharedComponentsOfUi.trackie
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -7,14 +7,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.trackies.customUI.progressIndicators.TrackieProgressBar
+import com.example.trackies.customUI.buttons.IconButtonDetails
 import com.example.trackies.customUI.spacers.Spacer5
-import com.example.trackies.ui.theme.PrimaryColor
+import com.example.trackies.customUI.texts.TextMedium
+import com.example.trackies.customUI.texts.TextSmall
 import com.example.trackies.ui.theme.SecondaryColor
-import com.example.trackies.ui.theme.White50
 
 @Composable
-fun LoadingTrackie() {
+fun StaticTrackie(
+    name: String,
+    totalDose: Int,
+    measuringUnit: String,
+    repeatOn: List<String>,
+    ingestionTime: Map<String, Int>?,
+
+    onDisplayDetails: () -> Unit
+) {
 
     Row(
 
@@ -35,7 +43,6 @@ fun LoadingTrackie() {
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
-//                    .border(2.dp, White)
                     .padding(start = 10.dp, top = 5.dp, bottom = 5.dp)
                     .weight(2f, true),
 
@@ -44,14 +51,7 @@ fun LoadingTrackie() {
 
                 content = {
 
-//                    TextMedium( "water" )
-
-                    Box(
-                        modifier = Modifier
-                            .width(125.dp)
-                            .height(18.dp)
-                            .background(color = White50, shape = RoundedCornerShape(18.dp))
-                    )
+                    TextMedium( name )
 
                     Spacer5()
 
@@ -66,15 +66,7 @@ fun LoadingTrackie() {
                         content = {
 
                             TrackieProgressBar(progress = 0)
-
-                            Spacer(Modifier.width(5.dp))
-
-                            Box(
-                                modifier = Modifier
-                                    .width(40.dp)
-                                    .height(10.dp)
-                                    .background(color = White50, shape = RoundedCornerShape(18.dp))
-                            )
+                            TextSmall( content = " 0/$totalDose $measuringUnit" )
                         }
                     )
                 }
@@ -88,34 +80,7 @@ fun LoadingTrackie() {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
 
-                content = {
-
-                    Box(
-                        modifier = Modifier
-                            .width(30.dp)
-                            .height(30.dp)
-                            .background(color = White50, shape = RoundedCornerShape(5.dp))
-                    )
-                }
-            )
-
-            Box(
-                modifier = Modifier
-                    .width(110.dp)
-                    .height(50.dp)
-                    .background(color = PrimaryColor, shape = RoundedCornerShape(18.dp)),
-
-                contentAlignment = Alignment.Center,
-
-                content = {
-
-                    Box(
-                        modifier = Modifier
-                            .width(80.dp)
-                            .height(20.dp)
-                            .background(color = White50, shape = RoundedCornerShape(20.dp))
-                    )
-                }
+                content = { IconButtonDetails { onDisplayDetails() } }
             )
 
             Spacer(Modifier.width(5.dp))
