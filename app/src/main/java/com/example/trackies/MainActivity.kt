@@ -6,8 +6,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.Text
 import androidx.compose.runtime.collectAsState
 import androidx.navigation.compose.*
 import com.example.trackies.authentication.repository.FirebaseAuthentication
@@ -18,11 +16,11 @@ import com.example.trackies.authentication.ui.register.Authenticate
 import com.example.trackies.authentication.ui.register.CouldNotRegister
 import com.example.trackies.authentication.ui.register.Register
 import com.example.trackies.authentication.ui.welcomeScreen.WelcomeScreen
-import com.example.trackies.confirmDeleting.ConfirmDeleting
-import com.example.trackies.customUI.texts.TextSmall
+import com.example.trackies.confirmDeleting.ConfirmTrackieDeletion
+import com.example.trackies.detailedTrackie.presentation.DetailedTrackieViewModel
 import com.example.trackies.homeScreen.buisness.TrackieViewState
 import com.example.trackies.homeScreen.presentation.HomeScreen
-import com.example.trackies.homeScreen.presentation.SharedViewModel
+import com.example.trackies.homeScreen.presentation.HomeScreenViewModel
 import com.example.trackies.settings.Settings
 import com.example.trackies.showAllTrackies.presentation.ShowAllTrackies
 import com.example.trackies.switchToPremium.TrackiesPremium
@@ -156,7 +154,8 @@ class MainActivity : ComponentActivity() {
 //              Home screen
                 navigation( route = "SignedIn", startDestination = "HomeScreen" ) {
 
-                    val sharedViewModel by lazy { SharedViewModel(uniqueIdentifier!!) }
+                    val homeScreenViewModel by lazy { HomeScreenViewModel(uniqueIdentifier!!) }
+                    val detailedTrackieViewModel by lazy { DetailedTrackieViewModel(uniqueIdentifier!!) }
 
                     composable(
                         route = "HomeScreen",
@@ -165,11 +164,12 @@ class MainActivity : ComponentActivity() {
                     ) {
 
                         HomeScreen(
-                            heightOfHomeScreenLazyColumn = sharedViewModel.heightOfHomeScreenLazyColumn,
 
-                            uiState = sharedViewModel.uiState.collectAsState().value,
+                            heightOfHomeScreenLazyColumn = homeScreenViewModel.heightOfHomeScreenLazyColumn,
 
-                            graphToDisplay = sharedViewModel.graphToDisplay.collectAsState().value,
+                            uiState = homeScreenViewModel.uiState.collectAsState().value,
+
+                            typeOfHomeScreenGraphToDisplay = homeScreenViewModel.typeOfHomeScreenGraphToDisplay.collectAsState().value,
 
                             onOpenSettings = { navigationController.navigate("Settings") },
 
@@ -178,9 +178,9 @@ class MainActivity : ComponentActivity() {
                                 navigationController.navigate("AddNewTrackie")
                             },
 
-                            onCheck = { trackieViewState ->
+                            onMarkTrackieAsIngestedForToday = { trackieViewState ->
 
-                                sharedViewModel.checkTrackieAsIngestedForToday(trackieViewState = trackieViewState)
+                                homeScreenViewModel.markTrackieAsIngestedForToday(trackieViewState = trackieViewState)
                             },
 
                             onShowAllTrackies = {
@@ -198,7 +198,7 @@ class MainActivity : ComponentActivity() {
                                 firebaseAuthenticator.signOut()
                             },
 
-                            onDelete = {
+                            onDeleteAccount = {
 
                                 firebaseAuthenticator.deleteAccount(
 
@@ -215,26 +215,29 @@ class MainActivity : ComponentActivity() {
                                 )
                             },
 
-                            onChangeGraph = { sharedViewModel.changeGraphToDisplay(it) },
+                            onChangeGraph = { homeScreenViewModel.changeGraphToDisplay(it) },
 
-                            onDisplayDetails = {trackieViewState ->
+                            onDisplayDetailedTrackie = { trackieViewState ->
 
-                                sharedViewModel.setTrackieToDisplay( trackieToDisplay = trackieViewState )
-                                navigationController.navigate("DetailedTrackie")
+                                detailedTrackieViewModel.setTrackieToDisplayDetails( trackieViewState = trackieViewState )
+                                detailedTrackieViewModel.calculateWeeklyRegularity( trackieViewState = trackieViewState)
+                                navigationController.navigate( route = "DetailedTrackie" )
                             }
                         )
                     }
 
-                    composable( route = "AddNewTrackie",
+                    composable(
+                        route = "AddNewTrackie",
                         enterTransition = {EnterTransition.None },
                         exitTransition = { ExitTransition.None }
                     ) {
 
                         AddNewTrackie(
-                            uiState = sharedViewModel.uiState.collectAsState().value,
+
+                            uiState = homeScreenViewModel.uiState.collectAsState().value,
                             onReturn = { navigationController.navigateUp() },
                             onNavigateToTrackiesPremium = { navigationController.navigate("TrackiesPremium") },
-                            onAdd = {trackie ->
+                            onAdd = { trackie ->
 
                                 val newTrackie = TrackieViewState (
 
@@ -245,41 +248,44 @@ class MainActivity : ComponentActivity() {
                                     ingestionTime = trackie.ingestionTime
                                 )
 
-                                sharedViewModel.addNewTrackie(newTrackie)
+                                homeScreenViewModel.addNewTrackie(newTrackie)
                             }
                         )
                     }
 
-                    composable( route = "ShowAllTrackies",
+                    composable(
+                        route = "ShowAllTrackies",
                         enterTransition = {EnterTransition.None },
                         exitTransition = { ExitTransition.None }
                     ) {
 
                         ShowAllTrackies(
 
-                            uiState = sharedViewModel.uiState.collectAsState().value,
-                            fetchAllUsersTrackies = { sharedViewModel.fetchAllTrackies() },
+                            uiState = homeScreenViewModel.uiState.collectAsState().value,
+                            fetchAllUsersTrackies = { homeScreenViewModel.fetchAllTrackies() },
                             onReturn = { navigationController.navigateUp() },
-                            onCheck = { sharedViewModel.checkTrackieAsIngestedForToday(trackieViewState = it) },
+                            onCheck = { homeScreenViewModel.markTrackieAsIngestedForToday(trackieViewState = it) },
                             onDisplayDetails = {trackieViewState ->
 
-                                sharedViewModel.setTrackieToDisplay( trackieToDisplay = trackieViewState )
+                                detailedTrackieViewModel.setTrackieToDisplayDetails( trackieViewState = trackieViewState )
+                                detailedTrackieViewModel.calculateWeeklyRegularity( trackieViewState = trackieViewState)
                                 navigationController.navigate("DetailedTrackie")
                             }
                         )
                     }
 
-                    composable( route = "DetailedTrackie",
+                    composable(
+                        route = "DetailedTrackie",
                         enterTransition = {EnterTransition.None },
                         exitTransition = { ExitTransition.None }
                     ) {
 
                         DetailedTrackie(
 
-                            uiState = sharedViewModel.uiState.collectAsState().value,
-                            trackieToDisplay = sharedViewModel.trackieToDisplay.collectAsState().value,
+                            uiState = detailedTrackieViewModel.uiState.collectAsState().value,
+                            displayDetailsOf = detailedTrackieViewModel.trackieToDisplay.collectAsState().value,
                             onReturn = { navigationController.navigateUp() },
-                            onDelete = { navigationController.navigate("ConfirmDeleting") }
+                            onDelete = { navigationController.navigate("ConfirmTrackieDeletion") }
                         )
                     }
 
@@ -300,25 +306,22 @@ class MainActivity : ComponentActivity() {
                         )
                     }
 
-                    dialog( route = "ConfirmDeleting" ) {
+                    dialog( route = "ConfirmTrackieDeletion" ) {
 
-                        ConfirmDeleting(
+                        ConfirmTrackieDeletion(
 
-                            trackieToDisplay = sharedViewModel.trackieToDisplay.collectAsState().value,
+                            nameOfTheTrackieToDelete = detailedTrackieViewModel.trackieToDisplay.collectAsState().value,
                             onConfirm = {
 
                                 navigationController.navigate("HomeScreen") { popUpTo("HomeScreen") {inclusive = true} }
-                                sharedViewModel.deleteTrackie(it)
+                                homeScreenViewModel.deleteTrackie(it)
+                                // TODO: function which deletes trackie from the new view model
                             },
                             onDecline = { navigationController.navigateUp() }
                         )
                     }
 
-
-                    dialog( route = "TrackiesPremium" ) {
-
-                        TrackiesPremium { navigationController.navigateUp() }
-                    }
+                    dialog( route = "TrackiesPremium" ) { TrackiesPremium { navigationController.navigateUp() } }
                 }
             }
         }

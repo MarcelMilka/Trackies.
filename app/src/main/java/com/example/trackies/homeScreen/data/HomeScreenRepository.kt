@@ -27,7 +27,7 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes, Delet
     private val usersTrackies = user.collection("user's trackies").document("trackies")
     private val namesOfTrackies = user.collection("names of trackies").document("names of trackies")
 
-        private val usersWeeklyStatistics = user.collection("user's statistics").document("user's weekly statistics")
+    private val usersWeeklyStatistics = user.collection("user's statistics").document("user's weekly statistics")
 
     override fun isFirstTimeInApp() {
 
@@ -558,41 +558,5 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes, Delet
             .document(trackieViewState.name)
             .delete()
 
-    }
-
-    override suspend fun fetchWeeklyRegularityOfTheTrackie(trackieViewState: TrackieViewState): MutableMap<String, Map<String, Int>>? {
-
-        val mapToReturn = mutableMapOf<String, Map<String, Int>>()
-        val valueOfMapToReturn = mutableMapOf<String, Int>()
-
-        return try {
-
-            for (dayOfWeek in trackieViewState.repeatOn) {
-
-                val document = usersWeeklyStatistics
-                    .collection(dayOfWeek)
-                    .document(trackieViewState.name)
-                    .get()
-                    .await()
-
-                val ingested = document.getBoolean("ingested")
-
-                if (ingested != null) {
-
-                    when (ingested) {
-
-                        true -> valueOfMapToReturn[dayOfWeek] = 100
-
-                        false -> valueOfMapToReturn[dayOfWeek] = 0
-                    }
-                }
-                else { return null }
-            }
-
-            mapToReturn[trackieViewState.name] = valueOfMapToReturn
-            mapToReturn
-
-        }
-        catch (e: Exception) { null }
     }
 }

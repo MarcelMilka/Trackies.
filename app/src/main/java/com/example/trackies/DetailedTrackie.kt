@@ -1,46 +1,25 @@
 package com.example.trackies
 
-import android.util.Log
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.animateIntAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.KeyboardReturn
-import androidx.compose.material.icons.rounded.Person
-import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color.Companion.White
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import com.example.trackies.customUI.buttons.ButtonAddAnotherTrackie
-import com.example.trackies.customUI.buttons.ButtonShowAllTrackies
-import com.example.trackies.customUI.buttons.IconButtonDelete
 import com.example.trackies.customUI.buttons.IconButtonToNavigateBetweenActivities
-import com.example.trackies.customUI.homeScreen.HomeScreenGraph
-import com.example.trackies.customUI.homeScreen.RowWithRadioButtons
-import com.example.trackies.customUI.lazyColumns.HomeScreenLazyColumn
-import com.example.trackies.customUI.spacers.Spacer10
 import com.example.trackies.customUI.spacers.Spacer40
-import com.example.trackies.customUI.spacers.Spacer5
-import com.example.trackies.customUI.texts.MediumHeader
-import com.example.trackies.customUI.texts.TextMedium
-import com.example.trackies.customUI.texts.TextSmall
+import com.example.trackies.detailedTrackie.presentation.DetailedTrackieViewState
+import com.example.trackies.detailedTrackie.presentation.ui.*
 import com.example.trackies.homeScreen.buisness.TrackieViewState
-import com.example.trackies.homeScreen.presentation.SharedViewModelViewState
 import com.example.trackies.ui.theme.*
 
 @Composable
 fun DetailedTrackie(
 
-    uiState: SharedViewModelViewState,
-    trackieToDisplay: TrackieViewState?,
+    uiState: DetailedTrackieViewState,
+    displayDetailsOf: TrackieViewState?,
     onReturn: () -> Unit,
     onDelete: () -> Unit
 ) {
@@ -64,6 +43,7 @@ fun DetailedTrackie(
 
                 content = {
 
+//                  Name of trackie, scheduled days, daily dose
                     Column(
 
                         modifier = Modifier
@@ -78,184 +58,63 @@ fun DetailedTrackie(
 
                             Spacer40()
 
-                            if (trackieToDisplay != null) {
+                            when (uiState) {
 
-                                Row(
+                                DetailedTrackieViewState.Loading -> {
 
-                                    modifier = Modifier
-                                        .fillMaxWidth(),
+                                    UpperPartOfUiLoading()
+                                }
 
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically,
+                                is DetailedTrackieViewState.SucceededToLoadData -> {
 
-                                    content = {
+                                    UpperPartOfUiLoadedSuccessfully(
 
-                                        MediumHeader(content = if (trackieToDisplay != null) { trackieToDisplay.name } else {"An error occurred."})
+                                        nameOfTheTrackie = displayDetailsOf!!.name,
+                                        repeatOn = displayDetailsOf.repeatOn,
+                                        totalDose = displayDetailsOf.totalDose,
+                                        measuringUnit = displayDetailsOf.measuringUnit,
+                                        onDelete = { onDelete() }
+                                    )
 
-                                        IconButtonDelete { onDelete() }
-                                    }
-                                )
+                                }
 
-                                Spacer5()
+                                DetailedTrackieViewState.FailedToLoadData -> {
 
-                                TextWithButton(
-                                    icon = Icons.Rounded.Edit,
-                                    content = "Scheduled days",
-                                    onEdit = {}
-                                )
-
-                                Row(
-
-                                    modifier = Modifier
-                                        .fillMaxWidth(),
-
-                                    horizontalArrangement = Arrangement.Start,
-                                    verticalAlignment = Alignment.CenterVertically,
-
-                                    content = {
-
-                                        val abbreviatedDaysOfWeek= trackieToDisplay.repeatOn.toMutableList().map { dayOfWeek ->
-
-                                            dayOfWeek.substring(0..2)
-                                        }
-
-                                        if (abbreviatedDaysOfWeek.count() != 1) {
-
-                                            abbreviatedDaysOfWeek.take(abbreviatedDaysOfWeek.count() - 1).forEach { dayOfWeek ->
-
-                                                TextSmall(content = "$dayOfWeek, ")
-                                            }
-
-                                            TextSmall(content = "${abbreviatedDaysOfWeek[abbreviatedDaysOfWeek.count() - 1]}")
-                                        }
-
-                                        else {
-                                            TextSmall(content = "$abbreviatedDaysOfWeek")
-                                        }
-                                    }
-                                )
-
-                                Spacer10()
-
-                                TextWithButton(
-                                    icon = Icons.Rounded.Edit,
-                                    content = "Daily dose",
-                                    onEdit = {}
-                                )
-
-                                Row(
-
-                                    modifier = Modifier
-                                        .fillMaxWidth(),
-
-                                    horizontalArrangement = Arrangement.Start,
-                                    verticalAlignment = Alignment.Bottom,
-
-                                    content = {
-
-                                        TextMedium(content = "${trackieToDisplay.totalDose}")
-                                        TextSmall(content = "${trackieToDisplay.measuringUnit}")
-                                    }
-                                )
-
-                                Spacer40()
-
+                                    UiFailedToLoadData()
+                                }
                             }
-
-                            else { TextMedium("An error occurred while loading data or something like that, implement something cool here.") }
                         }
                     )
 
+//                  Chart
                     Column(
 
                         modifier = Modifier
                             .fillMaxWidth(),
 
                         horizontalAlignment = Alignment.Start,
-                        verticalArrangement = Arrangement.Bottom,
+                        verticalArrangement = Arrangement.Top,
 
                         content = {
 
-                            Spacer40()
+                            when (uiState) {
 
-                            MediumHeader(content = "Weekly regularity")
+                                DetailedTrackieViewState.Loading -> {
 
-                            Spacer5()
+                                    LowerPartOfUiLoading()
+                                }
 
-                            DetailedTrackieGraph( uiState = uiState, nameOfTheTrackie = "name" )
+                                is DetailedTrackieViewState.SucceededToLoadData -> {
+
+                                    LowerPartOfUiLoadedSuccessfully(weeklyRegularity = uiState.trackiesWithWeeklyRegularity[displayDetailsOf!!.name])
+                                }
+
+                                DetailedTrackieViewState.FailedToLoadData -> {}
+                            }
                         }
                     )
                 }
             )
-        }
-    )
-}
-
-@Composable
-private fun TextWithButton(icon: ImageVector, content: String, onEdit: () -> Unit) {
-
-    Row(
-
-        modifier = Modifier
-            .fillMaxWidth(),
-
-        horizontalArrangement = Arrangement.Start,
-        verticalAlignment = Alignment.CenterVertically,
-
-        content = {
-
-            TextMedium(content = content)
-
-            Spacer(modifier = Modifier.width(5.dp))
-
-//            IconButton(
-//
-//                onClick = { onEdit() },
-//
-//                content = {
-//
-//                Icon(
-//                        imageVector = icon,
-//                        tint = White,
-//                        contentDescription = null
-//                    )
-//                }
-//            )
-        }
-    )
-}
-
-@Composable
-private fun DetailedTrackieGraph(uiState: SharedViewModelViewState, nameOfTheTrackie: String) {
-
-    val currentDayOfWeek = DateTimeClass().getCurrentDayOfWeek()
-    var activatedBar: String? by remember { mutableStateOf(currentDayOfWeek) }
-
-    Row (
-
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(180.dp),
-
-        horizontalArrangement = Arrangement.Start,
-        verticalAlignment = Alignment.Top,
-
-        content = {
-
-            when (uiState) {
-
-                SharedViewModelViewState.Loading -> {
-                    TextMedium("loading")
-                }
-
-                is SharedViewModelViewState.LoadedSuccessfully -> {
-                    TextMedium("loaded")
-                }
-
-                SharedViewModelViewState.FailedToLoadData -> {
-                    TextMedium("failed to load")
-                }
-            }
         }
     )
 }

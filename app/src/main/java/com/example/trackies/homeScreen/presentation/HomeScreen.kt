@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 import com.example.trackies.customUI.buttons.ButtonAddAnotherTrackie
 import com.example.trackies.customUI.buttons.ButtonShowAllTrackies
 import com.example.trackies.customUI.buttons.IconButtonToNavigateBetweenActivities
-import com.example.trackies.customUI.homeScreen.GraphToDisplay
+import com.example.trackies.customUI.homeScreen.HomeScreenGraphToDisplay
 import com.example.trackies.customUI.homeScreen.HomeScreenGraph
 import com.example.trackies.customUI.homeScreen.RowWithRadioButtons
 import com.example.trackies.customUI.lazyColumns.HomeScreenLazyColumn
@@ -26,15 +26,15 @@ import kotlinx.coroutines.flow.StateFlow
 fun HomeScreen(
     heightOfHomeScreenLazyColumn: StateFlow<Int>,
     uiState: SharedViewModelViewState,
-    graphToDisplay: GraphToDisplay,
+    typeOfHomeScreenGraphToDisplay: HomeScreenGraphToDisplay,
     onOpenSettings: () -> Unit,
     onAddNewTrackie: () -> Unit,
-    onCheck: (trackieViewState: TrackieViewState) -> Unit,
+    onMarkTrackieAsIngestedForToday: (trackieViewState: TrackieViewState) -> Unit,
     onShowAllTrackies: () -> Unit,
     onSignOut: () -> Unit,
-    onDelete: () -> Unit,
-    onChangeGraph: (GraphToDisplay) -> Unit,
-    onDisplayDetails: (trackieViewState: TrackieViewState) -> Unit
+    onDeleteAccount: () -> Unit,
+    onChangeGraph: (HomeScreenGraphToDisplay) -> Unit,
+    onDisplayDetailedTrackie: (trackieViewState: TrackieViewState) -> Unit
 ) {
 
     Box(
@@ -78,8 +78,8 @@ fun HomeScreen(
                                 heightOfHomeScreenLazyColumn = heightOfHomeScreenLazyColumn,
                                 uiState = uiState,
 
-                                onCheck = { onCheck(it) },
-                                onDisplayDetails = { onDisplayDetails(it) }
+                                onCheck = { onMarkTrackieAsIngestedForToday(it) },
+                                onDisplayDetails = { onDisplayDetailedTrackie(it) }
                             )
 
                             Spacer5()
@@ -108,7 +108,7 @@ fun HomeScreen(
 
                             Spacer5()
 
-                            RowWithRadioButtons(graphToDisplay = graphToDisplay) { onChangeGraph(it) }
+                            RowWithRadioButtons(graphToDisplay = typeOfHomeScreenGraphToDisplay) { onChangeGraph(it) }
 
                             Spacer5()
 

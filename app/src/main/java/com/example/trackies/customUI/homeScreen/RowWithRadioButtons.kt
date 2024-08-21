@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.trackies.customUI.buttons.MediumRadioTextButton
 
-@Composable fun RowWithRadioButtons(graphToDisplay: GraphToDisplay, changeGraphToDisplay: (GraphToDisplay) -> Unit ) {
+@Composable fun RowWithRadioButtons(graphToDisplay: HomeScreenGraphToDisplay, changeGraphToDisplay: (HomeScreenGraphToDisplay) -> Unit ) {
 
     var displayWeeklyChart by remember { mutableStateOf(true) }
     var displayMonthlyChart by remember { mutableStateOf(false) }
@@ -18,21 +18,21 @@ import com.example.trackies.customUI.buttons.MediumRadioTextButton
 
     when (graphToDisplay) {
 
-        GraphToDisplay.Weekly -> {
+        HomeScreenGraphToDisplay.Weekly -> {
 
             displayWeeklyChart = true
             displayMonthlyChart = false
             displayYearlyChart = false
         }
 
-        GraphToDisplay.Monthly -> {
+        HomeScreenGraphToDisplay.Monthly -> {
 
             displayWeeklyChart = false
             displayMonthlyChart = true
             displayYearlyChart = false
         }
 
-        GraphToDisplay.Yearly -> {
+        HomeScreenGraphToDisplay.Yearly -> {
 
             displayWeeklyChart = false
             displayMonthlyChart = false
@@ -56,7 +56,7 @@ import com.example.trackies.customUI.buttons.MediumRadioTextButton
             displayMonthlyChart = !it
             displayYearlyChart = !it
 
-            changeGraphToDisplay(GraphToDisplay.Weekly)
+            changeGraphToDisplay(HomeScreenGraphToDisplay.Weekly)
         }
 
         MediumRadioTextButton(text = "monthly", isSelected = displayMonthlyChart) {
@@ -65,7 +65,7 @@ import com.example.trackies.customUI.buttons.MediumRadioTextButton
             displayWeeklyChart = !it
             displayYearlyChart = !it
 
-            changeGraphToDisplay(GraphToDisplay.Monthly)
+            changeGraphToDisplay(HomeScreenGraphToDisplay.Monthly)
         }
 
         MediumRadioTextButton(text = "yearly", isSelected = displayYearlyChart) {
@@ -74,12 +74,12 @@ import com.example.trackies.customUI.buttons.MediumRadioTextButton
             displayWeeklyChart = !it
             displayMonthlyChart = !it
 
-            changeGraphToDisplay(GraphToDisplay.Yearly)
+            changeGraphToDisplay(HomeScreenGraphToDisplay.Yearly)
         }
     }
 }
 
-enum class GraphToDisplay {
+enum class HomeScreenGraphToDisplay {
     Weekly,
     Monthly,
     Yearly

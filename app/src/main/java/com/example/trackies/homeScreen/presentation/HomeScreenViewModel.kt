@@ -1,11 +1,10 @@
 package com.example.trackies.homeScreen.presentation
 
 import android.util.Log
-import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.trackies.DateTimeClass
-import com.example.trackies.customUI.homeScreen.GraphToDisplay
+import com.example.trackies.customUI.homeScreen.HomeScreenGraphToDisplay
 import com.example.trackies.homeScreen.buisness.LicenseViewState
 import com.example.trackies.homeScreen.buisness.TrackieViewState
 import com.example.trackies.homeScreen.data.HomeScreenRepository
@@ -13,19 +12,17 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
+class HomeScreenViewModel(private val uniqueIdentifier: String): ViewModel() {
 
     private val dateTimeClass = DateTimeClass()
 
     private val repository = HomeScreenRepository(uniqueIdentifier = uniqueIdentifier)
 
     private var _uiState = MutableStateFlow<SharedViewModelViewState>(value = SharedViewModelViewState.Loading)
-    private var _graphToDisplay = MutableStateFlow(value = GraphToDisplay.Weekly)
-    private var _trackieToDisplay: MutableStateFlow<TrackieViewState?> = MutableStateFlow(value = null)
+    private var _typeOfHomeScreenGraphToDisplay = MutableStateFlow(value = HomeScreenGraphToDisplay.Weekly)
     private var _heightOfHomeScreenLazyColumn = MutableStateFlow(value = 195)
     val uiState: StateFlow<SharedViewModelViewState> get() = _uiState
-    val graphToDisplay: StateFlow<GraphToDisplay> get() = _graphToDisplay
-    val trackieToDisplay: StateFlow<TrackieViewState?> get() = _trackieToDisplay
+    val typeOfHomeScreenGraphToDisplay: StateFlow<HomeScreenGraphToDisplay> get() = _typeOfHomeScreenGraphToDisplay
 
     val heightOfHomeScreenLazyColumn: StateFlow<Int> get() = _heightOfHomeScreenLazyColumn
 
@@ -37,17 +34,11 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
 
             delay(1000)
 
-            val licenseInformation = repository.fetchUsersLicenseInformation() // 1
-            val trackiesForToday = repository.fetchTrackiesForToday() // 2
-            val namesOfAllTrackies = repository.fetchNamesOfAllTrackies() // 3
+            val licenseInformation = repository.fetchUsersLicenseInformation()
+            val trackiesForToday = repository.fetchTrackiesForToday()
+            val namesOfAllTrackies = repository.fetchNamesOfAllTrackies()
             val statesOfTrackiesForToday = repository.fetchStatesOfTrackiesForToday()
-            val weeklyRegularity = repository.fetchWeeklyRegularity() // 5 does not finish
-
-            Log.d("r35 damn", "1 = $licenseInformation")
-            Log.d("r35 damn", "2 = $trackiesForToday")
-            Log.d("r35 damn", "3 = $namesOfAllTrackies")
-            Log.d("r35 damn", "4 = $statesOfTrackiesForToday")
-            Log.d("r35 damn", "5 = $weeklyRegularity")
+            val weeklyRegularity = repository.fetchWeeklyRegularity()
 
             if (
                 licenseInformation != null &&
@@ -186,7 +177,7 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
             }
     }
 
-    fun checkTrackieAsIngestedForToday(trackieViewState: TrackieViewState) {
+    fun markTrackieAsIngestedForToday(trackieViewState: TrackieViewState) {
 
 //      update state of a trackie in the database
         repository.checkTrackieAsIngestedForToday(trackieViewState)
@@ -270,8 +261,7 @@ class SharedViewModel(private val uniqueIdentifier: String): ViewModel() {
         }
     }
 
-    fun changeGraphToDisplay(chartToDisplay: GraphToDisplay) { _graphToDisplay.update { chartToDisplay } }
-    fun setTrackieToDisplay(trackieToDisplay: TrackieViewState) { _trackieToDisplay.update { trackieToDisplay } }
+    fun changeGraphToDisplay(chartToDisplay: HomeScreenGraphToDisplay) { _typeOfHomeScreenGraphToDisplay.update { chartToDisplay } }
 
     fun deleteTrackie(trackieToDelete: TrackieViewState) {
 
