@@ -16,10 +16,12 @@ import com.example.trackies.customUI.spacers.Spacer40
 import com.example.trackies.customUI.spacers.Spacer5
 import com.example.trackies.customUI.texts.MediumHeader
 import com.example.trackies.customUI.texts.TextMedium
+import com.example.trackies.enumClasses.WhatToDisplay
 import com.example.trackies.sharedComponentsOfUi.trackie.StaticTrackie
 import com.example.trackies.sharedComponentsOfUi.trackie.Trackie
 import com.example.trackies.homeScreen.buisness.TrackieViewState
 import com.example.trackies.homeScreen.presentation.SharedViewModelViewState
+import com.example.trackies.homeScreen.presentation.ui.PreviewOfListOfTrackiesLoading
 import com.example.trackies.ui.theme.BackgroundColor
 
 @Composable
@@ -117,7 +119,7 @@ fun ShowAllTrackies(
 
                                         null -> {
 
-                                            TextMedium("loading")
+                                            PreviewOfListOfTrackiesLoading()
                                             fetchAllUsersTrackies()
                                         }
 
@@ -140,102 +142,6 @@ fun ShowAllTrackies(
                     }
                 }
             )
-        }
-    )
-}
-
-enum class WhatToDisplay {
-    TrackiesForTheWholeWeek,
-    TrackiesForToday
-}
-
-@Composable fun DisplayAllTrackies(
-    listOfTrackies: List<TrackieViewState>,
-    listOfTrackiesForToday: List<TrackieViewState>,
-    statesOfTrackiesForToday: Map<String, Boolean>,
-    onCheck: (TrackieViewState) -> Unit,
-    onDisplayDetails: (TrackieViewState) -> Unit
-) {
-
-    LazyColumn(
-
-        modifier = Modifier
-            .fillMaxSize(),
-
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top,
-
-        content = {
-
-            items((listOfTrackiesForToday + listOfTrackies).toSet().toList()) {trackieViewState ->
-
-                if (listOfTrackiesForToday.contains(trackieViewState)) {
-
-                    Trackie(
-
-                        name = trackieViewState.name,
-                        totalDose = trackieViewState.totalDose,
-                        measuringUnit = trackieViewState.measuringUnit,
-                        repeatOn = trackieViewState.repeatOn,
-                        ingestionTime = trackieViewState.ingestionTime,
-                        stateOfTheTrackie = statesOfTrackiesForToday[trackieViewState.name]!!,
-                        onCheck = { onCheck(trackieViewState) },
-                        onDisplayDetails = { onDisplayDetails(trackieViewState) }
-                    )
-                }
-
-                else {
-
-                    StaticTrackie(
-
-                        name = trackieViewState.name,
-                        totalDose = trackieViewState.totalDose,
-                        measuringUnit = trackieViewState.measuringUnit,
-                        repeatOn = trackieViewState.repeatOn,
-                        ingestionTime = trackieViewState.ingestionTime,
-                        onDisplayDetails = { onDisplayDetails(trackieViewState) }
-                    )
-                }
-
-                Spacer5()
-            }
-        }
-    )
-}
-
-@Composable fun DisplayAllTrackiesForToday(
-    listOfTrackies: List<TrackieViewState>,
-    statesOfTrackiesForToday: Map<String,Boolean>,
-    onCheck: (TrackieViewState) -> Unit,
-    onDisplayDetails: (TrackieViewState) -> Unit,
-) {
-
-    LazyColumn(
-
-        modifier = Modifier
-            .fillMaxSize(),
-
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top,
-
-        content = {
-
-            items(listOfTrackies) {trackieViewState ->
-
-                Trackie(
-
-                    name = trackieViewState.name,
-                    totalDose = trackieViewState.totalDose,
-                    measuringUnit = trackieViewState.measuringUnit,
-                    repeatOn = trackieViewState.repeatOn,
-                    ingestionTime = trackieViewState.ingestionTime,
-                    stateOfTheTrackie = statesOfTrackiesForToday[trackieViewState.name]!!,
-                    onCheck = { onCheck(trackieViewState) },
-                    onDisplayDetails = { onDisplayDetails(trackieViewState) }
-                )
-
-                Spacer5()
-            }
         }
     )
 }
