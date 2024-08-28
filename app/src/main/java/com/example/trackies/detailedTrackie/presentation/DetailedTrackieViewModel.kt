@@ -5,9 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.trackies.DateTimeClass
 import com.example.trackies.authentication.repository.FirebaseAuthentication
+import com.example.trackies.detailedTrackie.buisness.TrackieWithWeeklyRegularity
 import com.example.trackies.detailedTrackie.data.DetailedTrackieRepository
 import com.example.trackies.homeScreen.buisness.TrackieViewState
-import kotlinx.coroutines.delay
+import com.google.type.DateTime
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -31,15 +32,15 @@ class DetailedTrackieViewModel(): ViewModel() {
 
             if (_uiState.value == DetailedTrackieViewState.Loading || _uiState.value == DetailedTrackieViewState.FailedToLoadData) {
 
-                val weeklyRegularityOfTheTrackie = repository.fetchWeeklyRegularityOfTheTrackie( trackieViewState = trackieViewState )
+                val trackieWithWeeklyRegularity = repository.fetchWeeklyRegularityOfTheTrackie( trackieViewState = trackieViewState )
 
-                if (weeklyRegularityOfTheTrackie != null) {
+                if (trackieWithWeeklyRegularity != null) {
 
                     _uiState.update {
 
                         DetailedTrackieViewState.SucceededToLoadData(
 
-                            trackiesWithWeeklyRegularity = weeklyRegularityOfTheTrackie
+                            trackiesWithWeeklyRegularity = mutableListOf(trackieWithWeeklyRegularity)
                         )
                     }
                 }
@@ -55,36 +56,31 @@ class DetailedTrackieViewModel(): ViewModel() {
 
             else {
 
-                val weeklyRegularity = _uiState.value as DetailedTrackieViewState.SucceededToLoadData
+                val listOfTrackiesWithWeeklyRegularity = (_uiState.value as DetailedTrackieViewState.SucceededToLoadData).trackiesWithWeeklyRegularity
 
-                if (!weeklyRegularity.trackiesWithWeeklyRegularity.keys.contains(trackieViewState.name)) {
+                var alreadyExists = false
+
+                listOfTrackiesWithWeeklyRegularity.forEach { trackieWithWeeklyRegularity ->
+
+                    if (trackieWithWeeklyRegularity.name == trackieViewState.name) { alreadyExists = true }
+                }
+
+                if (!alreadyExists) {
 
                     _uiState.update {
 
                         DetailedTrackieViewState.Loading
                     }
 
-                    val weeklyRegularityOfTheTrackie: MutableMap<String, Map<String, Int>>? = repository.fetchWeeklyRegularityOfTheTrackie( trackieViewState = trackieViewState )
+                    val trackieWithWeeklyRegularity = repository.fetchWeeklyRegularityOfTheTrackie( trackieViewState = trackieViewState )
 
-                    if (weeklyRegularityOfTheTrackie != null) {
+                    if (trackieWithWeeklyRegularity != null) {
 
-                        val key = weeklyRegularityOfTheTrackie.keys.toList()[0]
-                        val value = weeklyRegularityOfTheTrackie.values.toList()[0]
-
-                        val updatedWeeklyRegularity: MutableMap<String, Map<String, Int>> = mutableMapOf()
-
-                        weeklyRegularity.trackiesWithWeeklyRegularity
-                            .forEach { map ->
-                                updatedWeeklyRegularity[map.key] = map.value
-                            }
-                            .also { updatedWeeklyRegularity[key] = value }
+                        listOfTrackiesWithWeeklyRegularity.add(trackieWithWeeklyRegularity)
 
                         _uiState.update {
 
-                            DetailedTrackieViewState.SucceededToLoadData(
-
-                                trackiesWithWeeklyRegularity = updatedWeeklyRegularity
-                            )
+                            DetailedTrackieViewState.SucceededToLoadData(trackiesWithWeeklyRegularity = listOfTrackiesWithWeeklyRegularity)
                         }
                     }
 
@@ -97,6 +93,49 @@ class DetailedTrackieViewModel(): ViewModel() {
                     }
                 }
             }
+        }
+    }
+
+    fun updateWeeklyRegularityOfTheTrackie (trackieViewState: TrackieViewState) {
+
+        when (_uiState.value) {
+
+            DetailedTrackieViewState.Loading -> {}
+
+            is DetailedTrackieViewState.SucceededToLoadData -> {
+
+                val copyOfTrackiesWithWeeklyRegularity = (_uiState.value as DetailedTrackieViewState.SucceededToLoadData).trackiesWithWeeklyRegularity
+                val trackieWithWeeklyRegularity = mutableListOf<TrackieWithWeeklyRegularity>()
+
+                copyOfTrackiesWithWeeklyRegularity.forEach {
+
+                    if (it.name == trackieViewState.name) {
+
+                        val currentDayOfWeek = DateTimeClass().getCurrentDayOfWeek()
+
+                        val name = it.name
+                        val regularity = mutableMapOf<String, Int>()
+
+                        it.regularity.forEach {map ->
+
+                            if (map.key == currentDayOfWeek) { regularity[map.key] = 100 }
+
+                            else { regularity[map.key] = map.value }
+                        }
+
+                        trackieWithWeeklyRegularity.add(TrackieWithWeeklyRegularity(name = name, regularity = regularity))
+                    }
+
+                    else { trackieWithWeeklyRegularity.add(it) }
+                }
+
+                _uiState.update {
+
+                    DetailedTrackieViewState.SucceededToLoadData(trackieWithWeeklyRegularity)
+                }
+            }
+
+            DetailedTrackieViewState.FailedToLoadData -> {}
         }
     }
 }

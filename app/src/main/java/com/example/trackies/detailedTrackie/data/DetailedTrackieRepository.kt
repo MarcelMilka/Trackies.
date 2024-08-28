@@ -1,5 +1,6 @@
 package com.example.trackies.detailedTrackie.data
 
+import com.example.trackies.detailedTrackie.buisness.TrackieWithWeeklyRegularity
 import com.example.trackies.homeScreen.buisness.TrackieViewState
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
@@ -11,10 +12,9 @@ class DetailedTrackieRepository( val uniqueIdentifier: String ): Reads {
     private val user = users.document(uniqueIdentifier)
     private val usersWeeklyStatistics = user.collection("user's statistics").document("user's weekly statistics")
 
-    override suspend fun fetchWeeklyRegularityOfTheTrackie(trackieViewState: TrackieViewState): MutableMap<String, Map<String, Int>>? {
+    override suspend fun fetchWeeklyRegularityOfTheTrackie(trackieViewState: TrackieViewState): TrackieWithWeeklyRegularity? {
 
-        val mapToReturn = mutableMapOf<String, Map<String, Int>>()
-        val valueOfMapToReturn = mutableMapOf<String, Int>()
+        val regularity = mutableMapOf<String, Int>()
 
         return try {
 
@@ -32,17 +32,15 @@ class DetailedTrackieRepository( val uniqueIdentifier: String ): Reads {
 
                     when (ingested) {
 
-                        true -> valueOfMapToReturn[dayOfWeek] = 100
+                        true -> regularity[dayOfWeek] = 100
 
-                        false -> valueOfMapToReturn[dayOfWeek] = 0
+                        false -> regularity[dayOfWeek] = 0
                     }
                 }
                 else { return null }
             }
 
-            mapToReturn[trackieViewState.name] = valueOfMapToReturn
-            mapToReturn
-
+            TrackieWithWeeklyRegularity(name = trackieViewState.name, regularity)
         }
         catch (e: Exception) { null }
     }

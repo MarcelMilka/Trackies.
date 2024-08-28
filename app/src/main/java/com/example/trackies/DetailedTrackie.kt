@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.trackies.customUI.buttons.IconButtonToNavigateBetweenActivities
 import com.example.trackies.customUI.spacers.Spacer40
+import com.example.trackies.detailedTrackie.buisness.TrackieWithWeeklyRegularity
 import com.example.trackies.detailedTrackie.presentation.DetailedTrackieViewState
 import com.example.trackies.detailedTrackie.presentation.ui.failedToLoadData.UiFailedToLoadData
 import com.example.trackies.detailedTrackie.presentation.ui.loadedSuccessfully.LowerPartOfUiLoadedSuccessfully
@@ -110,7 +111,17 @@ fun DetailedTrackie(
 
                                 is DetailedTrackieViewState.SucceededToLoadData -> {
 
-                                    LowerPartOfUiLoadedSuccessfully(weeklyRegularity = uiState.trackiesWithWeeklyRegularity[displayDetailsOf!!.name])
+                                    var weeklyRegularity = mutableMapOf<String, Int>()
+
+                                    uiState.trackiesWithWeeklyRegularity.forEach {
+
+                                        if (it.name == displayDetailsOf!!.name) {
+
+                                            weeklyRegularity = it.regularity
+                                        }
+                                    }
+
+                                    LowerPartOfUiLoadedSuccessfully(weeklyRegularity = weeklyRegularity)
                                 }
 
                                 DetailedTrackieViewState.FailedToLoadData -> {}

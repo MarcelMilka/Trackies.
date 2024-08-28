@@ -226,6 +226,7 @@ class MainActivity : ComponentActivity() {
                             onMarkTrackieAsIngestedForToday = { trackieViewState ->
 
                                 homeScreenViewModel.markTrackieAsIngestedForToday(trackieViewState = trackieViewState)
+                                detailedTrackieViewModel.updateWeeklyRegularityOfTheTrackie(trackieViewState = trackieViewState)
                             },
 
                             onShowAllTrackies = {
@@ -290,6 +291,7 @@ class MainActivity : ComponentActivity() {
                             onMarkTrackieAsIngested = {trackieViewState ->
 
                                 homeScreenViewModel.markTrackieAsIngestedForToday(trackieViewState = trackieViewState)
+                                detailedTrackieViewModel.updateWeeklyRegularityOfTheTrackie(trackieViewState = trackieViewState)
                             },
                             onDisplayDetails = { trackieViewState ->
 
