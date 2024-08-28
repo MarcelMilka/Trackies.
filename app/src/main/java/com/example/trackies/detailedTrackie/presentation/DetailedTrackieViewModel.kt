@@ -1,7 +1,10 @@
 package com.example.trackies.detailedTrackie.presentation
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.trackies.DateTimeClass
+import com.example.trackies.authentication.repository.FirebaseAuthentication
 import com.example.trackies.detailedTrackie.data.DetailedTrackieRepository
 import com.example.trackies.homeScreen.buisness.TrackieViewState
 import kotlinx.coroutines.delay
@@ -9,9 +12,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class DetailedTrackieViewModel( uniqueIdentifier: String ): ViewModel() {
+class DetailedTrackieViewModel(): ViewModel() {
 
-    private val repository = DetailedTrackieRepository(uniqueIdentifier = uniqueIdentifier)
+    val uniqueIdentifier = FirebaseAuthentication().getSignedInUser().also { Log.d("ViewModel", "$it") }
+
+    private val repository = DetailedTrackieRepository(uniqueIdentifier = uniqueIdentifier!!)
     private val _uiState = MutableStateFlow<DetailedTrackieViewState>(DetailedTrackieViewState.Loading)
     private val _trackieToDisplay = MutableStateFlow<TrackieViewState?>(null)
 

@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.trackies.DateTimeClass
+import com.example.trackies.authentication.repository.FirebaseAuthentication
 import com.example.trackies.enumClasses.HomeScreenGraphToDisplay
 import com.example.trackies.homeScreen.buisness.LicenseViewState
 import com.example.trackies.homeScreen.buisness.TrackieViewState
@@ -11,12 +12,15 @@ import com.example.trackies.homeScreen.data.HomeScreenRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlin.math.log
 
-class HomeScreenViewModel(private val uniqueIdentifier: String): ViewModel() {
+class HomeScreenViewModel(): ViewModel() {
+
+    val uniqueIdentifier = FirebaseAuthentication().getSignedInUser().also { Log.d("ViewModel", "$it") }
 
     private val dateTimeClass = DateTimeClass()
 
-    private val repository = HomeScreenRepository(uniqueIdentifier = uniqueIdentifier)
+    private val repository = HomeScreenRepository(uniqueIdentifier = uniqueIdentifier!!)
 
     private var _uiState = MutableStateFlow<SharedViewModelViewState>(value = SharedViewModelViewState.Loading)
     private var _typeOfHomeScreenGraphToDisplay = MutableStateFlow(value = HomeScreenGraphToDisplay.Weekly)
@@ -25,7 +29,6 @@ class HomeScreenViewModel(private val uniqueIdentifier: String): ViewModel() {
     val typeOfHomeScreenGraphToDisplay: StateFlow<HomeScreenGraphToDisplay> get() = _typeOfHomeScreenGraphToDisplay
 
     val heightOfHomeScreenLazyColumn: StateFlow<Int> get() = _heightOfHomeScreenLazyColumn
-
     init {
 
         repository.isFirstTimeInApp()

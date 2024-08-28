@@ -14,7 +14,7 @@ import kotlinx.coroutines.tasks.await
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes, DeleteTrackie {
+class HomeScreenRepository( var uniqueIdentifier: String ): Reads, Writes, DeleteTrackie {
 
     private val firebase: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val currentDateAndTime = DateTimeClass()
@@ -28,6 +28,11 @@ class HomeScreenRepository( val uniqueIdentifier: String ): Reads, Writes, Delet
     private val namesOfTrackies = user.collection("names of trackies").document("names of trackies")
 
     private val usersWeeklyStatistics = user.collection("user's statistics").document("user's weekly statistics")
+
+    init {
+
+        Log.d("uid kurwa", "HomeScreenRespository $uniqueIdentifier")
+    }
 
     override fun isFirstTimeInApp() {
 

@@ -23,7 +23,7 @@ import com.example.trackies.ui.theme.BackgroundColor
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
-fun LogIn(onContinue: (EmailPasswordCredentials) -> Unit, recoverThePassword: () -> Unit ) {
+fun LogIn (onContinue: (EmailPasswordCredentials) -> Unit, recoverThePassword: () -> Unit ) {
 
 //  focus requesters responsible for switching between text fields
     var emailTextFieldIsActive by remember { mutableStateOf(false) }
@@ -90,7 +90,7 @@ fun LogIn(onContinue: (EmailPasswordCredentials) -> Unit, recoverThePassword: ()
 
             BigStaticPrimaryButton( textToDisplay = "Continue.") { onContinue( EmailPasswordCredentials( email = email, password = password ) ) }
 
-            Spacer120()
+            Spacer(modifier = Modifier.fillMaxHeight(0.5f))
 
             TextSmall( content = "Have you forgotten the password?" )
 

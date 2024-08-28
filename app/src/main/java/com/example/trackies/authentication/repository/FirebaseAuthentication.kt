@@ -78,25 +78,43 @@ class FirebaseAuthentication {
         authenticatedSuccessfully: (String) -> Unit
     ) {
 
-        authentication.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener { process ->
+        try {
 
-                if (process.isSuccessful) {
+            authentication.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener { process ->
 
-                    val user = authentication.currentUser
+                    if (process.isSuccessful) {
 
-                    user?.isEmailVerified?.let { isVerified ->
+                        val user = authentication.currentUser
 
-                        if (isVerified) {
-                            authenticatedSuccessfully(user.uid)
+                        user?.isEmailVerified?.let { isVerified ->
+
+                            if (isVerified) {
+                                authenticatedSuccessfully(user.uid)
+                            }
                         }
                     }
+                    else { signInError("${process.exception}") }
                 }
-                else { signInError("${process.exception}") }
+        }
+
+        catch (e: Exception) {
+
+            when (e) {
+
+                is java.lang.IllegalArgumentException -> { signInError("the email and/or password is empty") }
+
+                is FirebaseAuthInvalidCredentialsException -> { signInError("the email address is badly formatted") }
+
+                else -> {}
             }
+        }
     }
 
-    fun signOut() { authentication.signOut() }
+    fun signOut() {
+
+        authentication.signOut()
+    }
 
     fun deleteAccount(
         onComplete: () -> Unit,

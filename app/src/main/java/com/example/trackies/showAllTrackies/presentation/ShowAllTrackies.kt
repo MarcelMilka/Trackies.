@@ -2,8 +2,6 @@ package com.example.trackies.showAllTrackies.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.KeyboardReturn
 import androidx.compose.runtime.*
@@ -15,10 +13,7 @@ import com.example.trackies.customUI.buttons.MediumRadioTextButton
 import com.example.trackies.customUI.spacers.Spacer40
 import com.example.trackies.customUI.spacers.Spacer5
 import com.example.trackies.customUI.texts.MediumHeader
-import com.example.trackies.customUI.texts.TextMedium
 import com.example.trackies.enumClasses.WhatToDisplay
-import com.example.trackies.sharedComponentsOfUi.trackie.StaticTrackie
-import com.example.trackies.sharedComponentsOfUi.trackie.Trackie
 import com.example.trackies.homeScreen.buisness.TrackieViewState
 import com.example.trackies.homeScreen.presentation.SharedViewModelViewState
 import com.example.trackies.homeScreen.presentation.ui.PreviewOfListOfTrackiesLoading
@@ -29,7 +24,7 @@ fun ShowAllTrackies(
     uiState: SharedViewModelViewState,
     fetchAllUsersTrackies: () -> Unit,
     onReturn: () -> Unit,
-    onCheck: (TrackieViewState) -> Unit,
+    onMarkTrackieAsIngested: (TrackieViewState) -> Unit,
     onDisplayDetails: (TrackieViewState) -> Unit
 ) {
 
@@ -108,7 +103,7 @@ fun ShowAllTrackies(
                                     DisplayAllTrackiesForToday(
                                         listOfTrackies = uiState.trackiesForToday,
                                         statesOfTrackiesForToday = uiState.statesOfTrackiesForToday,
-                                        onCheck = { onCheck(it) },
+                                        onCheck = { onMarkTrackieAsIngested(it) },
                                         onDisplayDetails = { onDisplayDetails(it) }
                                     )
                                 }
@@ -129,7 +124,7 @@ fun ShowAllTrackies(
                                                 listOfTrackies = uiState.allTrackies!!,
                                                 listOfTrackiesForToday = uiState.trackiesForToday,
                                                 statesOfTrackiesForToday = uiState.statesOfTrackiesForToday,
-                                                onCheck = { onCheck(it) },
+                                                onCheck = { onMarkTrackieAsIngested(it) },
                                                 onDisplayDetails = { onDisplayDetails(it) }
                                             )
                                         }

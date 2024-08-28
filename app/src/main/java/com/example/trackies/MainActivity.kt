@@ -6,7 +6,15 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
 import com.example.trackies.authentication.repository.FirebaseAuthentication
 import com.example.trackies.authentication.ui.login.LogIn
@@ -24,6 +32,10 @@ import com.example.trackies.homeScreen.presentation.HomeScreenViewModel
 import com.example.trackies.settings.Settings
 import com.example.trackies.showAllTrackies.presentation.ShowAllTrackies
 import com.example.trackies.switchToPremium.TrackiesPremium
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
@@ -59,12 +71,23 @@ class MainActivity : ComponentActivity() {
 //              Welcome screen
                 navigation(route = "SignedOut", startDestination = "WelcomeScreen") {
 
-                    composable(route = "WelcomeScreen") { WelcomeScreen { navigationController.navigate(it) } }
+                    composable(
+                        route = "WelcomeScreen",
+                        enterTransition = {EnterTransition.None },
+                        exitTransition = { ExitTransition.None },
+                    ) {
+
+                        WelcomeScreen { navigationController.navigate(it) }
+                    }
 
 //                  Sign up
                     navigation(route = "SignUp", startDestination = "Register") {
 
-                        composable(route = "Register") {
+                        composable(
+                            route = "Register",
+                            enterTransition = {EnterTransition.None },
+                            exitTransition = { ExitTransition.None },
+                        ) {
 
                             Register { credentials ->
 
@@ -88,12 +111,20 @@ class MainActivity : ComponentActivity() {
                             }
                         }
 
-                        composable( route = "Authenticate" ) {
+                        composable(
+                            route = "Authenticate",
+                            enterTransition = {EnterTransition.None },
+                            exitTransition = { ExitTransition.None }
+                        ) {
 
                             Authenticate { navigationController.navigate("SignIn") { popUpTo("WelcomeScreen") { inclusive = false } } }
                         }
 
-                        composable( route = "CouldNotRegister" ) {
+                        composable(
+                            route = "CouldNotRegister",
+                            enterTransition = {EnterTransition.None },
+                            exitTransition = { ExitTransition.None }
+                        ) {
 
                             CouldNotRegister (
                                 errorCause = signUpError!!,
@@ -105,7 +136,11 @@ class MainActivity : ComponentActivity() {
 //                  Sign in
                     navigation(route = "SignIn", startDestination = "Login") {
 
-                        composable(route = "Login") {
+                        composable(
+                            route = "Login",
+                            enterTransition = {EnterTransition.None },
+                            exitTransition = { ExitTransition.None }
+                        ) {
 
                             LogIn(
                                 onContinue = { credentials ->
@@ -128,7 +163,12 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
-                        composable(route = "RecoverThePassword") {
+                        composable(
+                            route = "RecoverThePassword",
+                            enterTransition = {EnterTransition.None },
+                            exitTransition = { ExitTransition.None }
+                        ) {
+
                             RecoverThePassword { email ->
 
                                 firebaseAuthenticator.recoverThePassword(
@@ -143,7 +183,12 @@ class MainActivity : ComponentActivity() {
                             }
                         }
 
-                        composable(route = "RecoverThePassword-Information") {
+                        composable(
+                            route = "RecoverThePassword-Information",
+                            enterTransition = {EnterTransition.None },
+                            exitTransition = { ExitTransition.None }
+                        ) {
+
                             RecoverThePasswordInformation {
                                 navigationController.navigate(it) { popUpTo("SignIn") { inclusive = false } }
                             }
@@ -154,14 +199,14 @@ class MainActivity : ComponentActivity() {
 //              Home screen
                 navigation( route = "SignedIn", startDestination = "HomeScreen" ) {
 
-                    val homeScreenViewModel by lazy { HomeScreenViewModel(uniqueIdentifier!!) }
-                    val detailedTrackieViewModel by lazy { DetailedTrackieViewModel(uniqueIdentifier!!) }
-
                     composable(
                         route = "HomeScreen",
                         enterTransition = {EnterTransition.None },
                         exitTransition = { ExitTransition.None }
                     ) {
+
+                        val homeScreenViewModel = it.sharedViewModel<HomeScreenViewModel>(navigationController)
+                        val detailedTrackieViewModel = it.sharedViewModel<DetailedTrackieViewModel>(navigationController)
 
                         HomeScreen(
 
@@ -188,33 +233,6 @@ class MainActivity : ComponentActivity() {
                                 navigationController.navigate( route = "ShowAllTrackies" )
                             },
 
-//                            onSignOut = {
-//
-//                                navigationController.navigate( route = "SignedOut" ) {
-//
-//                                    popUpTo( route = "SignedIn" ) { inclusive = true }
-//                                }
-//
-//                                firebaseAuthenticator.signOut()
-//                            },
-//
-//                            onDeleteAccount = {
-//
-//                                firebaseAuthenticator.deleteAccount(
-//
-//                                    onComplete = {
-//
-//                                        navigationController.navigate( route = "SignedOut" ) {
-//
-//                                            popUpTo( route = "SignedIn" ) { inclusive = true }
-//                                        }
-//                                    },
-//                                    onFailure = {exception ->
-//                                        Log.d("halla", exception)
-//                                    }
-//                                )
-//                            },
-
                             onChangeGraph = { homeScreenViewModel.changeGraphToDisplay(it) },
 
                             onDisplayDetailedTrackie = { trackieViewState ->
@@ -231,6 +249,8 @@ class MainActivity : ComponentActivity() {
                         enterTransition = {EnterTransition.None },
                         exitTransition = { ExitTransition.None }
                     ) {
+
+                        val homeScreenViewModel = it.sharedViewModel<HomeScreenViewModel>(navigationController)
 
                         AddNewTrackie(
 
@@ -259,13 +279,19 @@ class MainActivity : ComponentActivity() {
                         exitTransition = { ExitTransition.None }
                     ) {
 
+                        val homeScreenViewModel = it.sharedViewModel<HomeScreenViewModel>(navigationController)
+                        val detailedTrackieViewModel = it.sharedViewModel<DetailedTrackieViewModel>(navigationController)
+
                         ShowAllTrackies(
 
                             uiState = homeScreenViewModel.uiState.collectAsState().value,
                             fetchAllUsersTrackies = { homeScreenViewModel.fetchAllTrackies() },
                             onReturn = { navigationController.navigateUp() },
-                            onCheck = { homeScreenViewModel.markTrackieAsIngestedForToday(trackieViewState = it) },
-                            onDisplayDetails = {trackieViewState ->
+                            onMarkTrackieAsIngested = {trackieViewState ->
+
+                                homeScreenViewModel.markTrackieAsIngestedForToday(trackieViewState = trackieViewState)
+                            },
+                            onDisplayDetails = { trackieViewState ->
 
                                 detailedTrackieViewModel.setTrackieToDisplayDetails( trackieViewState = trackieViewState )
                                 detailedTrackieViewModel.calculateWeeklyRegularity( trackieViewState = trackieViewState)
@@ -279,6 +305,8 @@ class MainActivity : ComponentActivity() {
                         enterTransition = {EnterTransition.None },
                         exitTransition = { ExitTransition.None }
                     ) {
+
+                        val detailedTrackieViewModel = it.sharedViewModel<DetailedTrackieViewModel>(navigationController)
 
                         DetailedTrackie(
 
@@ -302,11 +330,24 @@ class MainActivity : ComponentActivity() {
                             onChangePassword = {},
                             onDeleteAccount = {},
                             onChangeLanguage = {},
-                            onLogout = {}
+                            onLogout = {
+
+                                navigationController.navigate( route = "SignedOut" ) {
+
+                                    popUpTo( route = "SignedIn" ) { inclusive = true }
+                                }
+
+                                uniqueIdentifier = null
+
+                                firebaseAuthenticator.signOut()
+                            }
                         )
                     }
 
-                    dialog( route = "ConfirmTrackieDeletion" ) {
+                    dialog(route = "ConfirmTrackieDeletion") {
+
+                        val homeScreenViewModel = it.sharedViewModel<HomeScreenViewModel>(navigationController)
+                        val detailedTrackieViewModel = it.sharedViewModel<DetailedTrackieViewModel>(navigationController)
 
                         ConfirmTrackieDeletion(
 
@@ -315,15 +356,29 @@ class MainActivity : ComponentActivity() {
 
                                 navigationController.navigate("HomeScreen") { popUpTo("HomeScreen") {inclusive = true} }
                                 homeScreenViewModel.deleteTrackie(it)
-                                // TODO: function which deletes trackie from the new view model
                             },
                             onDecline = { navigationController.navigateUp() }
                         )
                     }
 
-                    dialog( route = "TrackiesPremium" ) { TrackiesPremium { navigationController.navigateUp() } }
+                    dialog(route = "TrackiesPremium") { TrackiesPremium { navigationController.navigateUp() } }
                 }
             }
         }
     }
+}
+
+@Composable
+//  the reified keyword allows the function to access the type of T at runtime
+inline fun <reified T : ViewModel> NavBackStackEntry.sharedViewModel(navController: NavHostController): T {
+
+//  getting information where the user already is e.g "HomeScreen", "Settings" etc.
+    val navGraphRoute = destination.parent?.route ?: return viewModel()
+
+//  whenever the function (this) gets called again,
+    val parentEntry = remember(this) {
+        navController.getBackStackEntry(navGraphRoute)
+    }
+
+    return viewModel(viewModelStoreOwner = parentEntry)
 }
